@@ -2,17 +2,18 @@
 #define MIRRORMODELS_H
 
 #include <iostream>
+#include <cassert>
+
 #include "Loop.h"
 #include "Shell.h"
 #include "BFieldModels.h"
-#include "calcWrappers.h"
-#include "writeToFile.h"
-#include "mirrorMcD_v1.h"
-#include "printFuncs.h"
-#include "ALPHAPhysicalConstants.hpp"
-#include "coorTransf.h"
-#include <cassert>
-#include "easy_eos.h"
+//~ #include "calcWrappers.h"
+//~ #include "writeToFile.h"
+//~ #include "mirrorMcD_v1.h"
+//~ #include "printFuncs.h"
+//~ #include "ALPHAPhysicalConstants.hpp"
+//~ #include "coorTransf.h"
+//~ #include "easy_eos.h"
 
 //NWire models
 void exactMirrorModel(std::string path, double carP1[3], double carP2[3]);
