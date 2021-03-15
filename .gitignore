@@ -3,3 +3,4 @@ CMakeFiles/
 Makefile
 build/
 cmake_install.cmake
+*.exe
