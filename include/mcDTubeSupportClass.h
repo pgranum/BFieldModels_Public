@@ -13,6 +13,7 @@
 
 #include "Tube.h"
 //~ #include "printFuncs.h"
+#include "PhysicsConstants.hpp"
 
 class McD_Tube_Support {
 private:
@@ -126,7 +127,7 @@ public:
 	} // end of destructor
 	
 	void getA0(const double z, const double R, const int n_McD, double a0_array[]);
-	void getB(Tube tube, const int nmax, const CylindricalVector& cylP, CylindricalVector& BCylVec);
+	void getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]);
 	
 };
 

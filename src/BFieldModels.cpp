@@ -1,5 +1,7 @@
-#define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1 // needed for elliptic integral functions
+//~ #define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1 // needed for elliptic integral functions
 #include "BFieldModels.h"
+
+// Basic functions
 
 void biotSavart(double s0[3], double s1[3], double r[3], const double I, double B_vec[3]){
 
@@ -41,7 +43,7 @@ void biotSavart(double s0[3], double s1[3], double r[3], const double I, double 
 	
 	a0 = vecDotP(dk,i_unit);
 		
-	const double C = ALPHAPhysicalConstants::mu0/(4*ALPHAPhysicalConstants::pi)*I*a0;
+	const double C = PhysicsConstants::mu0/(4*PhysicsConstants::pi)*I*a0;
 	vecMultScalOvrwrt(A,C);
 	
 	//~ std::cout << "C = " << C << std::endl;
@@ -50,76 +52,6 @@ void biotSavart(double s0[3], double s1[3], double r[3], const double I, double 
 	vecAddOvrwrt(B_vec,A);
 	
 	//~ printVec(B_vec,"B out");
-}
-
-void lineSegmentsOct(double R, double L, double z, double dPhi, const int N, double s_arr[][3]){
-	// splits an octupole into straight line segments, which are returned in the array s_arr
-	// the octupole has radius R, length L, is centered at z, amd is rotated dPhi
-	// each end turn is split into N segments
-	// the calculations are done in cylindrical coordinates before being converted to cartesian at the end
-	// cylindrical vector = [r, phi, z]
-	
-	double pi = ALPHAPhysicalConstants::pi;
-	double LHalf = L/2.0;
-	double piFourths = 2.0*pi/8.0;
-	
-	// angles at which the straight wire sections are located:
-	double phiM[8] = {0.0};
-	calcPointsLine1D(0.0+dPhi, 7*piFourths+dPhi, 8, phiM);
-
-	
-	
-	double sCyl[3] = {R, 0.0, 0.0};
-	double sCar[3] = {0.}; // placeholder for cartesian point
-	
-	double theta_vec[N]; // angles to describe end turn
-	
-	for(int i = 0; i<8; i++){
-		double phi1 = phiM[i]; // end turn start azimuthal angle
-		double phi2 = phi1 + piFourths; // end turn end azimuthal angle
-		calcPointsLine1D(pi,0,N,theta_vec);
-		printArr(theta_vec,N,"theta");
-		double turnRad = (phi2 - phi1)*R/2.0; // the radius of the end turn
-		
-		for(int j = 0; j<N; j++){
-			sCyl[1] = cos(theta_vec[j]) * (phi2-phi1)/2.0 + phi1 + (phi2-phi1)/2.0;
-			
-			if(i%2 == 1){
-				// if mod(i,2) = 1, so if i is odd, the loop is curving one way
-				sCyl[2] = sin(theta_vec[j])*turnRad + z + LHalf;
-			}else if (i%2 == 0){
-				// if mod(i,2) = 0, so if i is even, the loop curves the other way
-				sCyl[2] = -sin(theta_vec[j])*turnRad + z - LHalf;
-			}
-			
-			cylPToCarP(sCyl,sCar);
-			s_arr[i*N+j][0] = sCar[0];
-			s_arr[i*N+j][1] = sCar[1];
-			s_arr[i*N+j][2] = sCar[2];
-		}
-	} 
-}
-
-void mirrorBFieldLine_BS(Loop loop, double r0[3], double r1[3]){
-	
-	// calculates the B-field of a mirror along the line from r0 to r1
-	// does not return result for now
-	
-	const int N = 10; // number of observations points
-	const int NSegments = 64; // number of BS segments
-	double rVecArr[N][3]={0.0};
-	double BVecArr[N][3]={0.0};
-	calcPointsLine3D(r0,r1,N,rVecArr);
-	printVecArr(rVecArr,N,"rVecArr");
-	
-	for(int i = 0; i<N; i++){
-		loopBiotSavart(loop,NSegments,rVecArr[i],BVecArr[i]);
-	}
-	
-	//~ writeBField("test","/eos/user/p/penielse/Test folder",rVecArr,BVecArr,N);
-	
-	printVecArr(BVecArr,N,"B field array");
-	
 }
 
 // Current Loop
@@ -154,7 +86,7 @@ void loopExactSAM(Loop loop, const double cylP[3], double BCylVec[3]){
 	const double K = std::tr1::comp_ellint_1(k);
 	
 	//Preparing Result
-	const double C = ALPHAPhysicalConstants::mu0*loop.getI()/ALPHAPhysicalConstants::pi;
+	const double C = PhysicsConstants::mu0*loop.getI()/PhysicsConstants::pi;
 	const double denom_rho = 2*alpha2*beta*rho; // Denominator
 	const double denom_z = 2*alpha2*beta; // Denominator
 	
@@ -177,7 +109,45 @@ void loopExactSAM(Loop loop, const double cylP[3], double BCylVec[3]){
 	BCylVec[2]=B_z;
 }
 
-// Three McDonalds Model for Loop, Shell, Tube
+void loopBiotSavart(Loop loop, const int NSegments, double carP[3], double BCarVec[3]){
+	// calculates the B-field of a current loop in the x-y plane by using the BS method
+	// radius R, z position z, current I, number of segments N, obs point carP
+
+	const double R = loop.getR();
+	const double I = loop.getI();
+	const double z_loop = loop.getz();
+
+	double B = vecNorm(BCarVec);
+	if(B != 0){
+		//print("Warning, B is nonzero in loopBiotSavart. Setting B_vec = 0");
+		BCarVec[0] = 0;
+		BCarVec[1] = 0;
+		BCarVec[2] = 0;
+	}
+
+	// setup start and end coordinate for straight line segment
+	double phis[NSegments];
+	double dPhi = 2*PhysicsConstants::pi/(NSegments-1);
+	for(int i=0; i<NSegments; i++){
+		phis[i] = dPhi*i;
+	}
+	double x0 = cos(phis[0])*R;
+	double y0 = sin(phis[0])*R;
+	double x1;
+	double y1;
+	
+	for(int i=0; i<NSegments-1; i++){
+		x1 = cos(phis[i+1])*R;
+		y1 = sin(phis[i+1])*R;
+		double r0[3]{x0,y0,z_loop};
+		double r1[3]{x1,y1,z_loop};
+			
+		biotSavart(r0,r1,carP,I,BCarVec);
+		
+		x0 = x1;
+		y0 = y1;
+	}	
+}
 
 void mcDonald(Loop loop, const int nmax, const double cylP[3], double BCylVec[3]){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a loop of radius R and current I	using the method described by the McDonald model
@@ -215,7 +185,7 @@ void mcDonald(Loop loop, const int nmax, const double cylP[3], double BCylVec[3]
 	}
 	
 	// Preparing result
-	const double C = ALPHAPhysicalConstants::mu0*I*R*R/2;
+	const double C = PhysicsConstants::mu0*I*R*R/2;
 	B_rho *= C;
 	B_z *= C;
 	
@@ -335,6 +305,57 @@ if (n>6){
 }
 }
 
+
+// Shell
+
+void Conway1D(Shell shell, const double cylP[3], double BCylVec[3]){
+	// From the "Exact Solution..." paper by J. T. Conway
+	
+	assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
+	
+	const double Z1 = shell.getz() - shell.getL()/2.0;
+	const double Z2 = shell.getz() + shell.getL()/2.0;
+	const double z = cylP[2];
+	const double R = shell.getR();
+	
+	//~ std::cout << "Z1 = " << Z1 << std::endl;
+	//~ std::cout << "Z2 = " << Z2 << std::endl;
+	//~ std::cout << "z = " << z << std::endl;
+	
+	const double IDist = shell.getI()/shell.getL(); // the current density [A/m]
+	const double C = PhysicsConstants::mu0*IDist*R/2.0;	
+	
+	if(z < Z1){
+		BCylVec[2] = C * ( I_010(R, Z1-z, cylP)
+						 - I_010(R, Z2-z, cylP) );
+						 
+		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
+	}else if(z >= Z1 && z <= Z2){
+		BCylVec[2] = C * ( 2* I_010(R, 0.0 , cylP)
+							- I_010(R, Z1-z, cylP)
+							- I_010(R, Z2-z, cylP) );
+							
+		//~ std::cout << "I_010(0.0) =  " << I_010(R, 0.0 , cylP) << std::endl;
+		//~ std::cout << "I_010(Z1-z) = " << I_010(R, Z1-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z2-z) = " << I_010(R, Z2-z, cylP) << std::endl;
+	}else if(z > Z2){
+		BCylVec[2] = C * ( I_010(R, Z2-z, cylP)
+						 - I_010(R, Z1-z, cylP) );
+						 
+		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
+	}else{
+		std::cout << "Error, cannot determine z in Conway1D" << std::endl;
+	}
+		
+	BCylVec[0] = C * ( I_011(R, Z2-z, cylP)
+					 - I_011(R, Z1-z, cylP) );
+	
+	//~ std::cout << "I_011(Z2-z) = " << I_011(R, Z2-z, cylP) << std::endl;
+	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
+}
+
 void mcDonald(Shell shell, const int nmax, const double cylP[3], double BCylVec[3]){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a shell solenoid of radius R and total current I	using the method described by the McDonald model
  * 
@@ -376,7 +397,7 @@ void mcDonald(Shell shell, const int nmax, const double cylP[3], double BCylVec[
 	}
 	
 	// Preparing result
-	const double C = ALPHAPhysicalConstants::mu0*I/(2*L);
+	const double C = PhysicsConstants::mu0*I/(2*L);
 	B_rho *= C;
 	B_z *= C;
 	
@@ -494,6 +515,8 @@ if (n>6){
 }
 }
 
+// Tube
+
 void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
  * 
@@ -546,7 +569,7 @@ void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]
 	}
 	
 	// Preparing result
-	double C = ALPHAPhysicalConstants::mu0*I/(2*L*(R2-R1));
+	double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
 	B_rho *= C;
 	B_z *= C;
 	
@@ -631,118 +654,6 @@ void mcDonaldTubeSupFunc(const int n, const double z, const double R, double an[
 	//~ std::cout << " " << std::endl;
 }	
 
-// Others
-
-void loopBiotSavart(Loop loop, const int NSegements, double carP[3], double BCarVec[3]){
-	// calculates the B-field of a current loop in the x-y plane by using the BS method
-	// radius R, z position z, current I, number of segments N, obs point carP
-	
-	// Unfolding the loop
-	const double R = loop.getR();
-	const double I = loop.getI();
-	const double z_loop = loop.getz();
-
-	double B = vecNorm(BCarVec);
-	if(B != 0){
-		//print("Warning, B is nonzero in loopBiotSavart. Setting B_vec = 0");
-		BCarVec[0] = 0;
-		BCarVec[1] = 0;
-		BCarVec[2] = 0;
-	}
-
-	// setup start and end coordinate for straight line segment
-	double phis[NSegements];
-	calcPointsLine1D(0,2*ALPHAPhysicalConstants::pi,NSegements,phis);
-	double x0 = cos(phis[0])*R;
-	double y0 = sin(phis[0])*R;
-	double x1;
-	double y1;
-	
-	for(int i=0; i<NSegements-1; i++){
-		x1 = cos(phis[i+1])*R;
-		y1 = sin(phis[i+1])*R;
-		double r0[3]{x0,y0,z_loop};
-		double r1[3]{x1,y1,z_loop};
-			
-		biotSavart(r0,r1,carP,I,BCarVec);
-		
-		x0 = x1;
-		y0 = y1;
-	}	
-}
-
-void loopExactJack510(Loop loop, double cylP[3], double BCylVec[3]){
-/* Calculates the magnet field in cylindrical coordinates BCylVec at the cylindircal coordinate cylP for a loop of radius R and current Ibased on the exact solution of exercise 5.10 in Jackson. 
- * 
- * @param R the radius of the loop
- * @param z_loop the z position of the loop
- * @param I the current in the coil loop
- * @param cylP the cylindrical coordinate of interest where the magnetfield is calculated
- * @param BCylVec the magnetic field in cylP calulated in cylindrical coordinates
-*/
-	// Coordinates
-	double rho = cylP[0];
-	double z   = cylP[2] - loop.getz();
-	
-	double I   = loop.getI();
-	double R   = loop.getR();
-	
-	// Initilizing components of the magnetic field
-	double B_rho;
-	double B_z;
-	
-	int N = 10000;
-	double kArr[N];
-	double kMax = 100;
-	double kMin = kMax/N;
-	linspace(kMin,kMax, N,kArr);
-	//printVec(kArr,N,"kArr");
-
-		if(rho == R && z==0){
-			std::cout<<"ERROR: cannot evaluate mirror field on mirror"<<std::endl;
-			B_rho = 0.0;
-			B_z = 0.0;
-		} else if(rho < R){
-			double integrandRhoArr[N];
-			double integrandZArr[N];
-			for (int i = 0; i < N-1; i++){
-				double kArri=kArr[i];
-				double cyl_bessel_k_1_kArri_R = std::tr1::cyl_bessel_k(1,kArri*R);
-				//std::cout << "cyl_bessel"<< cyl_bessel_k_1_kArri_R << std:: endl;
-				integrandRhoArr[i] = kArri*sin(kArri*z)*std::tr1::cyl_bessel_i(1,kArri*rho)*cyl_bessel_k_1_kArri_R; 
-				integrandZArr[i] = kArri*cos(kArri*z)*std::tr1::cyl_bessel_i(0,kArri*rho)*cyl_bessel_k_1_kArri_R;
-			}
-			B_rho = trapz(N,kArr,integrandRhoArr);
-			B_z = trapz(N,kArr,integrandZArr);
-		} else if(rho > R){
-			double integrandRhoArr[N];
-			double integrandZArr[N];
-			for (int i = 0; i < N-1; i++){
-				double kArri=kArr[i];
-				double cyl_bessel_i_1_kArri_R = std::tr1::cyl_bessel_i(1,kArri*R);
-				integrandRhoArr[i] = kArri*sin(kArri*z)*std::tr1::cyl_bessel_k(1,kArri*rho)*cyl_bessel_i_1_kArri_R; 
-				integrandZArr[i] = kArri*cos(kArri*z)*std::tr1::cyl_bessel_k(0,kArri*rho)*cyl_bessel_i_1_kArri_R;
-			}
-			B_rho = trapz(N,kArr,integrandRhoArr);
-			B_z = trapz(N,kArr,integrandZArr);
-		} else{
-			std::cout<<"ERROR: cannot evaluate r coordinate"<<std::endl;
-			B_rho = 0.0;
-			B_z = 0.0;
-		};
-	
-	// Preparing result
-	double C = ALPHAPhysicalConstants::mu0*I*R/ALPHAPhysicalConstants::pi;
-	B_rho *= C;
-	B_z *= C;
-	
-
-	// Result
-	BCylVec[0] = B_rho;
-	BCylVec[1] = 0.0;
-	BCylVec[2] = B_z;
-}
-
 void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], double BSphVec[3]){
 	
 	// an approximation of the B-field of a current loop
@@ -755,7 +666,7 @@ void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], dou
 	const double theta = sphP[1];
 
 	// Constants
-	const double C = 0.125*ALPHAPhysicalConstants::mu0*loop.getI()*R/lambda;
+	const double C = 0.125*PhysicsConstants::mu0*loop.getI()*R/lambda;
 	const double r2 = r*r;
 	const double R2 = R*R;
 	
@@ -774,7 +685,7 @@ void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], dou
 
 	if(r < 1e-12){
 		//~ std::cout << "in centre" << std::endl;
-		B_r = ALPHAPhysicalConstants::mu0*loop.getI()/(2*R);		
+		B_r = PhysicsConstants::mu0*loop.getI()/(2*R);		
 		B_theta = 0;
 	}else if(sin(theta) < 1e-7){ 
 		//~ std::cout << "on axis" << std::endl;
@@ -814,99 +725,256 @@ void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], dou
 	BSphVec[2] = 0.;
 }
 
-void loopApproxJackson(Loop loop, double sphP[3], double BSphVec[3]){
-/* Calculates the magnet field in spherical coordinates BSphVec at the spherical coordinate sphP for a loop of radius R and current I based on approximation (5.40) in Jackson Third Edition
- * 
- * @param loop
- * @param sphP the spherical coordinate of interest where the magnetfield is calculated
- * @param BSphVec the magnetic field in cylP calulated in spherical coordinates
-*/
-	// Shift 
-	double carP[3];
-	sphPToCarP(sphP,carP);
-	carP[2]=carP[2]-loop.getz();
-	carPToSphP(carP,sphP);
+void Helix(Tube tube, const int N_rho, const int N_z, const int N_BS, double carP[3], double BCarVec[3]){
+		
+    // Tube Center
+    const double z = tube.getz();
+
+	// Radii
+	const double innerRadius = tube.getR1();			
+	const double outerRadius = tube.getR2();				
+	const double width_rho = outerRadius - innerRadius;
 	
-	double I = loop.getI();
-	double R = loop.getR();
+    // Length
+	const double width_z = tube.getL(); 	
+
+    // Spacing			
+	const double delta_rho = width_rho/N_rho; 	
+	const double delta_z = width_z/N_z; 
+
+    // Current			
+	const double i = tube.geti();				
 	
-	// Coordinates
-	double r = sphP[0];
-	double theta = sphP[1];
+	//~ std::cout << "tube centre = " << z << std::endl;
+	//~ std::cout << "R1 = " << innerRadius << std::endl;
+	//~ std::cout << "R2 = " << outerRadius << std::endl;
+	//~ std::cout << "thickness = " << width_rho << std::endl;
+	//~ std::cout << "L = " << width_z << std::endl;
+	//~ std::cout << "delta_rho = " << delta_rho << std::endl;
+	//~ std::cout << "delta_z = " << delta_z << std::endl;
+	//~ std::cout << "N_rho = " << N_rho << std::endl;
+	//~ std::cout << "N_z = " << N_z << std::endl;
+	//~ std::cout << "N_BS = " << N_BS << std::endl;
+	//~ std::cout << "I = " << i << std::endl;
 	
-	// Constants
-	double sintheta  = sin(theta);
-	double costheta  = cos(theta);
-	double sintheta2 = sintheta*sintheta;
-	double R2 = R*R;
-	double r2 = r*r;
-	double d = 1/(R2+r2);
-	double d2 = d*d;
-	double d1_2 = sqrt(d);
-	double d3_2 = d1_2*d;
-	double d5_2 = d3_2*d;
+
+	for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
+		double cylS0[3];
+		double cylS1[3]{innerRadius + delta_rho/2.0 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-width_z/2.0) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
+		cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
 	
-	// Model
-	double B_r = 1+3.75*R2*r2*sintheta2*d2;
-	double B_z = 2*R2-r2+1.875*R2*r2*sintheta2*(4*R2-3*r2)*d2;
-	
-	// Preparing Result
-	double C_r = 0.5*ALPHAPhysicalConstants::mu0*I*R2*costheta*d3_2;
-	B_r *= C_r;
-	
-	double C_z = -0.25*ALPHAPhysicalConstants::mu0*I*R2*sintheta*d5_2;
-	B_z *= C_z;
-	
-	// Result 
-	BSphVec[0]=B_r;
-	BSphVec[1]=0.0;
-	BSphVec[2]=B_z;
+		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
+			for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
+				
+                double BCarVec_i[3]{0.,0.,0.};				
+				cylS0[1] = cylS1[1]; 
+				cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
+				cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
+				cylS1[2] = z + pow(-1,n_rho)*(-width_z/2.0 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+				
+				double carS0[3], carS1[3];
+				cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
+				cylPToCarP(cylS1,carS1);				
+
+				//~ if(n_z == 0 && n_BS == 0){
+				//~ std::cout << "BS params:" << std::endl;
+				//~ std::cout << "n_rho = " << n_rho << " n_z = " << n_z << " n_BS = " << n_BS << std::endl;
+				//~ printVec(carS0,"s0");
+				//~ printVec(carS1,"s1");
+				//~ printVec(carP,"r_i");
+				//~ std::cout << "I = " << i << std::endl;
+				//~ printVec(BCarVec_i,"B_i");
+				//~ }
+
+				biotSavart(carS0,carS1,carP,i,BCarVec_i);	
+				BCarVec[0] += BCarVec_i[0];
+				BCarVec[1] += BCarVec_i[1];
+				BCarVec[2] += BCarVec_i[2];					
+							
+			}
+		}
+	}
 }
 
-void Conway1D(Shell shell, const double cylP[3], double BCylVec[3]){
-	// From the "Exact Solution..." paper by J. T. Conway
-	
-	assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
-	
-	const double Z1 = shell.getz() - shell.getL()/2.0;
-	const double Z2 = shell.getz() + shell.getL()/2.0;
-	const double z = cylP[2];
-	const double R = shell.getR();
-	
-	//~ std::cout << "Z1 = " << Z1 << std::endl;
-	//~ std::cout << "Z2 = " << Z2 << std::endl;
-	//~ std::cout << "z = " << z << std::endl;
-	
-	const double IDist = shell.getI()/shell.getL(); // the current density [A/m]
-	const double C = ALPHAPhysicalConstants::mu0*IDist*R/2.0;	
-	
-	if(z < Z1){
-		BCylVec[2] = C * ( I_010(R, Z1-z, cylP)
-						 - I_010(R, Z2-z, cylP) );
-						 
-		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
-	}else if(z >= Z1 && z <= Z2){
-		BCylVec[2] = C * ( 2* I_010(R, 0.0 , cylP)
-							- I_010(R, Z1-z, cylP)
-							- I_010(R, Z2-z, cylP) );
-							
-		//~ std::cout << "I_010(0.0) =  " << I_010(R, 0.0 , cylP) << std::endl;
-		//~ std::cout << "I_010(Z1-z) = " << I_010(R, Z1-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z2-z) = " << I_010(R, Z2-z, cylP) << std::endl;
-	}else if(z > Z2){
-		BCylVec[2] = C * ( I_010(R, Z2-z, cylP)
-						 - I_010(R, Z1-z, cylP) );
-						 
-		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
-	}else{
-		std::cout << "Error, cannot determine z in Conway1D" << std::endl;
-	}
+// Shell and Tube
+
+void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]){
+	// this model represents the magnet with an NxM wire grid, and calculates the total field
+	// as the sum of the individual wire contributions. The field of a wire is calculated
+	// with the SAM or McD method (see what method is commented in)	
 		
-	BCylVec[0] = C * ( I_011(R, Z2-z, cylP)
-					 - I_011(R, Z1-z, cylP) );
+    // Tube Center
+    const double x = tube.getx();
+    const double y = tube.gety();
+    const double z = tube.getz();
+
+	// Radii
+	const double innerRadius = tube.getR1();			
+	const double outerRadius = tube.getR2();				
+	const double width_rho = outerRadius - innerRadius;
 	
-	//~ std::cout << "I_011(Z2-z) = " << I_011(R, Z2-z, cylP) << std::endl;
-	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
+    // Number of wires
+	const int N_wires = N_rho*N_z;
+
+    // Length
+	const double width_z = tube.getL(); 	
+
+    // Spacing			
+	const double delta_rho = width_rho/N_rho; 	
+	const double delta_z = width_z/N_z; 
+
+    // Current			
+	const double I = tube.getI();					
+	
+    double BCylVec_i[3];
+	for(int i = 0; i < N_rho; i++){
+		for(int j = 0; j < N_z; j++){
+			Loop loop = Loop(innerRadius + delta_rho/2.0 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
+					
+			loopExactSAM(loop, cylP, BCylVec_i);
+
+			BCylVec[0] += BCylVec_i[0];
+			BCylVec[1] += BCylVec_i[1];
+			BCylVec[2] += BCylVec_i[2];		
+		}
+	}
+}
+
+void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]){	
+    // Tube Center
+    const double x = tube.getx();
+    const double y = tube.gety();
+    const double z = tube.getz();
+
+	// Radii
+	const double innerRadius = tube.getR1();			
+	const double outerRadius = tube.getR2();				
+	
+    // Dimension of Tube
+	const double width_z = tube.getL(); 	
+    const double width_rho = outerRadius - innerRadius;
+
+    // Current			
+	const double I = tube.getI()/(N_rho*N_z);	// devide the current of the tube on N_rho*N_z loops
+
+	
+	double GPRhoValues[NG_rho];
+	double GPZValues[NG_z];
+	
+	double GPRhoWeights[NG_rho];
+	double GPZWeights[NG_z];
+	
+	const int NWiresRho = N_rho/2; // half the number of wires in each dimension
+	const int NWiresZ = N_z/2;
+	
+	getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
+	getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	
+	const double centre_rho = innerRadius + width_rho/2.0;
+	
+    double BCylVec_i[3];
+	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
+		for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
+			Loop loop(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);		
+			loopExactSAM(loop, cylP, BCylVec_i);
+			//~ printVec(BCylVec_i,"BCyl_i");
+			
+			const double GFac = GPZWeights[nGP_z]*GPRhoWeights[nG_rho];
+			
+            BCylVec[0] += BCylVec_i[0]*GFac;
+			BCylVec[1] += BCylVec_i[1]*GFac;
+			BCylVec[2] += BCylVec_i[2]*GFac;
+		}
+	}
+	
+	//~ printVec(BCylVec,"BCyl");
+}
+
+void GaussianQuadratureShell(Tube tube, const int N_rho, const int N_z, const int NG_rho, const double cylP[3], double BCylVec[3]){	
+    // Tube Center
+    const double x = tube.getx();
+    const double y = tube.gety();
+    const double z = tube.getz();
+
+	// Radii
+	const double innerRadius = tube.getR1();			
+	const double outerRadius = tube.getR2();				
+	
+    // Dimension of Tube
+	const double width_z = tube.getL(); 	
+    const double width_rho = outerRadius - innerRadius;
+
+    // Current			
+	const double I = tube.getI()/N_rho; // devide the current of the tube on N_rho shells
+
+	double GPRhoValues[NG_rho];
+	double GPRhoWeights[NG_rho];
+
+	const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
+	getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NElementsRho);
+	
+	const double centre_rho = innerRadius + width_rho/2.0;
+
+    double BCylVec_i[3];
+	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
+		//~ std::cout << "nG_Rho = " << nG_rho << std::endl;
+		Shell shell = Shell(centre_rho + GPRhoValues[nG_rho],I,width_z,x,y,z);
+		
+		Conway1D(shell, cylP, BCylVec_i);
+		
+		const double GFac = GPRhoWeights[nG_rho];
+			
+		BCylVec[0] += BCylVec_i[0]*GFac;
+		BCylVec[1] += BCylVec_i[1]*GFac;
+		BCylVec[2] += BCylVec_i[2]*GFac;
+	
+	}
+	
+	//~ printVec(BCylVec,"BCyl");
+}
+
+void getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires){
+	if(N == 1){
+		points[0] = 0.0;
+		
+		weights[0] = 2.0*NWires;
+	}else if(N == 2){
+		points[0] = -1.0/sqrt(3.0)*dimLength;
+		points[1] = 1.0/sqrt(3.0)*dimLength;
+		
+		weights[0] = 1.0*NWires;
+		weights[1] = 1.0*NWires;
+	}else if(N == 3){
+		points[0] = -sqrt(0.6)*dimLength; //sqrt(3/5)
+		points[1] = 0;
+		points[2] = sqrt(0.6)*dimLength;
+		
+		weights[0] = 5.0/9.0*NWires;
+		weights[1] = 8.0/9.0*NWires;
+		weights[2] = 5.0/9.0*NWires;
+	}else if(N == 4){
+		points[0] = -sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
+		points[1] = -sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
+		points[2] = sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
+		points[3] = sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
+		
+		weights[0] = (18.-sqrt(30.))/36.*NWires;
+		weights[1] = (18.+sqrt(30.))/36.*NWires;
+		weights[2] = (18.+sqrt(30.))/36.*NWires;
+		weights[3] = (18.-sqrt(30.))/36.*NWires;
+	}else if(N == 5){
+		points[0] = -1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
+		points[1] = -1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
+		points[2] = 0.0; 
+		points[3] = 1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
+		points[4] = 1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
+		
+		weights[0] = (322.-13.*sqrt(70))/900.*NWires;
+		weights[1] = (322.+13.*sqrt(70))/900.*NWires;
+		weights[2] = 128./225.*NWires;
+		weights[3] = (322.+13.*sqrt(70))/900.*NWires;
+		weights[4] = (322.-13.*sqrt(70))/900.*NWires;
+	}else{
+		printf("N is not a valid value (In function getGussianQuadratureParams)");
+	}
 }

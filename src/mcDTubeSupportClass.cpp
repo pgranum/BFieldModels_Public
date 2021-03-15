@@ -15,13 +15,13 @@ void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, do
 		a0_array[i] = 0; //make sure all elements are 0
 	}	
 	
-	double R2 = R*R;
-	double z2 = z*z;
-	double A=sqrt(R2+z2);	// sqrt(R²+z²)
-	double B = A + R;       // sqrt(R²+z²)+R
-	double b = 1/B;   
-	double a = 1/A;
-	double logB = log(B); 	// ln(sqrt(R²+z²)+z)
+	const double R2 = R*R;
+	const double z2 = z*z;
+	const double A=sqrt(R2+z2);	// sqrt(R²+z²)
+	const double B = A + R;       // sqrt(R²+z²)+R
+	const double b = 1/B;   
+	const double a = 1/A;
+	const double logB = log(B); 	// ln(sqrt(R²+z²)+z)
 	
 	a0_array[0] = z*logB; 			// z*ln(sqrt(R²+z²)+z)
 	a0_array[1] = logB+z2*a*b;
@@ -98,7 +98,7 @@ void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, do
 	}	
 }
 
-void McD_Tube_Support::getB(Tube tube, const int nmax, const CylindricalVector& cylP, CylindricalVector& BCylVec){	
+void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]){	
 	/* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
 	 * 
 	 * @param tube 			the tube creating the magnetic field
@@ -113,8 +113,8 @@ void McD_Tube_Support::getB(Tube tube, const int nmax, const CylindricalVector& 
 	//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
 	
 	// Coordinates
-	const double rho = cylP.GetRho();
-	const double z   = cylP.GetZ()-tube.getz();  	// Posistion the tube in the center
+	const double rho = cylP[0];
+	const double z   = cylP[2]-tube.getz();  	// Posistion the tube in the center
 	const double R1  = tube.getR1();				// inner radius
 	const double R2  = tube.getR2();				// outer radius
 	const double I  = tube.getI();					// current
@@ -142,22 +142,22 @@ void McD_Tube_Support::getB(Tube tube, const int nmax, const CylindricalVector& 
 	//~ printArr(an11,arraySize);
 	
 	// Preparing terms for loop
-	//~ double B_z = an12[0]-an11[0]-an22[0]+an21[0];
-	BCylVec.SetZ(an12[0]-an11[0]-an22[0]+an21[0]);
+	double B_z = an12[0]-an11[0]-an22[0]+an21[0];
+	//~ BCylVec.SetZ(an12[0]-an11[0]-an22[0]+an21[0]);
 	double constZTerm = 1;
 	
-	//~ double B_rho = -(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]);
-	BCylVec.SetRho(-(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]));
+	double B_rho = -(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]);
+	//~ BCylVec.SetRho(-(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]));
 	double constRTerm = -(rho/2);
 	
 	// Looping over the series
 	for (int n=1; n<=nmax; n++){ 
 			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
-			//~ B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
-			BCylVec.AddZ(constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]));
+			B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
+			//~ BCylVec.AddZ(constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]));
 			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
-			//~ B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
-			BCylVec.AddRho(constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]));
+			B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
+			//~ BCylVec.AddRho(constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]));
 			
 			//~ std::cout << "n = " << n << std::endl;
 			//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
@@ -166,22 +166,22 @@ void McD_Tube_Support::getB(Tube tube, const int nmax, const CylindricalVector& 
 	}
 	
 	// Preparing result
-	const double C = ALPHAPhysicalConstants::mu0*I/(2*L*(R2-R1));
+	const double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
 	//~ std::cout << "I = " << I << std::endl;
 	//~ std::cout << "L = " << L << std::endl;
 	//~ std::cout << "R1 = " << R1 << std::endl;
 	//~ std::cout << "R2 = " << R2 << std::endl;
 	//~ std::cout << "C = " << C << std::endl;
-	//~ B_rho *= C;
-	BCylVec.MultRho(C);
-	//~ B_z *= C;
-	BCylVec.MultZ(C);
+	B_rho *= C;
+	//~ BCylVec.MultRho(C);
+	B_z *= C;
+	//~ BCylVec.MultZ(C);
 	
 	//~ std::cout << "P = (" << cylP.GetRho() << ", " << cylP.GetPhi() << ", " << cylP.GetZ() << ")" << std::endl;
 	//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
 	
 	// Result
-	//~ BCylVec[0]=B_rho;
-	//~ BCylVec[1]=0.0;
-	//~ BCylVec[2]=B_z;
+	BCylVec[0]=B_rho;
+	BCylVec[1]=0.0;
+	BCylVec[2]=B_z;
 }
