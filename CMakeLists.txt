@@ -27,7 +27,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 # Setup all programs in mains folder
 foreach(MAIN ${MAINS})
    get_filename_component(MAIN_NAME ${MAIN} NAME_WLE )
-   add_executable(${MAIN_NAME} ${MAIN} ${SRC_FILES})
+   add_executable(${MAIN_NAME}.exe ${MAIN} ${SRC_FILES})
    #install(${MAIN_NAME})
 endforeach(MAIN ${MAINS})
 
