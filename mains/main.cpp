@@ -16,6 +16,9 @@ int main(){
 	double BCarVec[3] = {0.,0.,0.}; 	// placeholder for the field in cartesian coordinates
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	
+	const int N_t = 100.;
+	double time;
+	
 	std::cout << std::endl;
 	std::cout << "Calculating field at point:" << std::endl;
 	printVec(carP,"P");
@@ -28,17 +31,47 @@ int main(){
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
 	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 	
+	
+	
 	std::cout << "Using the (exact) Simple Analytic Model (SAM):" << std::endl;
-	loopExactSAM(loop,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		loopExactSAM(loop,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+	
+	
 	
 	std::cout << "Using the McDonald model:" << std::endl;
-	mcDonald(loop,McDOrder,carP,BCarVec);
-	printVec(BCarVec,"B");
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		mcDonald(loop,McDOrder,carP,BCarVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
+	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+
+
 
 	std::cout << "Using the Biot-Savart model:" << std::endl;
-	loopBiotSavart(loop,N_BS,carP,BCarVec);
-	printVec(BCarVec,"B");
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		loopBiotSavart(loop,N_BS,carP,BCarVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
+	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
 	std::cout << std::endl;
 	
@@ -52,23 +85,62 @@ int main(){
 	const int NG_z = 3;
 	
 	std::cout << "Using the (exact) Conway model:" << std::endl;
-	Conway1D(shell,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		Conway1D(shell,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+	
+	
 	
 	std::cout << "Using the McDonald model:" << std::endl;
-	mcDonald(shell,McDOrder,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		mcDonald(shell,McDOrder,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
 	
-	BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+	
 	std::cout << "Using the N-Wire model:" << std::endl;
-	NWire(shell,N_z,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+		auto start = std::chrono::steady_clock::now();
+		NWire(shell,N_z,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
-	BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+	
+	
 	std::cout << "Using the Gaussian Quadrature model:" << std::endl;
-	GaussianQuadratureLoop(shell,N_z,NG_z,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+		auto start = std::chrono::steady_clock::now();
+		GaussianQuadratureLoop(shell,N_z,NG_z,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+	
+	
 		
 	std::cout << std::endl;
 	
@@ -84,28 +156,80 @@ int main(){
 	//~ const int NG_z = 3;
 	McD_Tube_Support McDSup = McD_Tube_Support(McDOrder2);
 	
+	
+	
 	std::cout << "Using the detailed Biot-Savart model:" << std::endl;
-	Helix(tube,N_rho,N_z,N_BS,carP,BCarVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		Helix(tube,N_rho,N_z,N_BS,carP,BCarVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+	
+	
 	
 	std::cout << "Using the McDonald model:" << std::endl;
-	mcDonald(tube,McDOrder2,cylP,BCylVec,McDSup);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		mcDonald(tube,McDOrder2,cylP,BCylVec,McDSup);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
-	BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+	
+	
 	std::cout << "Using the N-Wire model:" << std::endl;
-	NWire(tube,N_rho,N_z,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+		auto start = std::chrono::steady_clock::now();
+		NWire(tube,N_rho,N_z,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
-	BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+	
+	
 	std::cout << "Using the Gaussian Quadrature model with Loops:" << std::endl;
-	GaussianQuadratureLoop(tube,N_rho,N_z,NG_rho,NG_z,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+		auto start = std::chrono::steady_clock::now();
+		GaussianQuadratureLoop(tube,N_rho,N_z,NG_rho,NG_z,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
 	
-	BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+	
+	
 	std::cout << "Using the Gaussian Quadrature model with Shells:" << std::endl;
-	GaussianQuadratureShell(tube,N_rho,NG_rho,cylP,BCylVec);
+	time = 0;
+	for(int i=0; i<N_t; i++){
+		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
+		auto start = std::chrono::steady_clock::now();
+		GaussianQuadratureShell(tube,N_rho,NG_rho,cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+	}	
 	printVec(BCylVec,"B");
+	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
+	std::cout << std::endl;
+	
+	
 	
 	std::cout << std::endl;
 }
