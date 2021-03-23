@@ -4,4 +4,4 @@ Makefile
 build/
 cmake_install.cmake
 *.exe
-.__afs* 
+.__afs*
