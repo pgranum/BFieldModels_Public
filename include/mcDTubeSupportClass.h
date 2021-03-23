@@ -29,6 +29,7 @@ private:
 public:
 	McD_Tube_Support(const int McDOrder):McD_order(McDOrder)
 	{	
+		//~ std::cout << "Constructing McD Class..." << std::endl;
 		int n = 2 + 2*McD_order; // To calc the (n_McD)'th order in the McD expansion, (2+2*n_McD) orders are needed for a_n
 		// for n = 2 and higher there is a system to an[]. Each terms will be of the form k*pow(z,lambda)*pow(a,mu)*pow(b,nu)
 		if(n > 1){
@@ -72,7 +73,7 @@ public:
 
 			NTAcc_i += NT_i;
 		}
-		
+		//~ std::cout << "Calculation of terms done" << std::endl;
 		// now that all the terms have been calculated it is time to group the terms together
 		
 		//~ std::cout << "k size = " << k_arr.size() << std::endl;
@@ -83,6 +84,7 @@ public:
 		
 		unsigned int i = 0;
 		while (i < k_arr.size()){
+			//~ std::cout << "i = " << i << "/" << k_arr.size() << std::endl;
 			const int k_i = k_arr[i];
 			const int lambda_i = lambda_arr[i];
 			const int mu_i = mu_arr[i];
@@ -112,6 +114,7 @@ public:
 				i += 1;
 			}
 		}
+		//~ std::cout << "Grouping of terms done" << std::endl;
 		
 		//~ std::cout << "k size = " << k_arr.size() << std::endl;
 		//~ std::cout << "lambda size = " << lambda_arr.size() << std::endl;
@@ -121,6 +124,7 @@ public:
 
 		NT = k_arr.size();			
 		}
+		//~ std::cout << "Constructing McD Class done" << std::endl;
 	} // end of constructor
 	
 	~McD_Tube_Support(){

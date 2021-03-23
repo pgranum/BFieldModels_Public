@@ -515,39 +515,119 @@ if (n>6){
 }
 }
 
+void NWire(Shell shell, const int N_z, const double cylP[3], double BCylVec[3]){
+	// this model represents the magnet with an NxM wire grid, and calculates the total field
+	// as the sum of the individual wire contributions. The field of a wire is calculated
+	// with the SAM or McD method (see what method is commented in)	
+		
+    // Tube Center
+    const double x = shell.getx();
+    const double y = shell.gety();
+    const double z = shell.getz();
+
+	// Radii
+	const double radius = shell.getR();
+
+    // Length
+	const double width_z = shell.getL(); 	
+
+    // Spacing
+	const double delta_z = width_z/N_z; 
+
+    // Current			
+	const double I = shell.getI();					
+	
+    double BCylVec_i[3];
+	for(int j = 0; j < N_z; j++){
+		Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
+				
+		loopExactSAM(loop, cylP, BCylVec_i);
+		BCylVec[0] += BCylVec_i[0];
+		BCylVec[1] += BCylVec_i[1];
+		BCylVec[2] += BCylVec_i[2];		
+	}
+}
+
+void GaussianQuadratureLoop(Shell shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]){	
+    // Tube Center
+    const double x = shell.getx();
+    const double y = shell.gety();
+    const double z = shell.getz();
+
+	// Radii
+	const double radius = shell.getR();					
+	
+    // Dimension of Tube
+	const double width_z = shell.getL();
+
+    // Current			
+	const double I = shell.getI()/(N_z);	// divide the current of the shell on N_z loops
+
+	double GPZValues[NG_z];
+
+	double GPZWeights[NG_z];
+
+	const int NWiresZ = N_z/2;
+	
+	getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	
+    double BCylVec_i[3];
+	for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
+		Loop loop(radius,I,x,y,z+GPZValues[nGP_z]);		
+		loopExactSAM(loop, cylP, BCylVec_i);
+		//~ printVec(BCylVec_i,"BCyl_i");
+		
+		const double GFac = GPZWeights[nGP_z];
+		
+		BCylVec[0] += BCylVec_i[0]*GFac;
+		BCylVec[1] += BCylVec_i[1]*GFac;
+		BCylVec[2] += BCylVec_i[2]*GFac;
+	}
+	
+	//~ printVec(BCylVec,"BCyl");
+}
+
 // Tube
 
-void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]){	
+void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
  * 
- * @param tube 		the tube creating the magnetic field
- * @param nmax 		an integer [0,7] that the denotes the order of the McDonald calculation
- * @param cylP 		the cylindrical coordinate of interest where the magnetfield is calculated
- * @param BCylVec 	the magnetfield in cylP being calulated in cylindrical coordinates
+ * @param tube 			the tube creating the magnetic field
+ * @param nmax 			an integer [0,7] that the denotes the order of the McDonald calculation
+ * @param cylP 			the cylindrical coordinate of interest where the magnetfield is calculated
+ * @param BCylVec 		the magnetfield in cylP being calulated in cylindrical coordinates
+ * @param McDSupport	this function uses a class to precalculate the derivatives of the McD model. This is FASTER AND BETTER
  */
 
+	//~ std::cout <<"McD tube with support and arrays" << std::endl;
+	
 	// Coordinates
-	double rho = cylP[0];
-	double z   = cylP[2]-tube.getz();  	// Posistion the tube in the center
-	double R1  = tube.getR1();			// inner radius
-	double R2  = tube.getR2();			// outer radius
-	double I  = tube.getI();			// current
-	double L  = tube.getL();			// length of solenoid
-	double L_2 = 0.5*L;
+	const double rho = cylP[0];
+	const double z   = cylP[2]-tube.getz();  	// Posistion the tube in the center
+	const double R1  = tube.getR1();			// inner radius
+	const double R2  = tube.getR2();			// outer radius
+	const double I  = tube.getI();			// current
+	const double L  = tube.getL();			// length of solenoid
+	const double L_2 = 0.5*L;
 	
-	double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
-	double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
+	const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
+	const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
 	
-	int arraySize = 2*nmax + 2; // the number of coefficients needed to calculate the requested order (nmax)
+	const int arraySize = 2*nmax + 2; // the number of coefficients needed to calculate the requested order (nmax)
 	double an11[arraySize];		// array to hold terms with z1 and R1
 	double an12[arraySize];		// array to hold terms with z1 and R2
 	double an21[arraySize];		// array to hold terms with z2 and R1
 	double an22[arraySize];		// array to hold terms with z2 and R2
 	
-	mcDonaldTubeSupFunc(nmax,z1,R1,an11);
-	mcDonaldTubeSupFunc(nmax,z1,R2,an12);
-	mcDonaldTubeSupFunc(nmax,z2,R1,an21);
-	mcDonaldTubeSupFunc(nmax,z2,R2,an22);
+	McDSupport.getA0(z1,R1,nmax,an11);
+	McDSupport.getA0(z1,R2,nmax,an12);
+	McDSupport.getA0(z2,R1,nmax,an21);
+	McDSupport.getA0(z2,R2,nmax,an22);
+	
+	//~ printArr(an11,arraySize);
+	//~ printArr(an12,arraySize);
+	//~ printArr(an21,arraySize);
+	//~ printArr(an11,arraySize);
 	
 	// Preparing terms for loop
 	double B_z = an12[0]-an11[0]-an22[0]+an21[0];
@@ -564,12 +644,18 @@ void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]
 			B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
 			
 			//~ std::cout << "n = " << n << std::endl;
+			//~ std::cout << "B = (" << B_rho << ", " << 0 << ", " << B_z << ")" << std::endl;
 			//~ std::cout << "constZTerm = " << constZTerm << std::endl;
 			//~ std::cout << "constRTerm = " << constRTerm << std::endl;
 	}
 	
 	// Preparing result
-	double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
+	const double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
+	//~ std::cout << "I = " << I << std::endl;
+	//~ std::cout << "L = " << L << std::endl;
+	//~ std::cout << "R1 = " << R1 << std::endl;
+	//~ std::cout << "R2 = " << R2 << std::endl;
+	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
 	B_z *= C;
 	
@@ -577,82 +663,9 @@ void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]
 	BCylVec[0]=B_rho;
 	BCylVec[1]=0.0;
 	BCylVec[2]=B_z;
+	
+	//~ printVec(BCylVec);
 }
-
-void mcDonaldTubeSupFunc(const int n, const double z, const double R, double an[]){	
-/* This function is a support function to loopApproxMcDonald it generates  the an[] list depending on the order of n to reduce calculation time. n=3 IS THE MAX
- * 
- * @param n		the order of the McDonald model required
- * @param z		the z-coordinate where the field is being calculated
- * @param R 	the radius of the loop
- * @param an	the list of derivatives of the axial magnetic field
- */
-	double R2 = R*R;
-	double z2 = z*z;
-	double A=sqrt(R2+z2);	// sqrt(R²+z²)
-	double B = A + R;       // sqrt(R²+z²)+R
-	double b = 1/B;   
-	
-	double logB = log(B); // ln(sqrt(R²+z²)+z)
-	an[0]=z*logB; // z*ln(sqrt(R²+z²)+z)
-	double a = 1/A;
-	an[1]=logB+z2*a*b;
-	
-	//~ std::cout << "an_0 = " << an[0] << std::endl;
-	//~ std::cout << "an_1 = " << an[1] << std::endl;
-	
-	if (n > 0){
-		double a2 = a*a;
-		double a3 = a2*a;
-		double b2 = b*b;
-		double z3 = z2*z;
-		an[2]=3*z*a*b-z3*a3*b-z3*a2*b2;
-		
-		double a4 = a3*a;
-		double a5 = a4*a;
-		double b3 = b2*b;
-		double z4 = z3*z;
-		an[3]=3*a*b-6*z2*a3*b+3*z4*a5*b-6*z2*a2*b2+3*z4*a4*b2+2*z4*a3*b3;
-		
-		//~ std::cout << "an_2 = " << an[2] << std::endl;
-		//~ std::cout << "an_3 = " << an[3] << std::endl;
-	if (n > 1){
-		double a6 = a5*a;
-		double a7 = a6*a;
-		double b3 = b2*b;
-		double b4 = b3*b;
-		double z5 = z4*z;
-		an[4]=-15*z*a3*b+30*z3*a5*b-15*z5*a7*b-15*z*a2*b2+30*z3*a4*b2-15*z5*a6*b2+20*z3*a3*b3-12*z5*a5*b3-6*z5*a4*b4;
-		double z6 = z5*z;
-		double a8 = a7*a;
-		double a9 = a8*a;
-		double b5 = b4*b;
-		an[5]= -15*a3*b+135*z2*a5*b-225*z4*a7*b+105*z6*a9*b-15*a2*b2+135*z2*a4*b2-225*z4*a6*b2+105*z6*a8*b2+90*z2*a3*b3-180*z4*a5*b3+90*z6*a7*b3-90*z4*a4*b4+60*z6*a6*b4+24*z6*a5*b5;
-		
-		//~ std::cout << "an_4 = " << an[4] << std::endl;
-		//~ std::cout << "an_5 = " << an[5] << std::endl;
-	if (n > 2){
-		double z7 = z6*z;
-		double a10 = a9*a;
-		double a11 = a10*a;
-		double b6 = b5*b;
-		an[6]=315*z*a5*b-1575*z3*a7*b+2205*z5*a9*b-945*z7*a11*b+315*z*a4*b2-1575*z3*a6*b2+2205*z5*a8*b2-945*z7*a10*b2+210*z*a3*b3-1260*z3*a5*b3
-			+1890*z5*a7*b3-840*z7*a9*b3-630*z3*a4*b4+1260*z5*a6*b4-630*z7*a8*b4+504*z5*a5*b5-360*z7*a7*b5-120*z7*a6*b6;
-		double z8 = z7*z;
-		double a12 = a11*a;
-		double a13 = a12*a;
-		double b7 = b6*b;
-		an[7]=315*a5*b-6300*z2*a7*b+22050*z4*a9*b-26460*z6*a11*b+10395*z8*a13*b+315*a4*b2-6300*z2*a6*b2+22050*z4*a8*b2-26460*z6*a10*b2+10395*z8*a12*b2
-			+210*a3*b3-5040*z2*a5*b3+18900*z4*a7*b3-23520*z6*a9*b3+9450*z8*a11*b3-2520*z2*a4*b4+12600*z4*a6*b4-17640*z6*a8*b4+7560*z8*a10*b4+5040*z4*a5*b5
-			-10080*z6*a7*b5+5040*z8*a9*b5-3360*z6*a6*b6+2520*z8*a8*b6+720*z8*a7*b7;
-	
-		//~ std::cout << "an_6 = " << an[6] << std::endl;
-		//~ std::cout << "an_7 = " << an[7] << std::endl;
-	}
-	}
-	}
-	//~ std::cout << " " << std::endl;
-}	
 
 void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], double BSphVec[3]){
 	
@@ -796,8 +809,6 @@ void Helix(Tube tube, const int N_rho, const int N_z, const int N_BS, double car
 	}
 }
 
-// Shell and Tube
-
 void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]){
 	// this model represents the magnet with an NxM wire grid, and calculates the total field
 	// as the sum of the individual wire contributions. The field of a wire is calculated
@@ -829,6 +840,7 @@ void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], doub
     double BCylVec_i[3];
 	for(int i = 0; i < N_rho; i++){
 		for(int j = 0; j < N_z; j++){
+			//~ std::cout << " i, j = " << i << ", " << j << std::endl;
 			Loop loop = Loop(innerRadius + delta_rho/2.0 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
 					
 			loopExactSAM(loop, cylP, BCylVec_i);
@@ -855,7 +867,7 @@ void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int
     const double width_rho = outerRadius - innerRadius;
 
     // Current			
-	const double I = tube.getI()/(N_rho*N_z);	// devide the current of the tube on N_rho*N_z loops
+	const double I = tube.getI()/(N_rho*N_z);	// divide the current of the tube on N_rho*N_z loops
 
 	
 	double GPRhoValues[NG_rho];
@@ -890,7 +902,7 @@ void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int
 	//~ printVec(BCylVec,"BCyl");
 }
 
-void GaussianQuadratureShell(Tube tube, const int N_rho, const int N_z, const int NG_rho, const double cylP[3], double BCylVec[3]){	
+void GaussianQuadratureShell(Tube tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]){	
     // Tube Center
     const double x = tube.getx();
     const double y = tube.gety();
@@ -932,6 +944,8 @@ void GaussianQuadratureShell(Tube tube, const int N_rho, const int N_z, const in
 	
 	//~ printVec(BCylVec,"BCyl");
 }
+
+// Utils
 
 void getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires){
 	if(N == 1){

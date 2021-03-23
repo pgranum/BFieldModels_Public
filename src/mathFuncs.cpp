@@ -116,7 +116,6 @@ void vecMultScalOvrwrt(double a[3], double k){
 
 // conversion functions
 
-
 void cylPToCarP(double cylP[3], double carP[3]){
 	// converts a POINT in cylindrical coordinates to cartesian coordinates
 	carP[0] = cylP[0]*cos(cylP[1]);
