@@ -1,15 +1,16 @@
 #include "mcDTubeSupportClass.h"
 
-void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, double a0_array[]) const{
+void McD_Tube_Support::getA0(const double z, const double R, double a0_array[]) const{
 	// This function calculates the the a_n terms for a given z and R. 
 	// The derivatives of a_0 have been precalculated by the class constructor, which
 	// was instantiated to be able to go to a given order. The requested order has to
 	// be below this
 	// various outcommented debugging code has been left here
 	
-	assert(n_McD <= McD_order); // make sure that the requested order is not bigger then the max order the class is configured to calculate
+	//Constructor makes this check
+	//assert(n_McD <= McD_order); // make sure that the requested order is not bigger then the max order the class is configured to calculate
 	
-	const int n = 2 + 2*n_McD;
+	const int n = 2 + 2*McD_order;
 	//~ std::cout << "number of a_n terms to calculate, n = " << n <<std::endl;
 	for(int i=0; i<n; i++){
 		a0_array[i] = 0; //make sure all elements are 0
@@ -98,11 +99,10 @@ void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, do
 	}	
 }
 
-void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]) const{	
+void McD_Tube_Support::getB(Tube tube, const double cylP[3], double BCylVec[3]) const{	
 	/* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
 	 * 
 	 * @param tube 			the tube creating the magnetic field
-	 * @param nmax 			an integer [0,7] that the denotes the order of the McDonald calculation
 	 * @param cylP 			the cylindrical coordinate of interest where the magnetfield is calculated
 	 * @param BCylVec 		the magnetfield in cylP being calulated in cylindrical coordinates
 	 * @param McDSupport	this function uses a class to precalculate the derivatives of the McD model. This is FASTER AND BETTER
@@ -125,16 +125,16 @@ void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], dou
 	const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
 	const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
 	
-	const int arraySize = 2*nmax + 2; 	// the number of coefficients needed to calculate the requested order (nmax)
+	const int arraySize = 2*McD_order + 2; 	// the number of coefficients needed to calculate the requested order (nmax)
 	double an11[arraySize];		// array to hold terms with z1 and R1
 	double an12[arraySize];		// array to hold terms with z1 and R2
 	double an21[arraySize];		// array to hold terms with z2 and R1
 	double an22[arraySize];		// array to hold terms with z2 and R2
 	
-	this->getA0(z1,R1,nmax,an11);
-	this->getA0(z1,R2,nmax,an12);
-	this->getA0(z2,R1,nmax,an21);
-	this->getA0(z2,R2,nmax,an22);
+	this->getA0(z1,R1,an11);
+	this->getA0(z1,R2,an12);
+	this->getA0(z2,R1,an21);
+	this->getA0(z2,R2,an22);
 	
 	//~ printArr(an11,arraySize);
 	//~ printArr(an12,arraySize);
@@ -151,7 +151,7 @@ void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], dou
 	double constRTerm = -(rho/2);
 	
 	// Looping over the series
-	for (int n=1; n<=nmax; n++){ 
+	for (int n=1; n<=McD_order; n++){ 
 			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
 			B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
 			//~ BCylVec.AddZ(constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]));

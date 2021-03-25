@@ -103,6 +103,7 @@ int main(){
 	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
 	time_squared = 0;
+    assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		Conway1D(shell,cylP,BCylVec);
@@ -216,9 +217,10 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
+	
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		mcDonald(tube,McDOrder2,cylP,BCylVec,McDSup);
+		mcDonald(tube,cylP,BCylVec,McDSup);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;

@@ -27,6 +27,9 @@ private:
 
 
 public:
+    int GetMcD_order() const {
+        return McD_order;
+	}
 	McD_Tube_Support(const int McDOrder):McD_order(McDOrder)
 	{	
 		//~ std::cout << "Constructing McD Class..." << std::endl;
@@ -130,8 +133,8 @@ public:
 	~McD_Tube_Support(){
 	} // end of destructor
 	
-	void getA0(const double z, const double R, const int n_McD, double a0_array[]) const;
-	void getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]) const;
+	void getA0(const double z, const double R, double a0_array[]) const;
+	void getB(Tube tube, const double cylP[3], double BCylVec[3]) const;
 	
 };
 

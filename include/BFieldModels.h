@@ -41,8 +41,7 @@ void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, c
 // Tube
 
 void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, const double carP[3], double BCarVec[3]);
-
-void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], const McD_Tube_Support& McDSupport);
+void mcDonald(const Tube& tube, const double cylP[3], double BCylVec[3], const McD_Tube_Support& McDSupport);
 
 void loopApproxFrancis(const Loop& loop, const double lam, const double sphP[3], double BSphVec[3]);
 

@@ -311,8 +311,7 @@ if (n>6){
 void Conway1D(const Shell& shell, const double cylP[3], double BCylVec[3]){
 	// From the "Exact Solution..." paper by J. T. Conway
 	
-	assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
-	
+
 	const double Z1 = shell.getz() - shell.getL()/2.0;
 	const double Z2 = shell.getz() + shell.getL()/2.0;
 	const double z = cylP[2];
@@ -589,11 +588,10 @@ void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, c
 
 // Tube
 
-void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], const McD_Tube_Support& McDSupport){	
+void mcDonald(const Tube& tube, const double cylP[3], double BCylVec[3], const McD_Tube_Support& McDSupport){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
  * 
  * @param tube 			the tube creating the magnetic field
- * @param nmax 			an integer [0,7] that the denotes the order of the McDonald calculation
  * @param cylP 			the cylindrical coordinate of interest where the magnetfield is calculated
  * @param BCylVec 		the magnetfield in cylP being calulated in cylindrical coordinates
  * @param McDSupport	this function uses a class to precalculate the derivatives of the McD model. This is FASTER AND BETTER
@@ -613,16 +611,16 @@ void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCy
 	const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
 	const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
 	
-	const int arraySize = 2*nmax + 2; // the number of coefficients needed to calculate the requested order (nmax)
+	const int arraySize = 2*McDSupport.GetMcD_order() + 2; // the number of coefficients needed to calculate the requested order (nmax)
 	double an11[arraySize];		// array to hold terms with z1 and R1
 	double an12[arraySize];		// array to hold terms with z1 and R2
 	double an21[arraySize];		// array to hold terms with z2 and R1
 	double an22[arraySize];		// array to hold terms with z2 and R2
 	
-	McDSupport.getA0(z1,R1,nmax,an11);
-	McDSupport.getA0(z1,R2,nmax,an12);
-	McDSupport.getA0(z2,R1,nmax,an21);
-	McDSupport.getA0(z2,R2,nmax,an22);
+	McDSupport.getA0(z1,R1,an11);
+	McDSupport.getA0(z1,R2,an12);
+	McDSupport.getA0(z2,R1,an21);
+	McDSupport.getA0(z2,R2,an22);
 	
 	//~ printArr(an11,arraySize);
 	//~ printArr(an12,arraySize);
@@ -637,7 +635,7 @@ void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCy
 	double constRTerm = -(rho/2);
 	
 	// Looping over the series
-	for (int n=1; n<=nmax; n++){ 
+	for (int n=1; n<=McDSupport.GetMcD_order(); n++){ 
 			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
 			B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
 			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
