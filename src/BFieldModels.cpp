@@ -508,6 +508,11 @@ void NWire(const Shell& shell, const int N_z, const double cylP[3], double BCylV
 	// this model represents the magnet with an NxM wire grid, and calculates the total field
 	// as the sum of the individual wire contributions. The field of a wire is calculated
 	// with the SAM or McD method (see what method is commented in)	
+	
+	// make sure that the placeholder for the magnetic field is 0
+	BCylVec[0] = 0;
+	BCylVec[1] = 0;
+	BCylVec[2] = 0;
 		
     // Tube Center
     const double x = shell.getx();
@@ -538,6 +543,11 @@ void NWire(const Shell& shell, const int N_z, const double cylP[3], double BCylV
 }
 
 void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]){	
+    // make sure that the placeholder for the magnetic field is 0
+	BCylVec[0] = 0;
+	BCylVec[1] = 0;
+	BCylVec[2] = 0;
+    
     // Tube Center
     const double x = shell.getx();
     const double y = shell.gety();
@@ -727,6 +737,10 @@ void loopApproxFrancis(const Loop& loop, const double lambda, const double sphP[
 }
 
 void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, const double carP[3], double BCarVec[3]){
+	// make sure that the placeholder for the magnetic field is 0
+	BCarVec[0] = 0;
+	BCarVec[1] = 0;
+	BCarVec[2] = 0;	
 		
     // Tube Center
     const double z = tube.getz();
@@ -797,6 +811,11 @@ void NWire(const Tube& tube, const int N_rho, const int N_z, const double cylP[3
 	// this model represents the magnet with an NxM wire grid, and calculates the total field
 	// as the sum of the individual wire contributions. The field of a wire is calculated
 	// with the SAM or McD method (see what method is commented in)	
+	
+	// make sure that the placeholder for the magnetic field is 0
+	BCylVec[0] = 0;
+	BCylVec[1] = 0;
+	BCylVec[2] = 0;
 		
     // Tube Center
     const double x = tube.getx();
@@ -836,6 +855,11 @@ void NWire(const Tube& tube, const int N_rho, const int N_z, const double cylP[3
 }
 
 void GaussianQuadratureLoop(const Tube& tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]){	
+    // make sure that the placeholder for the magnetic field is 0
+	BCylVec[0] = 0;
+	BCylVec[1] = 0;
+	BCylVec[2] = 0;
+    
     // Tube Center
     const double x = tube.getx();
     const double y = tube.gety();
@@ -883,6 +907,11 @@ void GaussianQuadratureLoop(const Tube& tube, const int N_rho, const int N_z, co
 }
 
 void GaussianQuadratureShell(const Tube& tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]){	
+    // make sure that the placeholder for the magnetic field is 0
+	BCylVec[0] = 0;
+	BCylVec[1] = 0;
+	BCylVec[2] = 0;
+    
     // Tube Center
     const double x = tube.getx();
     const double y = tube.gety();

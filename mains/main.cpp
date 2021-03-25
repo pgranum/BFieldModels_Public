@@ -143,7 +143,6 @@ int main(){
 	time = 0;
 	time_squared = 0;
 	for(int i=0; i<N_t; i++){
-		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		NWire(shell,N_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
@@ -163,7 +162,6 @@ int main(){
 	time = 0;
 	time_squared = 0;
 	for(int i=0; i<N_t; i++){
-		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureLoop(shell,N_z,NG_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
@@ -238,7 +236,6 @@ int main(){
 	time = 0;
     time_squared = 0;
 	for(int i=0; i<N_t; i++){
-		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		NWire(tube,N_rho,N_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
@@ -258,7 +255,6 @@ int main(){
 	time = 0;
 	time_squared = 0;
 	for(int i=0; i<N_t; i++){
-		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureLoop(tube,N_rho,N_z,NG_rho,NG_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
@@ -278,7 +274,6 @@ int main(){
 	time = 0;
 	time_squared = 0;
 	for(int i=0; i<N_t; i++){
-		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureShell(tube,N_rho,NG_rho,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
