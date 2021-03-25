@@ -589,7 +589,7 @@ void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, c
 
 // Tube
 
-void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport){	
+void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], const McD_Tube_Support& McDSupport){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
  * 
  * @param tube 			the tube creating the magnetic field

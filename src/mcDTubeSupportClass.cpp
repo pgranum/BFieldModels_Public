@@ -1,6 +1,6 @@
 #include "mcDTubeSupportClass.h"
 
-void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, double a0_array[]){
+void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, double a0_array[]) const{
 	// This function calculates the the a_n terms for a given z and R. 
 	// The derivatives of a_0 have been precalculated by the class constructor, which
 	// was instantiated to be able to go to a given order. The requested order has to
@@ -98,7 +98,7 @@ void McD_Tube_Support::getA0(const double z, const double R, const int n_McD, do
 	}	
 }
 
-void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]){	
+void McD_Tube_Support::getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]) const{	
 	/* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
 	 * 
 	 * @param tube 			the tube creating the magnetic field

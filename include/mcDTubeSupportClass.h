@@ -130,8 +130,8 @@ public:
 	~McD_Tube_Support(){
 	} // end of destructor
 	
-	void getA0(const double z, const double R, const int n_McD, double a0_array[]);
-	void getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]);
+	void getA0(const double z, const double R, const int n_McD, double a0_array[]) const;
+	void getB(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]) const;
 	
 };
 
