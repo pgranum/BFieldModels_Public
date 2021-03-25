@@ -3,7 +3,7 @@
 
 // Basic functions
 
-void biotSavart(double s0[3], double s1[3], double r[3], const double I, double B_vec[3]){
+void biotSavart(const double s0[3], const double s1[3], const double r[3], const double I, double B_vec[3]){
 
 	//~ printVec(s0,"s0");
 	//~ printVec(s1,"s1");
@@ -16,9 +16,9 @@ void biotSavart(double s0[3], double s1[3], double r[3], const double I, double 
 	vecSub(s1,r,k1);
 	
 	//~ double i_norm; double k0_norm; double k1_norm;
-	double i_norm = vecNorm(i);
-	double k0_norm = vecNorm(k0);
-	double k1_norm = vecNorm(k1);
+	const double i_norm = vecNorm(i);
+	const double k0_norm = vecNorm(k0);
+	const double k1_norm = vecNorm(k1);
 	
 	
 	double i_unit[3]={0.}; double k0_unit[3]={0.}; double k1_unit[3]={0.};
@@ -56,7 +56,7 @@ void biotSavart(double s0[3], double s1[3], double r[3], const double I, double 
 
 // Current Loop
 
-void loopExactSAM(Loop loop, const double cylP[3], double BCylVec[3]){
+void loopExactSAM(const Loop& loop, const double cylP[3], double BCylVec[3]){
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a loop of radius R and current I	using the method described by the SAM model
  * 
  * @param loop the loop creating the magnetic field
@@ -109,7 +109,7 @@ void loopExactSAM(Loop loop, const double cylP[3], double BCylVec[3]){
 	BCylVec[2]=B_z;
 }
 
-void loopBiotSavart(Loop loop, const int NSegments, double carP[3], double BCarVec[3]){
+void loopBiotSavart(const Loop& loop, const int NSegments, const double carP[3], double BCarVec[3]){
 	// calculates the B-field of a current loop in the x-y plane by using the BS method
 	// radius R, z position z, current I, number of segments N, obs point carP
 
@@ -149,7 +149,7 @@ void loopBiotSavart(Loop loop, const int NSegments, double carP[3], double BCarV
 	}	
 }
 
-void mcDonald(Loop loop, const int nmax, const double cylP[3], double BCylVec[3]){	
+void mcDonald(const Loop& loop, const int nmax, const double cylP[3], double BCylVec[3]){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a loop of radius R and current I	using the method described by the McDonald model
  * 
  * @param loop the loop creating the magnetic field
@@ -308,7 +308,7 @@ if (n>6){
 
 // Shell
 
-void Conway1D(Shell shell, const double cylP[3], double BCylVec[3]){
+void Conway1D(const Shell& shell, const double cylP[3], double BCylVec[3]){
 	// From the "Exact Solution..." paper by J. T. Conway
 	
 	assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
@@ -356,7 +356,7 @@ void Conway1D(Shell shell, const double cylP[3], double BCylVec[3]){
 	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
 }
 
-void mcDonald(Shell shell, const int nmax, const double cylP[3], double BCylVec[3]){	
+void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double BCylVec[3]){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a shell solenoid of radius R and total current I	using the method described by the McDonald model
  * 
  * @param shell the shell creating the magnetic field
@@ -515,7 +515,7 @@ if (n>6){
 }
 }
 
-void NWire(Shell shell, const int N_z, const double cylP[3], double BCylVec[3]){
+void NWire(const Shell& shell, const int N_z, const double cylP[3], double BCylVec[3]){
 	// this model represents the magnet with an NxM wire grid, and calculates the total field
 	// as the sum of the individual wire contributions. The field of a wire is calculated
 	// with the SAM or McD method (see what method is commented in)	
@@ -539,7 +539,7 @@ void NWire(Shell shell, const int N_z, const double cylP[3], double BCylVec[3]){
 	
     double BCylVec_i[3];
 	for(int j = 0; j < N_z; j++){
-		Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
+		const Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
 				
 		loopExactSAM(loop, cylP, BCylVec_i);
 		BCylVec[0] += BCylVec_i[0];
@@ -548,7 +548,7 @@ void NWire(Shell shell, const int N_z, const double cylP[3], double BCylVec[3]){
 	}
 }
 
-void GaussianQuadratureLoop(Shell shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]){	
+void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]){	
     // Tube Center
     const double x = shell.getx();
     const double y = shell.gety();
@@ -573,7 +573,7 @@ void GaussianQuadratureLoop(Shell shell, const int N_z, const int NG_z, const do
 	
     double BCylVec_i[3];
 	for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
-		Loop loop(radius,I,x,y,z+GPZValues[nGP_z]);		
+		const Loop loop(radius,I,x,y,z+GPZValues[nGP_z]);		
 		loopExactSAM(loop, cylP, BCylVec_i);
 		//~ printVec(BCylVec_i,"BCyl_i");
 		
@@ -589,7 +589,7 @@ void GaussianQuadratureLoop(Shell shell, const int N_z, const int NG_z, const do
 
 // Tube
 
-void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport){	
+void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport){	
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a finite solenoid of radius R and total current I using the method described by the McDonald model
  * 
  * @param tube 			the tube creating the magnetic field
@@ -667,7 +667,7 @@ void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3]
 	//~ printVec(BCylVec);
 }
 
-void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], double BSphVec[3]){
+void loopApproxFrancis(const Loop& loop, const double lambda, const double sphP[3], double BSphVec[3]){
 	
 	// an approximation of the B-field of a current loop
 	// based on eq A.2 in https://iopscience.iop.org/article/10.1088/1367-2630/14/1/015010
@@ -738,7 +738,7 @@ void loopApproxFrancis(Loop loop, const double lambda, const double sphP[3], dou
 	BSphVec[2] = 0.;
 }
 
-void Helix(Tube tube, const int N_rho, const int N_z, const int N_BS, double carP[3], double BCarVec[3]){
+void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, const double carP[3], double BCarVec[3]){
 		
     // Tube Center
     const double z = tube.getz();
@@ -809,7 +809,7 @@ void Helix(Tube tube, const int N_rho, const int N_z, const int N_BS, double car
 	}
 }
 
-void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]){
+void NWire(const Tube& tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]){
 	// this model represents the magnet with an NxM wire grid, and calculates the total field
 	// as the sum of the individual wire contributions. The field of a wire is calculated
 	// with the SAM or McD method (see what method is commented in)	
@@ -852,7 +852,7 @@ void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], doub
 	}
 }
 
-void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]){	
+void GaussianQuadratureLoop(const Tube& tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]){	
     // Tube Center
     const double x = tube.getx();
     const double y = tube.gety();
@@ -887,7 +887,7 @@ void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int
     double BCylVec_i[3];
 	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
 		for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
-			Loop loop(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);		
+			const Loop loop(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);		
 			loopExactSAM(loop, cylP, BCylVec_i);
 			//~ printVec(BCylVec_i,"BCyl_i");
 			
@@ -902,7 +902,7 @@ void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int
 	//~ printVec(BCylVec,"BCyl");
 }
 
-void GaussianQuadratureShell(Tube tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]){	
+void GaussianQuadratureShell(const Tube& tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]){	
     // Tube Center
     const double x = tube.getx();
     const double y = tube.gety();
@@ -930,7 +930,7 @@ void GaussianQuadratureShell(Tube tube, const int N_rho, const int NG_rho, const
     double BCylVec_i[3];
 	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
 		//~ std::cout << "nG_Rho = " << nG_rho << std::endl;
-		Shell shell = Shell(centre_rho + GPRhoValues[nG_rho],I,width_z,x,y,z);
+		const Shell shell = Shell(centre_rho + GPRhoValues[nG_rho],I,width_z,x,y,z);
 		
 		Conway1D(shell, cylP, BCylVec_i);
 		

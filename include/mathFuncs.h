@@ -15,22 +15,22 @@
 
 //~ // vector manipulation
 
-void vecAdd(double a[3], double b[3], double c[3]);
-void vecAddOvrwrt(double a[3], double b[3]);
-void vecSub(double a[3], double b[3], double c[3]);
-void vecMult(double a[3], double b[3], double c[3]);
+void vecAdd(const double a[3], const double b[3], double c[3]);
+void vecAddOvrwrt(double a[3], const double b[3]);
+void vecSub(const double a[3], const double b[3], double c[3]);
+void vecMult(const double a[3], const double b[3], double c[3]);
 //~ void vecDiv(double a[3], double b[3], double c[3]);
-double vecDotP(double a[3], double b[3]);
-void vecCrsP(double  a[3], double  b[3], double  c[3]);
-double vecNorm(double a[3]);
-void vecMultScal(double a[3], const double k, double c[3]);
-void vecMultScalOvrwrt(double a[3], double k);
+double vecDotP(const double a[3], const double b[3]);
+void vecCrsP(const double  a[3], const double  b[3], double  c[3]);
+double vecNorm(const double a[3]);
+void vecMultScal(const double a[3], const double k, double c[3]);
+void vecMultScalOvrwrt(double a[3], const double k);
 
 // Coordinate Conversion
 
-void carPToCylP(double carP[3], double cylP[3]);
+void carPToCylP(const double carP[3], double cylP[3]);
 //~ void carPToSphP(double carP[3], double sphP[3]);
-void cylPToCarP(double cylP[3], double carP[3]);
+void cylPToCarP(const double cylP[3], double carP[3]);
 //~ void sphPToCarP(double sphP[3], double carP[3]);
 
 //~ // interpolation

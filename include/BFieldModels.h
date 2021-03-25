@@ -17,39 +17,39 @@
 
 // Basic
 
-void biotSavart(double s0[3], double s1[3], double r[3], const double I, double B_vec[3]);
+void biotSavart(const double s0[3], const double s1[3], const double r[3], const double I, double B_vec[3]);
 
 // Current Loop
-void loopExactSAM(Loop loop, const double cylP[3], double BCylVec[3]);
+void loopExactSAM(const Loop& loop, const double cylP[3], double BCylVec[3]);
 
-void loopBiotSavart(Loop loop, const int NSegments, double carP[3], double BCarVec[3]);
+void loopBiotSavart(const Loop& loop, const int NSegments, const double carP[3], double BCarVec[3]);
 
-void mcDonald(Loop loop, const int nmax, const double cylP[3], double BCylVec[3]);
+void mcDonald(const Loop& loop, const int nmax, const double cylP[3], double BCylVec[3]);
 void mcDonaldLoopSupFunc(const int n, const double z, const double R, double an[]);
 
 // Shell
 
-void Conway1D(Shell shell, const double cylP[3], double BCylVec[3]);
+void Conway1D(const Shell& shell, const double cylP[3], double BCylVec[3]);
 
-void mcDonald(Shell shell, const int nmax, const double cylP[3], double BCylVec[3]);
+void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double BCylVec[3]);
 void mcDonaldShellSupFunc(const int n, const double z, const double R, double an[]);
 
-void NWire(Shell shell, const int N_z, const double cylP[3], double BCylVec[3]);
+void NWire(const Shell& shell, const int N_z, const double cylP[3], double BCylVec[3]);
 
-void GaussianQuadratureLoop(Shell shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]);
+void GaussianQuadratureLoop(const Shell& shell, const int N_z, const int NG_z, const double cylP[3], double BCylVec[3]);
 
 // Tube
 
-void Helix(Tube tube, const int N_rho, const int N_z, const int N_BS, double carP[3], double BCarVec[3]);
+void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, const double carP[3], double BCarVec[3]);
 
-void mcDonald(Tube tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport);
+void mcDonald(const Tube& tube, const int nmax, const double cylP[3], double BCylVec[3], McD_Tube_Support& McDSupport);
 
-void loopApproxFrancis(Loop loop, const double lam, const double sphP[3], double BSphVec[3]);
+void loopApproxFrancis(const Loop& loop, const double lam, const double sphP[3], double BSphVec[3]);
 
-void NWire(Tube tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]);
+void NWire(const Tube& tube, const int N_rho, const int N_z, const double cylP[3], double BCylVec[3]);
 
-void GaussianQuadratureLoop(Tube tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]);
-void GaussianQuadratureShell(Tube tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]);
+void GaussianQuadratureLoop(const Tube& tube, const int N_rho, const int N_z, const int NG_rho, const int NG_z, const double cylP[3], double BCylVec[3]);
+void GaussianQuadratureShell(const Tube& tube, const int N_rho, const int NG_rho, const double cylP[3], double BCylVec[3]);
 
 // Utils
 

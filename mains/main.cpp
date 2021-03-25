@@ -30,7 +30,7 @@ int main(){
 	//////////////////// LOOP ////////////////////
 	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 	
-	Loop loop = Loop();		// a loop class that is instantiated with the relevant parameters
+	const Loop loop = Loop();		// a loop class that is instantiated with the relevant parameters
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
 	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 	
@@ -52,8 +52,6 @@ int main(){
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
-	
-	
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
@@ -97,7 +95,7 @@ int main(){
 	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
 	
-	Shell shell = Shell();
+	const Shell shell = Shell();
 	//~ McDOrder = 7; // I would like the option to change here
 	const int N_z = 30;
 	const int NG_z = 3;
@@ -185,7 +183,7 @@ int main(){
 	//////////////////// FINITE SOLENOID ////////////////////
 	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
-	Tube tube = Tube();
+	const Tube tube = Tube();
 	const int McDOrder2 = 3; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
 	const int N_rho = 4;
 	//~ const int N_z = 30;

@@ -4,7 +4,7 @@
 
 // vector functions
 
-void vecAdd(double a[3], double b[3], double c[3]){
+void vecAdd(const double a[3], const double b[3], double c[3]){
 /* This function adds two vectors 
 * (a+b=c)
 * 
@@ -17,7 +17,7 @@ void vecAdd(double a[3], double b[3], double c[3]){
 	c[2] = a[2] + b[2];
 }
 
-void vecAddOvrwrt(double a[3], double b[3]){
+void vecAddOvrwrt(double a[3], const double b[3]){
 /* This function adds two vectors 
 * (a+b=a)
 * 
@@ -29,7 +29,7 @@ void vecAddOvrwrt(double a[3], double b[3]){
 	a[2] += b[2];
 }
 
-void vecSub(double a[3], double b[3], double c[3]){
+void vecSub(const double a[3], const double b[3], double c[3]){
 /* This function subtracts two vectors 
 * (a-b=c)
 * 
@@ -42,7 +42,7 @@ void vecSub(double a[3], double b[3], double c[3]){
 	c[2] = a[2] - b[2];
 }
 
-void vecMult(double a[3], double b[3], double c[3]){
+void vecMult(const double a[3], const double b[3], double c[3]){
 /* This function  multiply two vectors entrywise
 * (a*b=c) (entrywise)
 * 
@@ -55,7 +55,7 @@ void vecMult(double a[3], double b[3], double c[3]){
 	c[2] = a[2] * b[2];
 }
 
-double vecDotP(double a[3], double b[3]){
+double vecDotP(const double a[3], const double b[3]){
 /* This function finds the dot product of two vectors
 * (a*b=return) (dot product)
 * 
@@ -66,7 +66,7 @@ double vecDotP(double a[3], double b[3]){
 	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
 }
 
-void vecCrsP(double  a[3], double  b[3], double  c[3]){
+void vecCrsP(const double  a[3], const double  b[3], double  c[3]){
 /* This function  finds the crossproduct of two vectors
 * (a*b=c) (cross-product)
 * 
@@ -79,7 +79,7 @@ void vecCrsP(double  a[3], double  b[3], double  c[3]){
 	c[2] = a[0]*b[1] - a[1]*b[0];
 }
 
-double vecNorm(double a[3]){
+double vecNorm(const double a[3]){
 /* This function finds the norm of a vector
 * 
 * @param a		the vector finding the norm of 
@@ -88,7 +88,7 @@ double vecNorm(double a[3]){
 	return std::sqrt(vecDotP(a,a));
 }
 
-void vecMultScal(double a[3], const double k, double c[3]){
+void vecMultScal(const double a[3], const double k, double c[3]){
 /* This function multiply the vector a with a scalar k
 * (k*a=c)
 * 
@@ -102,7 +102,7 @@ void vecMultScal(double a[3], const double k, double c[3]){
 	c[2] = a[2]*k;
 }
 
-void vecMultScalOvrwrt(double a[3], double k){
+void vecMultScalOvrwrt(double a[3], const double k){
 /* This function multiply the vector a with a scalar k and overwrites a with the resulting vector
 * (k*a=a)
 * 
@@ -116,14 +116,14 @@ void vecMultScalOvrwrt(double a[3], double k){
 
 // conversion functions
 
-void cylPToCarP(double cylP[3], double carP[3]){
+void cylPToCarP(const double cylP[3], double carP[3]){
 	// converts a POINT in cylindrical coordinates to cartesian coordinates
 	carP[0] = cylP[0]*cos(cylP[1]);
 	carP[1] = cylP[0]*sin(cylP[1]);
 	carP[2] = cylP[2];
 }
 
-void carPToCylP(double carP[3], double cylP[3]){
+void carPToCylP(const double carP[3], double cylP[3]){
 	// converts a POINT in cartesian coordinates to cylindrical coordinates
 	//~ ALPHAPhysicalConstants apc;
 
