@@ -16,16 +16,19 @@ int main(){
 	double BCarVec[3] = {0.,0.,0.}; 	// placeholder for the field in cartesian coordinates
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	
-	const int N_t = 100.;
+	const int N_t = 1000;
 	double time;
+	double time_squared;
+	double mean;
+	double stdev;
 	
-	std::cout << std::endl;
-	std::cout << "Calculating field at point:" << std::endl;
+	std::cout << "\n";
+	std::cout << "Calculating field at point:\n";
 	printVec(carP,"P");
-	std::cout << std::endl;
+	std::cout << "\n";
 	
 	//////////////////// LOOP ////////////////////
-	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP" << std::endl;
+	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 	
 	Loop loop = Loop();		// a loop class that is instantiated with the relevant parameters
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
@@ -33,50 +36,65 @@ int main(){
 	
 	
 	
-	std::cout << "Using the (exact) Simple Analytic Model (SAM):" << std::endl;
+	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		loopExactSAM(loop,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the McDonald model:" << std::endl;
+	std::cout << "Using the McDonald model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcDonald(loop,McDOrder,carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 
 
 
-	std::cout << "Using the Biot-Savart model:" << std::endl;
+	std::cout << "Using the Biot-Savart model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		loopBiotSavart(loop,N_BS,carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
-	std::cout << std::endl;
+	std::cout << "\n";
 	
 	//////////////////// SHELL ////////////////////
-	std::cout << "CALCULATING MODELS FOR A SHELL" << std::endl;
+	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
 	
 	Shell shell = Shell();
@@ -84,68 +102,88 @@ int main(){
 	const int N_z = 30;
 	const int NG_z = 3;
 	
-	std::cout << "Using the (exact) Conway model:" << std::endl;
+	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		Conway1D(shell,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the McDonald model:" << std::endl;
+	std::cout << "Using the McDonald model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcDonald(shell,McDOrder,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the N-Wire model:" << std::endl;
+	std::cout << "Using the N-Wire model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		NWire(shell,N_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the Gaussian Quadrature model:" << std::endl;
+	std::cout << "Using the Gaussian Quadrature model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureLoop(shell,N_z,NG_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 		
-	std::cout << std::endl;
+	std::cout << "\n";
 	
 	//////////////////// FINITE SOLENOID ////////////////////
-	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID" << std::endl;
+	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
 	Tube tube = Tube();
 	const int McDOrder2 = 3; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
@@ -158,78 +196,103 @@ int main(){
 	
 	
 	
-	std::cout << "Using the detailed Biot-Savart model:" << std::endl;
+	std::cout << "Using the detailed Biot-Savart model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		Helix(tube,N_rho,N_z,N_BS,carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the McDonald model:" << std::endl;
+	std::cout << "Using the McDonald model:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcDonald(tube,McDOrder2,cylP,BCylVec,McDSup);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the N-Wire model:" << std::endl;
+	std::cout << "Using the N-Wire model:\n";
 	time = 0;
+    time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		NWire(tube,N_rho,N_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the Gaussian Quadrature model with Loops:" << std::endl;
+	std::cout << "Using the Gaussian Quadrature model with Loops:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureLoop(tube,N_rho,N_z,NG_rho,NG_z,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << "Using the Gaussian Quadrature model with Shells:" << std::endl;
+	std::cout << "Using the Gaussian Quadrature model with Shells:\n";
 	time = 0;
+	time_squared = 0;
 	for(int i=0; i<N_t; i++){
 		BCylVec[0] = 0.; BCylVec[1] = 0.; BCylVec[2] = 0.;
 		auto start = std::chrono::steady_clock::now();
 		GaussianQuadratureShell(tube,N_rho,NG_rho,cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
-		time += std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	std::cout << "Average calc time = " << time/N_t << " s" << std::endl;
-	std::cout << std::endl;
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	
 	
-	std::cout << std::endl;
+	std::cout << "\n";
 }
