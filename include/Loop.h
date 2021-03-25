@@ -2,6 +2,9 @@
 #define LOOP_H
 
 #include <iostream>
+#include <vector>
+
+#include "PhysicsConstants.hpp"
 
 /** 
  * Implementation of a current loop
@@ -17,11 +20,15 @@ const double I; // The current in the loop
 const double x; // The the x position of the center of the loop
 const double y; // The the y position of the center of the loop
 const double z; // The the z position of the center of the loop
+const int NSegments;
+std::vector<double> xs;
+std::vector<double> ys;
 	
 public:
 // Class Constructor
 
 Loop(const double R, const double I, const double x, const double y, const double z);
+Loop(const double R, const double I, const double x, const double y, const double z, const int NSegments);
 Loop();
 
 
@@ -36,6 +43,11 @@ double getR() const;
 /** This function return the radius of a Loop object
 * 
 * @return the radius of a Loop object
+*/
+double getRR() const;
+/** This function return the radius of a Loop object
+* 
+* @return the radius of a Loop object squared
 */
 double getI() const;
 /** This function return the current of a Loop object
@@ -58,6 +70,10 @@ double gety() const;
 * @return the z coordinate of the center of a Loop object
 */
 double getz() const;
+
+double getxi(const int i) const;
+
+double getyi(const int i) const;
 
 };
 

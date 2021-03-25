@@ -2,6 +2,7 @@
 #define TUBE_H
 
 #include <iostream>
+#include <vector>
 
 /** 
  * Implementation of a finite solenoid
@@ -75,6 +76,8 @@ double gety() const;
 * @return the z coordinate of the center
 */
 double getz() const;
+
+double getThickness() const;
 
 void print();
 

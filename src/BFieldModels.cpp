@@ -66,6 +66,7 @@ void loopExactSAM(const Loop& loop, const double cylP[3], double BCylVec[3]){
 	
 	// Unpacking Loop 
 	const double R = loop.getR();
+	const double R2 = loop.getRR();
 
 	// Coordinates
 	const double rho = cylP[0];
@@ -74,7 +75,6 @@ void loopExactSAM(const Loop& loop, const double cylP[3], double BCylVec[3]){
 	// Powers
 	const double rho2 = rho*rho;
 	const double z2 = z*z; 
-	const double R2 = R*R;
 	
 	// Model
 	const double alpha2 = R2 + rho2 + z2 - 2*R*rho;
@@ -113,32 +113,22 @@ void loopBiotSavart(const Loop& loop, const int NSegments, const double carP[3],
 	// calculates the B-field of a current loop in the x-y plane by using the BS method
 	// radius R, z position z, current I, number of segments N, obs point carP
 
-	const double R = loop.getR();
 	const double I = loop.getI();
 	const double z_loop = loop.getz();
 
-	double B = vecNorm(BCarVec);
-	if(B != 0){
-		//print("Warning, B is nonzero in loopBiotSavart. Setting B_vec = 0");
-		BCarVec[0] = 0;
-		BCarVec[1] = 0;
-		BCarVec[2] = 0;
-	}
+	// make sure that the placeholder for the magnetic field is 0
+	BCarVec[0] = 0;
+	BCarVec[1] = 0;
+	BCarVec[2] = 0;
 
-	// setup start and end coordinate for straight line segment
-	double phis[NSegments];
-	double dPhi = 2*PhysicsConstants::pi/(NSegments-1);
-	for(int i=0; i<NSegments; i++){
-		phis[i] = dPhi*i;
-	}
-	double x0 = cos(phis[0])*R;
-	double y0 = sin(phis[0])*R;
+	double x0 = loop.getxi(0);
+	double y0 = loop.getyi(0);
 	double x1;
 	double y1;
 	
 	for(int i=0; i<NSegments-1; i++){
-		x1 = cos(phis[i+1])*R;
-		y1 = sin(phis[i+1])*R;
+		x1 = loop.getxi(i+1);
+		y1 = loop.getyi(i+1);
 		double r0[3]{x0,y0,z_loop};
 		double r1[3]{x1,y1,z_loop};
 			
@@ -741,12 +731,9 @@ void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, con
     // Tube Center
     const double z = tube.getz();
 
-	// Radii
+	// Dimension of Tube
 	const double innerRadius = tube.getR1();			
-	const double outerRadius = tube.getR2();				
-	const double width_rho = outerRadius - innerRadius;
-	
-    // Length
+	const double width_rho = tube.getThickness();
 	const double width_z = tube.getL(); 	
 
     // Spacing			
@@ -768,7 +755,6 @@ void Helix(const Tube& tube, const int N_rho, const int N_z, const int N_BS, con
 	//~ std::cout << "N_BS = " << N_BS << std::endl;
 	//~ std::cout << "I = " << i << std::endl;
 	
-
 	for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
 		double cylS0[3];
 		double cylS1[3]{innerRadius + delta_rho/2.0 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-width_z/2.0) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
@@ -817,10 +803,9 @@ void NWire(const Tube& tube, const int N_rho, const int N_z, const double cylP[3
     const double y = tube.gety();
     const double z = tube.getz();
 
-	// Radii
+	// Dimension of Tube
 	const double innerRadius = tube.getR1();			
-	const double outerRadius = tube.getR2();				
-	const double width_rho = outerRadius - innerRadius;
+	const double width_rho = tube.getThickness();
 	
     // Number of wires
 	const int N_wires = N_rho*N_z;
@@ -856,13 +841,10 @@ void GaussianQuadratureLoop(const Tube& tube, const int N_rho, const int N_z, co
     const double y = tube.gety();
     const double z = tube.getz();
 
-	// Radii
-	const double innerRadius = tube.getR1();			
-	const double outerRadius = tube.getR2();				
-	
     // Dimension of Tube
+    const double innerRadius = tube.getR1();
 	const double width_z = tube.getL(); 	
-    const double width_rho = outerRadius - innerRadius;
+    const double width_rho = tube.getThickness();
 
     // Current			
 	const double I = tube.getI()/(N_rho*N_z);	// divide the current of the tube on N_rho*N_z loops
@@ -906,13 +888,10 @@ void GaussianQuadratureShell(const Tube& tube, const int N_rho, const int NG_rho
     const double y = tube.gety();
     const double z = tube.getz();
 
-	// Radii
-	const double innerRadius = tube.getR1();			
-	const double outerRadius = tube.getR2();				
-	
     // Dimension of Tube
+    const double innerRadius = tube.getR1();	
 	const double width_z = tube.getL(); 	
-    const double width_rho = outerRadius - innerRadius;
+    const double width_rho = tube.getThickness();
 
     // Current			
 	const double I = tube.getI()/N_rho; // devide the current of the tube on N_rho shells

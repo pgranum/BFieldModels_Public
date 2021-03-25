@@ -33,6 +33,9 @@ double Tube::gety() const{
 double Tube::getz() const{
 		return z;
 }
+double Tube::getThickness() const{
+		return R2-R1;
+}
 void Tube::print() {
 	std::cout << "Tube: " << "R1 = " << R1 << "; R2 = " << R2 << "; N = " << N << "; i = " << i << "; x = " << x << "; y = " << y << "; z = " << z <<std:: endl;
 }

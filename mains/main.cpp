@@ -30,7 +30,7 @@ int main(){
 	//////////////////// LOOP ////////////////////
 	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 	
-	const Loop loop = Loop();		// a loop class that is instantiated with the relevant parameters
+	const Loop loop = Loop((0.0463701-0.04125)/2.0+0.04125,120*600,0,0,0,1000);		// a loop class that is instantiated with the relevant parameters
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
 	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 	

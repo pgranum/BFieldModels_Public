@@ -36,6 +36,11 @@ double getR() const;
 * 
 * @return the radius
 */
+double getRR() const;
+/** This function return the radius
+* 
+* @return the radius squared
+*/
 int getN() const;
 /** This function return the  number of wires
 * 

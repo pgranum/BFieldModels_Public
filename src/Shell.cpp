@@ -10,6 +10,9 @@ Shell::Shell() : R((0.0463701-0.04125)/2.0+0.04125),N(120),i(600),L(0.0346811),x
 double Shell::getR() const {
 		return R;
 }
+double Shell::getRR() const {
+		return R*R;
+}
 int    Shell::getN() const {
 		return N;
 }
