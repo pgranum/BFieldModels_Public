@@ -345,7 +345,58 @@ void Conway1D(const Shell& shell, const double cylP[3], double BCylVec[3]){
 	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
 }
 
-void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double BCylVec[3]){	
+//~ void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double BCylVec[3]){	
+//~ /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a shell solenoid of radius R and total current I	using the method described by the McDonald model
+ //~ * 
+ //~ * @param shell the shell creating the magnetic field
+ //~ * @param nmax an integer [0,7] that the denotes the order of the McDonald calculation
+ //~ * @param cylP the cylindrical coordinate of interest where the magnetfield is calculated
+ //~ * @param BCylVec the magnetfield in cylP being calulated in cylindrical coordinates
+ //~ */
+	
+	//~ // Coordinates
+	//~ const double rho = cylP[0];
+	//~ const double z   = cylP[2]-shell.getz();
+	//~ const double R  = shell.getR();
+	//~ const double I  = shell.getI();
+	//~ const double L  = shell.getL();
+	//~ const double L_2  = 0.5*L;
+	
+	//~ const double z1 = z + L_2;
+	//~ const double z2 = z - L_2;
+	
+	//~ double an1[2*nmax+2];
+	//~ double an2[2*nmax+2];
+	//~ mcDonaldShellSupFunc(nmax,z1,R,an1);
+	//~ mcDonaldShellSupFunc(nmax,z2,R,an2);
+	
+	//~ // Preparing terms for loop
+	//~ double B_z = an1[0]-an2[0]; 
+	//~ double constZTerm = 1;
+	
+	//~ double B_rho = -(rho/2)*(an1[1]-an2[1]);
+	//~ double constRTerm = -(rho/2);
+	
+	//~ // Looping over the series
+	//~ for (int n=1; n<=nmax; n++){ 
+			//~ constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
+			//~ B_z+= constZTerm*(an1[2*n]-an2[2*n]);
+			//~ constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
+			//~ B_rho += constRTerm*(an1[2*n+1]-an2[2*n+1]);
+	//~ }
+	
+	//~ // Preparing result
+	//~ const double C = PhysicsConstants::mu0*I/(2*L);
+	//~ B_rho *= C;
+	//~ B_z *= C;
+	
+	//~ // Result
+	//~ BCylVec[0]=B_rho;
+	//~ BCylVec[1]=0.0;
+	//~ BCylVec[2]=B_z;
+//~ }
+
+void McDShell::getB(const double cylP[3], double BCylVec[3]){
 /* Calculates the magnet field in BCylVec at the cylindrical coordinate cylVec for a shell solenoid of radius R and total current I	using the method described by the McDonald model
  * 
  * @param shell the shell creating the magnetic field
@@ -356,19 +407,19 @@ void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double B
 	
 	// Coordinates
 	const double rho = cylP[0];
-	const double z   = cylP[2]-shell.getz();
-	const double R  = shell.getR();
-	const double I  = shell.getI();
-	const double L  = shell.getL();
+	const double z   = cylP[2]-this->getz();
+	const double R  = this->getR();
+	const double I  = this->getI();
+	const double L  = this->getL();
 	const double L_2  = 0.5*L;
 	
 	const double z1 = z + L_2;
 	const double z2 = z - L_2;
 	
-	double an1[2*nmax+2];
-	double an2[2*nmax+2];
-	mcDonaldShellSupFunc(nmax,z1,R,an1);
-	mcDonaldShellSupFunc(nmax,z2,R,an2);
+	double an1[2*McDOrder+2];
+	double an2[2*McDOrder+2];
+	mcDonaldShellSupFunc(McDOrder,z1,R,an1);
+	mcDonaldShellSupFunc(McDOrder,z2,R,an2);
 	
 	// Preparing terms for loop
 	double B_z = an1[0]-an2[0]; 
@@ -378,7 +429,7 @@ void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double B
 	double constRTerm = -(rho/2);
 	
 	// Looping over the series
-	for (int n=1; n<=nmax; n++){ 
+	for (int n=1; n<=McDOrder; n++){ 
 			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
 			B_z+= constZTerm*(an1[2*n]-an2[2*n]);
 			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
@@ -396,7 +447,115 @@ void mcDonald(const Shell& shell, const int nmax, const double cylP[3], double B
 	BCylVec[2]=B_z;
 }
 
-void mcDonaldShellSupFunc(const int n, const double z, const double R, double an[]){	
+//~ void mcDonaldShellSupFunc(const int n, const double z, const double R, double an[]){	
+//~ /* This function is a support function to loopApproxMcDonald it generates  the an[] list depending on the order of n to reduce calculation time.
+ //~ * 
+ //~ * @param n		the order of the McDonald model required
+ //~ * @param z		the z-coordinate where the field is being calculated
+ //~ * @param R 	the radius of the loop
+ //~ * @param an	the list of derivatives of the axial magnetic field
+ //~ */
+	
+	//~ // Powers of z
+	//~ const double z2=z*z;  
+
+	//~ // Powers of R
+	//~ const double R2 = R*R;
+		
+	//~ // Powers of d
+	//~ const double d = 1/(z2+R2);
+	//~ const double d1_2 = sqrt(d); 
+	//~ const double d3_2 = R2*d1_2*d;
+
+	//~ an[0]=z*d1_2;
+	//~ an[1]=d3_2;
+//~ if (n > 0){ 
+	//~ const double z2 = z*z;
+	
+	//~ const double d5_2=d3_2*d;
+	//~ const double d7_2=d5_2*d;
+	//~ an[2]=-3*z*d5_2;
+	//~ an[3]=(12*z2-3*R2)*d7_2;
+		
+//~ if (n > 1){
+	//~ const double z3=z2*z;
+	//~ const double z4=z3*z;
+
+	//~ const double R4 = R2*R2;
+				
+	//~ const double d9_2=d7_2*d;
+	//~ const double d11_2=d9_2*d;
+	//~ an[4]=(-60*z3+45*R2*z)*d9_2;			
+	//~ an[5]=(360*z4-540*R2*z2+45*R4)*d11_2;
+
+//~ if (n > 2){
+	//~ const double z5=z4*z;
+	//~ const double z6=z5*z;
+
+	//~ const double R6 = R4*R2;
+		
+	//~ const double d13_2=d11_2*d;
+	//~ const double d15_2=d13_2*d;
+
+	//~ an[6]=(-2520*z5+6300*R2*z3-1575*R4*z)*d13_2;
+	//~ an[7]=(20160*z6-75600*R2*z4+37800*R4*z2-1575*R6)*d15_2;
+
+//~ if (n > 3){
+	//~ const double z7=z6*z;
+	//~ const double z8=z7*z;
+	
+	//~ const double R8 = R6*R2;
+		
+	//~ const double d17_2=d15_2*d;
+	//~ const double d19_2=d17_2*d;
+	
+	//~ an[8]=(-181440*z7+952560*R2*z5-793800*R4*z3+99225*R6*z)*d17_2;
+	//~ an[9]=(1814400*z8-12700800*R2*z6+15876000*R4*z4-3969000*R6*z2+99225*R8)*d19_2;
+
+//~ if (n > 4){
+	//~ const double z9=z8*z;
+	//~ const double z10=z9*z;
+
+	//~ const double R10 = R8*R2;
+
+	//~ const double d21_2=d19_2*d;
+	//~ const double d23_2=d21_2*d;
+	
+	//~ an[10]=-(19958400*z9-179625600*R2*z7+314344800*R4*z5-130977000*R6*z3+9823275*R8*z)*d21_2;
+	//~ an[11]=(239500800*z10-2694384000*R2*z8+6286896000*R4*z6-3929310000*R6*z4+589396500*R8*z2-9823275*R10)*d23_2;
+//~ if (n> 5){
+	//~ const double z11=z10*z;
+	//~ const double z12=z11*z;
+
+	//~ const double R12 = R10*R2;
+			
+	//~ const double d25_2 = d23_2*d;	
+	//~ const double d27_2 = d25_2*d;
+	
+	//~ an[12]=-(3113510400*z11-42810768000*R2*z9+128432304000*R4*z7-112378266000*R6*z5+28094566500*R8*z3-1404728325*R10*z)*d25_2;
+	//~ an[13]=(43589145600*z12-719220902400*R2*z10+2697078384000*R4*z8-3146591448000*R6*z6+1179971793000*R8*z4-117997179300*R10*z2+1404728325*R12)*d27_2;
+
+//~ if (n>6){
+	//~ const double z13 = z12*z;
+	//~ const double z14 = z13*z;
+	
+	//~ const double R14 = R12*R2;
+
+	//~ const double d29_2 = d27_2*d;			
+	//~ const double d31_2 = d29_2*d;
+
+	//~ an[14]=-(653837184000*z13-12749825088000*R2*z11+58436698320000*R4*z9-87655047480000*R6*z7+46018899927000*R8*z5-7669816654500*R10*z3+273922023375*R12*z)*d29_2;
+	//~ an[15]=(10461394944000*z14-237996734976000*R2*z12+1308982042368000*R4*z10-2454341329440000*R6*z8+1718038930608000*R8*z6-429509732652000*R10*z4+30679266618000*R12*z2-273922023375*R14)*d31_2;
+//~ }
+//~ }	
+//~ }
+//~ }
+//~ }
+//~ }
+//~ }
+//~ }
+
+void McDShell::mcDonaldShellSupFunc(const int n, const double z, const double R, double an[]){	
 /* This function is a support function to loopApproxMcDonald it generates  the an[] list depending on the order of n to reduce calculation time.
  * 
  * @param n		the order of the McDonald model required

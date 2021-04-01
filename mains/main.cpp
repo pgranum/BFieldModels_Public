@@ -94,8 +94,14 @@ int main(){
 	//////////////////// SHELL ////////////////////
 	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
-	
-	const Shell shell = Shell();
+	const double R = (0.0463701-0.04125)/2.0+0.04125;
+	const int N = 120;
+	const double i = 600;
+	const double L = 0.0346811;
+	const double x = 0;
+	const double y = 0;
+	const double z = 0;
+	const Shell shell = Shell(R,N,i,L,x,y,z); // a shell class that is instantiated with the relevant parameters
 	//~ McDOrder = 7; // I would like the option to change here
 	const int N_z = 30;
 	const int NG_z = 3;
@@ -123,9 +129,11 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
+	McDShell mcDShell = McDShell(McDOrder,R,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		mcDonald(shell,McDOrder,cylP,BCylVec);
+		//~ mcDonald(shell,McDOrder,cylP,BCylVec);
+		mcDShell.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
