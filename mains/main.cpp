@@ -2,7 +2,6 @@
 
 #include "BFieldModels.h"
 #include "Loop.h"
-#include "mcDTubeSupportClass.h"
 #include "Shell.h"
 #include "Tube.h"
 #include "utils.h"
@@ -29,19 +28,21 @@ int main(){
 	
 	//////////////////// LOOP ////////////////////
 	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
-	
-	const Loop loop = Loop((0.0463701-0.04125)/2.0+0.04125,120*600,0,0,0,1000);		// a loop class that is instantiated with the relevant parameters
+	const double R = (0.0463701-0.04125)/2.0+0.04125;
+	const double I = 120*600;
+	const double x = 0;
+	const double y = 0;
+	const double z = 0;
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
 	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
-	
-	
-	
+		
 	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
 	time_squared = 0;
+	SimpleAnalyticModel SAM = SimpleAnalyticModel(R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		loopExactSAM(loop,cylP,BCylVec);
+		SAM.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -56,9 +57,10 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
+	McD_Loop mcD_Loop = McD_Loop(McDOrder,R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		mcDonald(loop,McDOrder,carP,BCarVec);
+		mcD_Loop.getB(carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -75,9 +77,10 @@ int main(){
 	std::cout << "Using the Biot-Savart model:\n";
 	time = 0;
 	time_squared = 0;
+	BiotSavart_Loop BS_L = BiotSavart_Loop(N_BS,R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		loopBiotSavart(loop,N_BS,carP,BCarVec);
+		BS_L.getB(carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -94,14 +97,14 @@ int main(){
 	//////////////////// SHELL ////////////////////
 	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
-	const double R = (0.0463701-0.04125)/2.0+0.04125;
+	//~ const double R = (0.0463701-0.04125)/2.0+0.04125;
 	const int N = 120;
 	const double i = 600;
 	const double L = 0.0346811;
-	const double x = 0;
-	const double y = 0;
-	const double z = 0;
-	const Shell shell = Shell(R,N,i,L,x,y,z); // a shell class that is instantiated with the relevant parameters
+	//~ const double x = 0;
+	//~ const double y = 0;
+	//~ const double z = 0;
+	//~ const Shell shell = Shell(R,N,i,L,x,y,z); // a shell class that is instantiated with the relevant parameters
 	//~ McDOrder = 7; // I would like the option to change here
 	const int N_z = 30;
 	const int NG_z = 3;
@@ -109,10 +112,11 @@ int main(){
 	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
 	time_squared = 0;
-    assert(shell.getx() == 0 && shell.gety() == 0); // the solenoid has to be centered around the axis
+	Conway1D conway1D = Conway1D(R,N,i,L,x,y,z);
+    assert(x == 0 && y == 0); // the solenoid has to be centered around the axis
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		Conway1D(shell,cylP,BCylVec);
+		conway1D.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -129,7 +133,7 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
-	McDShell mcDShell = McDShell(McDOrder,R,N,i,L,x,y,z);
+	McD_Shell mcDShell = McD_Shell(McDOrder,R,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		//~ mcDonald(shell,McDOrder,cylP,BCylVec);
@@ -150,9 +154,10 @@ int main(){
 	std::cout << "Using the N-Wire model:\n";
 	time = 0;
 	time_squared = 0;
+	NWire_Shell nWire = NWire_Shell(N_z,R,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		NWire(shell,N_z,cylP,BCylVec);
+		nWire.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -169,9 +174,10 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model:\n";
 	time = 0;
 	time_squared = 0;
+	GaussianQuadratureLoops_Shell GQL_S = GaussianQuadratureLoops_Shell(N_z,NG_z,R,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		GaussianQuadratureLoop(shell,N_z,NG_z,cylP,BCylVec);
+		GQL_S.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -190,23 +196,29 @@ int main(){
 	//////////////////// FINITE SOLENOID ////////////////////
 	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
-	const Tube tube = Tube();
+	const double R1 = 0.04125;
+	const double R2 = 0.04637;
+	//~ const int N = 4*30;
+	//~ const double L = 0.03468;
+	//~ const double x = 0;
+	//~ const double y = 0;
+	//~ const double z = 0;
+	
 	const int McDOrder2 = 3; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
 	const int N_rho = 4;
 	//~ const int N_z = 30;
 	//~ const int N_BS = 10000; // I would like the option to change here
 	const int NG_rho = 1;
-	//~ const int NG_z = 3;
-	McD_Tube_Support McDSup = McD_Tube_Support(McDOrder2);
-	
+	//~ const int NG_z = 3;	
 	
 	
 	std::cout << "Using the detailed Biot-Savart model:\n";
 	time = 0;
 	time_squared = 0;
+	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		Helix(tube,N_rho,N_z,N_BS,carP,BCarVec);
+		helix.getB(carP,BCarVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -218,15 +230,15 @@ int main(){
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
 	
-	
+	std::cout << "Using the TAVP model:\n";
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
-	
+	McD_Tube mcD_Tube = McD_Tube(McDOrder2,R1,R2,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		mcDonald(tube,cylP,BCylVec,McDSup);
+		mcD_Tube.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -243,9 +255,10 @@ int main(){
 	std::cout << "Using the N-Wire model:\n";
 	time = 0;
     time_squared = 0;
+    NWire_Tube nWire_Tube = NWire_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		NWire(tube,N_rho,N_z,cylP,BCylVec);
+		nWire_Tube.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -262,9 +275,10 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Loops:\n";
 	time = 0;
 	time_squared = 0;
+	GaussianQuadratureLoops_Tube GQL_T = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		GaussianQuadratureLoop(tube,N_rho,N_z,NG_rho,NG_z,cylP,BCylVec);
+		GQL_T.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -281,9 +295,10 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Shells:\n";
 	time = 0;
 	time_squared = 0;
+	GaussianQuadratureShells_Tube GQS_T = GaussianQuadratureShells_Tube(N_rho,NG_rho,R1,R2,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		GaussianQuadratureShell(tube,N_rho,NG_rho,cylP,BCylVec);
+		GQS_T.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;

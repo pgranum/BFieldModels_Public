@@ -20,9 +20,6 @@ const double I; // The current in the loop
 const double x; // The the x position of the center of the loop
 const double y; // The the y position of the center of the loop
 const double z; // The the z position of the center of the loop
-const int NSegments;
-std::vector<double> xs;
-std::vector<double> ys;
 	
 public:
 // Class Constructor
