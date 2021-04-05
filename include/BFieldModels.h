@@ -65,7 +65,7 @@ class BiotSavart_Loop : public Loop, public BiotSavart{
 	std::vector<double> ys;
 	
 	public:
-	BiotSavart_Loop(const int N_BS, const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z,N_BS), N_BS(N_BS){
+	BiotSavart_Loop(const int N_BS, const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z), N_BS(N_BS){
 		// setting up the straght line segments used by the Biot-Savart method
 		const double dPhi = 2*PhysicsConstants::pi/(N_BS-1);
 		for(int i=0; i<N_BS; i++){

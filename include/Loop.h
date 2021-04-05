@@ -25,7 +25,7 @@ public:
 // Class Constructor
 
 Loop(const double R, const double I, const double x, const double y, const double z);
-Loop(const double R, const double I, const double x, const double y, const double z, const int NSegments);
+//Loop(const double R, const double I, const double x, const double y, const double z, const int NSegments);
 Loop();
 
 
