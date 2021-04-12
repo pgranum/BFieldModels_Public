@@ -29,9 +29,9 @@ void vecMultScalOvrwrt(double a[3], const double k);
 // Coordinate Conversion
 
 void carPToCylP(const double carP[3], double cylP[3]);
-//~ void carPToSphP(double carP[3], double sphP[3]);
+void carPToSphP(double carP[3], double sphP[3]);
 void cylPToCarP(const double cylP[3], double carP[3]);
-//~ void sphPToCarP(double sphP[3], double carP[3]);
+void sphPToCarP(double sphP[3], double carP[3]);
 
 //~ // interpolation
 

@@ -148,6 +148,42 @@ void carPToCylP(const double carP[3], double cylP[3]){
 	
 }
 
+void sphPToCarP(double sphP[3], double carP[3]){
+	// converts a point in spherical coordinates to cartesian coordinates
+	
+	double rsintheta = sphP[0]*sin(sphP[1]);
+	carP[0]=rsintheta*cos(sphP[2]);
+	carP[1]=rsintheta*sin(sphP[2]);
+	carP[2]=sphP[0]*cos(sphP[1]);	
+}
+
+void carPToSphP(double carP[3], double sphP[3]){
+	// converts a POINT in cartesian coordinates to cylindrical coordinates
+	
+	double s2 = carP[0]*carP[0] + carP[1]*carP[1]; 
+	
+	sphP[0] = std::sqrt(s2 + carP[2]*carP[2]);
+	
+	if (s2 == 0 && carP[2] == 0){
+		sphP[1] = 0;
+	}else if (s2 == 0 && carP[2] > 0){
+		sphP[1] = 0;
+	}else if (s2 == 0 && carP[2] < 0){
+		sphP[1] = PhysicsConstants::pi;
+	}else if (carP[2] == 0){
+		sphP[1] = PhysicsConstants::pi/2.0;
+	}else{
+		sphP[1] = atan2(sqrt(s2),carP[2]); // arctan(y/x)
+	};
+	
+	if (carP[0] == 0 && carP[1] == 0){
+		sphP[2] = 0;
+	}else {
+		sphP[2] = atan2(carP[1],carP[0]); // arctan(y/x)
+	};
+	
+}
+
 // integral function
 
 double I_010(const double R, const double zDiff, const double cylP[3]){

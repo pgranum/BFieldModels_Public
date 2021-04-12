@@ -11,9 +11,12 @@ int main(){
 	
 	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
-	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coor
+	double sphP[3];						// point to calculate field at in spherical coordinates
+	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coordinates
+	carPToSphP(carP,cylP);				// converting the point in cartesian coor to spherical coordiantes
 	double BCarVec[3] = {0.,0.,0.}; 	// placeholder for the field in cartesian coordinates
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
+	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
 	
 	const int N_t = 1000;
 	double time;
@@ -211,6 +214,7 @@ int main(){
 	//~ const int N_BS = 10000; // I would like the option to change here
 	const int NG_rho = 1;
 	//~ const int NG_z = 3;	
+	const double lambda = 0.866;
 	
 	
 	std::cout << "Using the detailed Biot-Savart model:\n";
@@ -232,6 +236,22 @@ int main(){
 	std::cout << "\n";
 	
 	std::cout << "Using the TAVP model:\n";
+	time = 0;
+	time_squared = 0;
+	TAVP tavp = TAVP(lambda,R,I,x,y,z);
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		tavp.getB(sphP,BSphVec);
+		auto end = std::chrono::steady_clock::now();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
+	}	
+	printVec(BSphVec,"B");
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
