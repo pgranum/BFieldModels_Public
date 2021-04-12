@@ -198,6 +198,7 @@ int main(){
 	
 	const double R1 = 0.04125;
 	const double R2 = 0.04637;
+	const double L2 = 0.03468;
 	//~ const int N = 4*30;
 	//~ const double L = 0.03468;
 	//~ const double x = 0;
@@ -215,7 +216,7 @@ int main(){
 	std::cout << "Using the detailed Biot-Savart model:\n";
 	time = 0;
 	time_squared = 0;
-	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L,x,y,z);
+	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L2,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		helix.getB(carP,BCarVec);
@@ -235,7 +236,7 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
-	McD_Tube mcD_Tube = McD_Tube(McDOrder2,R1,R2,N,i,L,x,y,z);
+	McD_Tube mcD_Tube = McD_Tube(McDOrder2,R1,R2,N,i,L2,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcD_Tube.getB(cylP,BCylVec);
@@ -255,7 +256,7 @@ int main(){
 	std::cout << "Using the N-Wire model:\n";
 	time = 0;
     time_squared = 0;
-    NWire_Tube nWire_Tube = NWire_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L,x,y,z);
+    NWire_Tube nWire_Tube = NWire_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L2,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		nWire_Tube.getB(cylP,BCylVec);
@@ -275,7 +276,7 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Loops:\n";
 	time = 0;
 	time_squared = 0;
-	GaussianQuadratureLoops_Tube GQL_T = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L,x,y,z);
+	GaussianQuadratureLoops_Tube GQL_T = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L2,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		GQL_T.getB(cylP,BCylVec);
@@ -295,7 +296,7 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Shells:\n";
 	time = 0;
 	time_squared = 0;
-	GaussianQuadratureShells_Tube GQS_T = GaussianQuadratureShells_Tube(N_rho,NG_rho,R1,R2,N,i,L,x,y,z);
+	GaussianQuadratureShells_Tube GQS_T = GaussianQuadratureShells_Tube(N_rho,NG_rho,R1,R2,N,i,L2,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		GQS_T.getB(cylP,BCylVec);
