@@ -7,7 +7,7 @@
 #include "utils.h"
 
 int main(){
-	std::cout.precision(9);	// sets the number of significant digits of cout
+	std::cout.precision(15);	// sets the number of significant digits of cout
 	
 	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
@@ -63,7 +63,7 @@ int main(){
 	McD_Loop mcD_Loop = McD_Loop(McDOrder,R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		mcD_Loop.getB(carP,BCarVec);
+		mcD_Loop.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
@@ -88,7 +88,8 @@ int main(){
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
 		time_squared += t*t;
-	}	
+	}
+	carVecToCylVec(BCarVec,carP,BCylVec);	
 	printVec(BCylVec,"B");
 	mean = time/(double)N_t;
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -139,7 +140,6 @@ int main(){
 	McD_Shell mcDShell = McD_Shell(McDOrder,R,N,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		//~ mcDonald(shell,McDOrder,cylP,BCylVec);
 		mcDShell.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
@@ -228,7 +228,8 @@ int main(){
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
 		time_squared += t*t;
-	}	
+	}
+	carVecToCylVec(BCarVec,carP,BCylVec);		
 	printVec(BCylVec,"B");
 	mean = time/(double)N_t;
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -247,7 +248,9 @@ int main(){
 		time += t;
 		time_squared += t*t;
 	}	
-	printVec(BSphVec,"B");
+	sphVecToCarVec(BSphVec,sphP,BCarVec);
+	carVecToCylVec(BCarVec,carP,BCylVec);	
+	printVec(BCylVec,"B");
 	mean = time/(double)N_t;
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";

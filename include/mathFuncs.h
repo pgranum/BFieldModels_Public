@@ -26,12 +26,19 @@ double vecNorm(const double a[3]);
 void vecMultScal(const double a[3], const double k, double c[3]);
 void vecMultScalOvrwrt(double a[3], const double k);
 
-// Coordinate Conversion
+// Conversion of points
 
 void carPToCylP(const double carP[3], double cylP[3]);
 void carPToSphP(double carP[3], double sphP[3]);
 void cylPToCarP(const double cylP[3], double carP[3]);
 void sphPToCarP(double sphP[3], double carP[3]);
+
+// Conversion of vectors
+
+void carVecToCylVec(double carVec[3], double carP[3], double cylVec[3]);
+void carVecToSphVec(double carVec[3], double carP[3], double sphVec[3]);
+void cylVecToCarVec(double cylVec[3], double cylP[3], double carVec[3]);
+void sphVecToCarVec(double sphVec[3], double sphP[3], double carVec[3]);
 
 //~ // interpolation
 

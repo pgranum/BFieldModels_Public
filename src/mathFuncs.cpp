@@ -114,7 +114,7 @@ void vecMultScalOvrwrt(double a[3], const double k){
 	a[2] *= k;
 }
 
-// conversion functions
+// Conversion of points
 
 void cylPToCarP(const double cylP[3], double carP[3]){
 	// converts a POINT in cylindrical coordinates to cartesian coordinates
@@ -182,6 +182,61 @@ void carPToSphP(double carP[3], double sphP[3]){
 		sphP[2] = atan2(carP[1],carP[0]); // arctan(y/x)
 	};
 	
+}
+
+// Conversion of vectors
+
+void carVecToCylVec(double carVec[3], double carP[3], double cylVec[3]){
+	// converts a cartesian vector to a cylindrical vector
+	
+	double cylP[3];
+	carPToCylP(carP,cylP);
+	
+	double cosPhi = cos(cylP[1]);
+	double sinPhi = sin(cylP[1]);
+	
+	cylVec[0]= cosPhi*carVec[0]+sinPhi*carVec[1];
+	cylVec[1]=-sinPhi*carVec[0]+cosPhi*carVec[1];
+	cylVec[2]= carVec[2];
+}
+
+void carVecToSphVec(double carVec[3], double carP[3], double sphVec[3]){
+	// converst a cartesian vector at the azimuthal angle phi and polar angle theta 
+	// to a spherical vector
+	double sphP[3];
+	carPToSphP(carP,sphP);
+	
+	double sinTheta=sin(sphP[1]);
+	double sinPhi  =sin(sphP[2]);
+	double cosTheta=cos(sphP[1]);
+	double cosPhi  =cos(sphP[2]);
+	sphVec[0]=sinTheta*cosPhi*carVec[0]+sinTheta*sinPhi*carVec[1]+cosTheta*carVec[2];
+	sphVec[1]=cosTheta*cosPhi*carVec[0]+cosTheta*sinPhi*carVec[1]-sinTheta*carVec[2];
+	sphVec[2]=-sinPhi*carVec[0]+cosPhi*carVec[1];	
+}
+
+void cylVecToCarVec(double cylVec[3], double cylP[3], double carVec[3]){
+	// converts a cylindrical VECTOR at point P to a cartesian vector
+	// P should be in cylindrical coordinates
+	double cphi = cos(cylP[1]);
+	double sphi = sin(cylP[1]);
+	
+	carVec[0] = cphi*cylVec[0] - sphi*cylVec[1];
+	carVec[1] = sphi*cylVec[0] + cphi*cylVec[1];
+	carVec[2] = cylVec[2];
+}
+
+void sphVecToCarVec(double sphVec[3], double sphP[3], double carVec[3]){
+	// converts a spherical VECTOR at point P to a cartesian vector
+	// P should be in spherical coordinates
+	double ctheta = cos(sphP[1]);
+	double stheta = sin(sphP[1]);
+	double cphi = cos(sphP[2]);
+	double sphi = sin(sphP[2]);	
+	
+	carVec[0] = sphVec[0]*stheta*cphi + sphVec[1]*ctheta*cphi - sphVec[2]*sphi;
+	carVec[1] = sphVec[0]*stheta*sphi + sphVec[1]*ctheta*sphi + sphVec[2]*cphi;
+	carVec[2] = sphVec[0]*ctheta - sphVec[1]*stheta;
 }
 
 // integral function
