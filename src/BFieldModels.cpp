@@ -54,47 +54,96 @@ void BiotSavart::BSSegment(const double s0[3], const double s1[3], const double 
 	//~ printVec(B_vec,"B out");
 }
 
-void GQ_Support::getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires) const {
+//~ void GQ_Support::getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires) const {
+	//~ std::cout << "old GQ support\n";
+	//~ if(N == 1){
+		//~ points[0] = 0.0;
+		
+		//~ weights[0] = 2.0*NWires;
+	//~ }else if(N == 2){
+		//~ points[0] = -1.0/sqrt(3.0)*dimLength;
+		//~ points[1] = 1.0/sqrt(3.0)*dimLength;
+		
+		//~ weights[0] = 1.0*NWires;
+		//~ weights[1] = 1.0*NWires;
+	//~ }else if(N == 3){
+		//~ points[0] = -sqrt(0.6)*dimLength; //sqrt(3/5)
+		//~ points[1] = 0;
+		//~ points[2] = sqrt(0.6)*dimLength;
+		
+		//~ weights[0] = 5.0/9.0*NWires;
+		//~ weights[1] = 8.0/9.0*NWires;
+		//~ weights[2] = 5.0/9.0*NWires;
+	//~ }else if(N == 4){
+		//~ points[0] = -sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
+		//~ points[1] = -sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
+		//~ points[2] = sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
+		//~ points[3] = sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
+		
+		//~ weights[0] = (18.-sqrt(30.))/36.*NWires;
+		//~ weights[1] = (18.+sqrt(30.))/36.*NWires;
+		//~ weights[2] = (18.+sqrt(30.))/36.*NWires;
+		//~ weights[3] = (18.-sqrt(30.))/36.*NWires;
+	//~ }else if(N == 5){
+		//~ points[0] = -1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
+		//~ points[1] = -1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
+		//~ points[2] = 0.0; 
+		//~ points[3] = 1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
+		//~ points[4] = 1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
+		
+		//~ weights[0] = (322.-13.*sqrt(70))/900.*NWires;
+		//~ weights[1] = (322.+13.*sqrt(70))/900.*NWires;
+		//~ weights[2] = 128./225.*NWires;
+		//~ weights[3] = (322.+13.*sqrt(70))/900.*NWires;
+		//~ weights[4] = (322.-13.*sqrt(70))/900.*NWires;
+	//~ }else{
+		//~ printf("N is not a valid value (In function getGussianQuadratureParams)");
+	//~ }
+//~ }
+
+void GQ_Support::getGaussianQuadratureParams(const int N, std::vector<double> &points, std::vector<double> &weights, const double dimLength, const double NWires) const {
+	std::cout << "new GQ support\n";
 	if(N == 1){
-		points[0] = 0.0;
+		points.push_back(0.0);
 		
-		weights[0] = 2.0*NWires;
+		weights.push_back(2.0*NWires);
 	}else if(N == 2){
-		points[0] = -1.0/sqrt(3.0)*dimLength;
-		points[1] = 1.0/sqrt(3.0)*dimLength;
+		points.push_back(-1.0/sqrt(3.0)*dimLength);
+		points.push_back(1.0/sqrt(3.0)*dimLength);
 		
-		weights[0] = 1.0*NWires;
-		weights[1] = 1.0*NWires;
+		weights.push_back(1.0*NWires);
+		weights.push_back(1.0*NWires);
 	}else if(N == 3){
-		points[0] = -sqrt(0.6)*dimLength; //sqrt(3/5)
-		points[1] = 0;
-		points[2] = sqrt(0.6)*dimLength;
+		std::cout << "N=3\n";
+		points.push_back(-sqrt(0.6)*dimLength); //sqrt(3/5)
+		points.push_back(0);
+		points.push_back(sqrt(0.6)*dimLength);
 		
-		weights[0] = 5.0/9.0*NWires;
-		weights[1] = 8.0/9.0*NWires;
-		weights[2] = 5.0/9.0*NWires;
+		weights.push_back(5.0/9.0*NWires);
+		weights.push_back(8.0/9.0*NWires);
+		weights.push_back(5.0/9.0*NWires);
 	}else if(N == 4){
-		points[0] = -sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
-		points[1] = -sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
-		points[2] = sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength;
-		points[3] = sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength;
+		points.push_back(-sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength);
+		points.push_back(-sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength);
+		points.push_back(sqrt(3./7.-2./7.*sqrt(6./5.))*dimLength);
+		points.push_back(sqrt(3./7.+2./7.*sqrt(6./5.))*dimLength);
 		
-		weights[0] = (18.-sqrt(30.))/36.*NWires;
-		weights[1] = (18.+sqrt(30.))/36.*NWires;
-		weights[2] = (18.+sqrt(30.))/36.*NWires;
-		weights[3] = (18.-sqrt(30.))/36.*NWires;
+		weights.push_back((18.-sqrt(30.))/36.*NWires);
+		weights.push_back((18.+sqrt(30.))/36.*NWires);
+		weights.push_back((18.+sqrt(30.))/36.*NWires);
+		weights.push_back((18.-sqrt(30.))/36.*NWires);
 	}else if(N == 5){
-		points[0] = -1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
-		points[1] = -1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
-		points[2] = 0.0; 
-		points[3] = 1./3.*sqrt(5-2*sqrt(10./7.))*dimLength; 
-		points[4] = 1./3.*sqrt(5+2*sqrt(10./7.))*dimLength; 
+		points.push_back(-1./3.*sqrt(5+2*sqrt(10./7.))*dimLength); 
+		points.push_back(-1./3.*sqrt(5-2*sqrt(10./7.))*dimLength); 
+		points.push_back(0.0); 
+		points.push_back(1./3.*sqrt(5-2*sqrt(10./7.))*dimLength); 
+		points.push_back(1./3.*sqrt(5+2*sqrt(10./7.))*dimLength); 
 		
-		weights[0] = (322.-13.*sqrt(70))/900.*NWires;
-		weights[1] = (322.+13.*sqrt(70))/900.*NWires;
-		weights[2] = 128./225.*NWires;
-		weights[3] = (322.+13.*sqrt(70))/900.*NWires;
-		weights[4] = (322.-13.*sqrt(70))/900.*NWires;
+		weights.push_back((322.-13.*sqrt(70))/900.*NWires);
+		weights.push_back((322.+13.*sqrt(70))/900.*NWires);
+		weights.push_back(128./225.*NWires);
+		weights.push_back((322.+13.*sqrt(70))/900.*NWires);
+		weights.push_back((322.-13.*sqrt(70))/900.*NWires);
 	}else{
 		printf("N is not a valid value (In function getGussianQuadratureParams)");
 	}
@@ -202,6 +251,13 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	const double R  = this->getR();
 	const double I  = this->getI();
 	
+	//~ std::cout << "rho = " << rho << std::endl;
+	//~ std::cout << "z = " << z << std::endl;
+	//~ std::cout << "R = " << R << std::endl;
+	//~ std::cout << "I = " << I << std::endl;
+	
+	//~ std::cout << "McDOrder = " << McDOrder << std::endl;
+	
 	double an[2*McDOrder+2];
 	mcDonaldLoopSupFunc(McDOrder,z,R,an);
 	
@@ -213,6 +269,9 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	double B_rho = -rho_2*an[1];
 	double constRTerm = -rho_2;
 	
+	//~ std::cout << "B_z_i_Acc = " << B_z << std::endl;
+	//~ std::cout << "B_rho_i_Acc = " << B_rho << std::endl;
+	
 	double rho2_4 = rho_2*rho_2; //(rho/2)²
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
@@ -220,10 +279,16 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 			B_z+= constZTerm*an[2*n];	
 			constRTerm *= -rho2_4/((n+1)*n); //-(rho/2)²n/((n+1)n²)
 			B_rho += constRTerm*an[2*n+1];
+			
+			//~ std::cout << "B_z_i = " << constZTerm*an[2*n] << std::endl;
+			//~ std::cout << "B_rho_i = " << constRTerm*an[2*n+1] << std::endl;
+			//~ std::cout << "B_z_i_Acc = " << B_z << std::endl;
+			//~ std::cout << "B_rho_i_Acc = " << B_rho << std::endl;
 	}
 	
 	// Preparing result
 	const double C = PhysicsConstants::mu0*I*R*R/2;
+	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
 	B_z *= C;
 	
@@ -607,25 +672,24 @@ void GaussianQuadratureLoops_Shell::getB(const double cylP[3], double BCylVec[3]
 	const double radius = this->getR();					
 	
     // Dimension of Tube
-	const double width_z = this->getL();
+	//~ const double width_z = this->getL();
 
     // Current			
 	const double I = this->getI()/(N_z);	// divide the current of the shell on N_z loops
 
-	double GPZValues[NG_z];
+	//~ double GPZValues[NG_z];
 
-	double GPZWeights[NG_z];
+	//~ double GPZWeights[NG_z];
 
-	const int NWiresZ = N_z/2;
+	//~ const int NWiresZ = N_z/2;
 	
-	getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
 	
     double BCylVec_i[3];
 	for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
-		
 		//~ const Loop loop(radius,I,x,y,z+GPZValues[nGP_z]);	
 		SimpleAnalyticModel SAM = SimpleAnalyticModel(radius,I,x,y,z+GPZValues[nGP_z]);
-			
+		
 		//~ loopExactSAM(loop, cylP, BCylVec_i);
 		SAM.getB(cylP,BCylVec_i);		
 		
@@ -1034,24 +1098,24 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 
     // Dimension of Tube
     const double innerRadius = this->getR1();
-	const double width_z = this->getL(); 	
+	//~ const double width_z = this->getL(); 	
     const double width_rho = this->getThickness();
 
     // Current			
-	const double I = this->getI()/(N_rho*N_z);	// divide the current of the tube on N_rho*N_z loops
+	const double I = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
 
 	
-	double GPRhoValues[NG_rho];
-	double GPZValues[NG_z];
+	//~ double GPRhoValues[NG_rho];
+	//~ double GPZValues[NG_z];
 	
-	double GPRhoWeights[NG_rho];
-	double GPZWeights[NG_z];
+	//~ double GPRhoWeights[NG_rho];
+	//~ double GPZWeights[NG_z];
 	
-	const int NWiresRho = N_rho/2; // half the number of wires in each dimension
-	const int NWiresZ = N_z/2;
+	//~ const int NWiresRho = N_rho/2; // half the number of wires in each dimension
+	//~ const int NWiresZ = N_z/2;
 	
-	getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
-	getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
+	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
 	
 	const double centre_rho = innerRadius + width_rho/2.0;
 	
@@ -1097,11 +1161,11 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
     // Current			
 	const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
 
-	double GPRhoValues[NG_rho];
-	double GPRhoWeights[NG_rho];
+	//~ double GPRhoValues[NG_rho];
+	//~ double GPRhoWeights[NG_rho];
 
-	const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
-	getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NElementsRho);
+	//~ const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
+	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NElementsRho);
 	
 	const double centre_rho = innerRadius + width_rho/2.0;
 

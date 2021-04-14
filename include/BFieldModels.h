@@ -39,7 +39,8 @@ class GQ_Support {
 	~GQ_Support(){
 	} // end of destructor
 	
-	void getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires) const ;
+	//~ void getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires) const ;
+	void getGaussianQuadratureParams(const int N, std::vector<double> &points, std::vector<double> &weights, const double dimLength, const double NWires) const ;
 };
 
 // LOOP
@@ -150,11 +151,17 @@ class GaussianQuadratureLoops_Shell : public Shell, public GQ_Support{
 	private:
 	const int N_z; // the number of wires making up the Shell
 	const int NG_z; // the number of wires used to represent the shell in the Gaussian Quadrature
+	std::vector<double> GPZValues;
+	std::vector<double> GPZWeights;
 	
 	public:
 	GaussianQuadratureLoops_Shell(const int N_z, const int NG_z, const double R, const int N, const double i, const double L,
 								  const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z), NG_z(NG_z){
-	
+		assert(N_z % 2 == 0); // N_z has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
+		
+		const double width_z = this->getL(); 
+		
+		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,N_z/2);
 	} // end of constructor
 	
 	~GaussianQuadratureLoops_Shell(){
@@ -348,12 +355,26 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	const int N_rho; // the number of layers making up the Tube
 	const int NG_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
 	const int NG_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
+	std::vector<double> GPZValues;
+	std::vector<double> GPZWeights;
+	std::vector<double> GPRhoValues;
+	std::vector<double> GPRhoWeights;
 	
 	public:
 	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NG_z, const int NG_rho, const double R1, const double R2, 
 								 const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
 								 N_z(N_z), N_rho(N_rho), NG_z(NG_z), NG_rho(NG_rho){
-	
+		assert(N_z % 2 == 0); // N_z has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
+		assert(N_rho % 2 == 0); // N_rho has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
+		
+		const double width_z = this->getL(); 	
+		const double width_rho = this->getThickness();
+		
+		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
+		const int NWiresZ = N_z/2;		
+		
+		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
+		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
 	} // end of constructor
 	
 	~GaussianQuadratureLoops_Tube(){
@@ -366,10 +387,16 @@ class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 	private:
 	const int N_rho; // the number of layers making up the Tube
 	const int NG_rho; // the number of shells used to represent the Tube in the Gaussian Quadrature
+	std::vector<double> GPRhoValues;
+	std::vector<double> GPRhoWeights;
 	
 	public:
 	GaussianQuadratureShells_Tube(const int N_rho, const int NG_rho, const double R1, const double R2, const int N, const double i, const double L,
 								  const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z), N_rho(N_rho), NG_rho(NG_rho){
+		
+		const double width_rho = this->getThickness();
+		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
+		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
 	
 	} // end of constructor
 	

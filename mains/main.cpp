@@ -9,11 +9,11 @@
 int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	
-	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
+	double carP[3] = {0.,-0.01,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
 	double sphP[3];						// point to calculate field at in spherical coordinates
 	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coordinates
-	carPToSphP(carP,cylP);				// converting the point in cartesian coor to spherical coordiantes
+	carPToSphP(carP,sphP);				// converting the point in cartesian coor to spherical coordiantes
 	double BCarVec[3] = {0.,0.,0.}; 	// placeholder for the field in cartesian coordinates
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
@@ -27,6 +27,8 @@ int main(){
 	std::cout << "\n";
 	std::cout << "Calculating field at point:\n";
 	printVec(carP,"P");
+	//~ printVec(cylP,"P");
+	//~ printVec(sphP,"P");
 	std::cout << "\n";
 	
 	//////////////////// LOOP ////////////////////
