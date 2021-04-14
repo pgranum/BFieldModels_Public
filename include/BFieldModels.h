@@ -105,6 +105,13 @@ class Conway1D : public Shell{
 	
 	public:
 	Conway1D(const double R, const int N, const double i, const double L, const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z){
+		// R	shell radius
+		// N 	number of wire turns in the shell/number of loops representing the shell
+		// i 	current in wire/current per loop
+		// L	length of the shell
+		// x	x position of shell centre
+		// y	y position of shell centre
+		// z	z position of shell centre
 	
 	} // end of constructor
 	
@@ -390,13 +397,24 @@ class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 	std::vector<double> GPRhoValues;
 	std::vector<double> GPRhoWeights;
 	
+	std::vector<Conway1D> shells;
+	
 	public:
 	GaussianQuadratureShells_Tube(const int N_rho, const int NG_rho, const double R1, const double R2, const int N, const double i, const double L,
-								  const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z), N_rho(N_rho), NG_rho(NG_rho){
+								  const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z), N_rho(N_rho), NG_rho(NG_rho) {
 		
 		const double width_rho = this->getThickness();
 		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
 		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
+		
+		const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
+		const double innerRadius = this->getR1();
+		const double width_z = this->getL(); 	
+		const double centre_rho = innerRadius + width_rho/2.0;
+		
+		for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
+			shells.push_back(Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,width_z,x,y,z));
+		}
 	
 	} // end of constructor
 	

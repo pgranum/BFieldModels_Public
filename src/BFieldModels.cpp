@@ -1167,17 +1167,18 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
 	//~ const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
 	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NElementsRho);
 	
-	const double centre_rho = innerRadius + width_rho/2.0;
+	//~ const double centre_rho = innerRadius + width_rho/2.0;
 
     double BCylVec_i[3];
 	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
 		//~ std::cout << "nG_Rho = " << nG_rho << std::endl;
 		
 		//~ const Shell shell = Shell(centre_rho + GPRhoValues[nG_rho],I,width_z,x,y,z);
-		Conway1D conway1D = Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,width_z,x,y,z); // INSERTING THE 1 HERE IS A HACK	
+		//~ Conway1D conway1D = Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,width_z,x,y,z); // INSERTING THE 1 HERE IS A HACK	
 		
 		//~ Conway1D(shell, cylP, BCylVec_i);
-		conway1D.getB(cylP, BCylVec_i);
+		//~ conway1D.getB(cylP, BCylVec_i);
+		shells[nG_rho].getB(cylP, BCylVec_i);
 		
 		const double GFac = GPRhoWeights[nG_rho];
 			
