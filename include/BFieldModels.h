@@ -168,7 +168,7 @@ class GaussianQuadratureLoops_Shell : public Shell, public GQ_Support{
 		
 		const double width_z = this->getL(); 
 		
-		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,N_z/2);
+		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,N_z/2);
 	} // end of constructor
 	
 	~GaussianQuadratureLoops_Shell(){
@@ -342,12 +342,35 @@ class NWire_Tube : public Tube{
 	const int N_rho; // the number of layers making up the Tube
 	const int NG_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
 	const int NG_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
+	std::vector<std::vector<SimpleAnalyticModel>> loops;
+	
 	
 	public:
 	NWire_Tube(const int N_z, const int N_rho, const int NG_z, const int NG_rho, const double R1, const double R2, 
 			   const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
 			   N_z(N_z), N_rho(N_rho), NG_z(NG_z), NG_rho(NG_rho){
+		
+		// Dimension of Tube			
+		const double width_rho = this->getThickness();
+		
+	    // Number of wires
+		const int N_wires = N_rho*N_z;
+		
+		const double I = i*N/N_wires; // total current in tube distributed across the N wires
+		
+	    // Length
+		const double width_z = this->getL(); 	
 	
+	    // Spacing			
+		const double delta_rho = width_rho/N_rho; 	
+		const double delta_z = width_z/N_z; 
+				
+		for(int n_rho = 0; n_rho < N_rho; n_rho++){
+			loops.push_back(std::vector<SimpleAnalyticModel>());
+			for(int n_z = 0; n_z < N_z; n_z++){
+				loops[n_rho].push_back(SimpleAnalyticModel(R1 + delta_rho*0.5 + n_rho*delta_rho, I, x, y, z - 0.5*width_z + delta_z*0.5 + n_z*delta_z));
+			}
+		}
 	} // end of constructor
 	
 	~NWire_Tube(){
@@ -366,6 +389,7 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	std::vector<double> GPZWeights;
 	std::vector<double> GPRhoValues;
 	std::vector<double> GPRhoWeights;
+	std::vector<std::vector<SimpleAnalyticModel>> loops;
 	
 	public:
 	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NG_z, const int NG_rho, const double R1, const double R2, 
@@ -380,8 +404,19 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
 		const int NWiresZ = N_z/2;		
 		
-		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
-		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
+		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
+		
+		const double I_temp = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
+		const double centre_rho = R1 + width_rho*0.5;
+		
+		for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
+			loops.push_back(std::vector<SimpleAnalyticModel>());
+			for(int nG_z = 0; nG_z < NG_z; nG_z++){
+				loops[nG_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nG_rho],I_temp,x,y,z+GPZValues[nG_z]));
+			}
+		}
+		
 	} // end of constructor
 	
 	~GaussianQuadratureLoops_Tube(){
@@ -405,15 +440,15 @@ class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 		
 		const double width_rho = this->getThickness();
 		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
-		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
+		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
 		
 		const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
-		const double innerRadius = this->getR1();
-		const double width_z = this->getL(); 	
-		const double centre_rho = innerRadius + width_rho/2.0;
+		//~ const double innerRadius = this->getR1();
+		//~ const double width_z = this->getL(); 	
+		const double centre_rho = R1 + width_rho*0.5;
 		
 		for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
-			shells.push_back(Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,width_z,x,y,z));
+			shells.push_back(Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,L,x,y,z));
 		}
 	
 	} // end of constructor

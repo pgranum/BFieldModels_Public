@@ -10,7 +10,7 @@
  */
 class Shell {
 	
-private: 
+protected: 
 // Class Variables
 const double R; // The radius of the inside of the shell
 const int	 N; // The number of wires in the shell

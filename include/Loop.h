@@ -13,7 +13,7 @@
  */
 class Loop{
 	
-private: 
+protected: 
 // Class Variables
 const double R; // The radius of the loop
 const double I; // The current in the loop

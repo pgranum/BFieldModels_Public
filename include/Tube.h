@@ -11,7 +11,7 @@
  */
 class Tube {
 	
-private: 
+protected: 
 // Class Variables
 const double R1; // The radius of the inside of the tube
 const double R2; // The radius of the outside of the tube

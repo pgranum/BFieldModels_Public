@@ -102,7 +102,6 @@ void BiotSavart::BSSegment(const double s0[3], const double s1[3], const double 
 //~ }
 
 void GQ_Support::getGaussianQuadratureParams(const int N, std::vector<double> &points, std::vector<double> &weights, const double dimLength, const double NWires) const {
-	std::cout << "new GQ support\n";
 	if(N == 1){
 		points.push_back(0.0);
 		
@@ -414,8 +413,8 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	// From the "Exact Solution..." paper by J. T. Conway
 	
 
-	const double Z1 = this->getz() - this->getL()/2.0;
-	const double Z2 = this->getz() + this->getL()/2.0;
+	const double Z1 = this->getz() - this->getL()*0.5;
+	const double Z2 = this->getz() + this->getL()*0.5;
 	const double z = cylP[2];
 	const double R = this->getR();
 	
@@ -424,7 +423,7 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	//~ std::cout << "z = " << z << std::endl;
 	
 	const double IDens = this->getI()/this->getL(); // the current density [A/m]
-	const double C = PhysicsConstants::mu0*IDens*R/2.0;	
+	const double C = PhysicsConstants::mu0*IDens*R*0.5;	
 	
 	if(z < Z1){
 		BCylVec[2] = C * ( I_010(R, Z1-z, cylP)
@@ -645,8 +644,8 @@ void NWire_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	
     double BCylVec_i[3];
 	for(int j = 0; j < N_z; j++){
-		//~ const Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
-		SimpleAnalyticModel SAM = SimpleAnalyticModel(radius,I/N_z,x,y,z - 0.5*width_z + delta_z/2.0 + j*delta_z);
+		//~ const Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z*0.5 + j*delta_z);
+		SimpleAnalyticModel SAM = SimpleAnalyticModel(radius,I/N_z,x,y,z - 0.5*width_z + delta_z*0.5 + j*delta_z);
 				
 		//~ loopExactSAM(loop, cylP, BCylVec_i);
 		SAM.getB(cylP,BCylVec_i);
@@ -683,7 +682,7 @@ void GaussianQuadratureLoops_Shell::getB(const double cylP[3], double BCylVec[3]
 
 	//~ const int NWiresZ = N_z/2;
 	
-	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
 	
     double BCylVec_i[3];
 	for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
@@ -999,7 +998,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	
 	for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
 		double cylS0[3];
-		double cylS1[3]{innerRadius + delta_rho/2.0 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-width_z/2.0) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
+		double cylS1[3]{innerRadius + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-width_z*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
 		cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
 	
 		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
@@ -1009,7 +1008,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 				cylS0[1] = cylS1[1]; 
 				cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
 				cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
-				cylS1[2] = z + pow(-1,n_rho)*(-width_z/2.0 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+				cylS1[2] = z + pow(-1,n_rho)*(-width_z*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
 				
 				double carS0[3], carS1[3];
 				cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
@@ -1046,37 +1045,38 @@ void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[2] = 0;
 		
     // Tube Center
-    const double x = this->getx();
-    const double y = this->gety();
-    const double z = this->getz();
+    //~ const double x = this->getx();
+    //~ const double y = this->gety();
+    //~ const double z = this->getz();
 
-	// Dimension of Tube
-	const double innerRadius = this->getR1();			
-	const double width_rho = this->getThickness();
+	//~ // Dimension of Tube
+	//~ const double innerRadius = this->getR1();			
+	//~ const double width_rho = this->getThickness();
 	
-    // Number of wires
-	const int N_wires = N_rho*N_z;
+    //~ // Number of wires
+	//~ const int N_wires = N_rho*N_z;
 
-    // Length
-	const double width_z = this->getL(); 	
+    //~ // Length
+	//~ const double width_z = this->getL(); 	
 
-    // Spacing			
-	const double delta_rho = width_rho/N_rho; 	
-	const double delta_z = width_z/N_z; 
+    //~ // Spacing			
+	//~ const double delta_rho = width_rho/N_rho; 	
+	//~ const double delta_z = width_z/N_z; 
 
     // Current			
-	const double I = this->getI();					
+	//~ const double I = this->getI();					
 	
     double BCylVec_i[3];
-	for(int i = 0; i < N_rho; i++){
-		for(int j = 0; j < N_z; j++){
+	for(int n_rho = 0; n_rho < N_rho; n_rho++){
+		for(int n_z = 0; n_z < N_z; n_z++){	
 			//~ std::cout << " i, j = " << i << ", " << j << std::endl;
 			
-			//~ Loop loop = Loop(innerRadius + delta_rho/2.0 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
-			SimpleAnalyticModel SAM = SimpleAnalyticModel(innerRadius + delta_rho/2.0 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z/2.0 + j*delta_z);
+			//~ Loop loop = Loop(innerRadius + delta_rho*0.5 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z*0.5 + j*delta_z);
+			//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(innerRadius + delta_rho*0.5 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z*0.5 + j*delta_z);
+			
 					
 			//~ loopExactSAM(loop, cylP, BCylVec_i);
-			SAM.getB(cylP, BCylVec_i);
+			loops[n_rho][n_z].getB(cylP, BCylVec_i);
 
 			BCylVec[0] += BCylVec_i[0];
 			BCylVec[1] += BCylVec_i[1];
@@ -1092,17 +1092,17 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 	BCylVec[2] = 0;
     
     // Tube Center
-    const double x = this->getx();
-    const double y = this->gety();
-    const double z = this->getz();
+    //~ const double x = this->getx();
+    //~ const double y = this->gety();
+    //~ const double z = this->getz();
 
     // Dimension of Tube
-    const double innerRadius = this->getR1();
+    //~ const double innerRadius = this->getR1();
 	//~ const double width_z = this->getL(); 	
-    const double width_rho = this->getThickness();
+    //~ const double width_rho = this->getThickness();
 
     // Current			
-	const double I = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
+	//~ const double I = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
 
 	
 	//~ double GPRhoValues[NG_rho];
@@ -1114,24 +1114,23 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 	//~ const int NWiresRho = N_rho/2; // half the number of wires in each dimension
 	//~ const int NWiresZ = N_z/2;
 	
-	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NWiresRho);
-	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z/2.0,NWiresZ);
+	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
+	//~ getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
 	
-	const double centre_rho = innerRadius + width_rho/2.0;
+	//~ const double centre_rho = innerRadius + width_rho*0.5;
 	
     double BCylVec_i[3];
 	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
-		for(int nGP_z = 0; nGP_z < NG_z; nGP_z++){
-			
+		for(int nG_z = 0; nG_z < NG_z; nG_z++){			
 			//~ const Loop loop(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);
-			SimpleAnalyticModel SAM = SimpleAnalyticModel(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);					
+			//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(centre_rho + GPRhoValues[nG_rho],I,x,y,z+GPZValues[nGP_z]);					
 			
 			//~ loopExactSAM(loop, cylP, BCylVec_i);
-			SAM.getB(cylP, BCylVec_i);
+			loops[nG_rho][nG_z].getB(cylP, BCylVec_i);
 			
 			//~ printVec(BCylVec_i,"BCyl_i");
 			
-			const double GFac = GPZWeights[nGP_z]*GPRhoWeights[nG_rho];
+			const double GFac = GPZWeights[nG_z]*GPRhoWeights[nG_rho];
 			
             BCylVec[0] += BCylVec_i[0]*GFac;
 			BCylVec[1] += BCylVec_i[1]*GFac;
@@ -1149,25 +1148,25 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
 	BCylVec[2] = 0;
     
     // Tube Center
-    const double x = this->getx();
-    const double y = this->gety();
-    const double z = this->getz();
+    //~ const double x = this->getx();
+    //~ const double y = this->gety();
+    //~ const double z = this->getz();
 
     // Dimension of Tube
-    const double innerRadius = this->getR1();	
-	const double width_z = this->getL(); 	
-    const double width_rho = this->getThickness();
+    //~ const double innerRadius = this->getR1();	
+	//~ const double width_z = this->getL(); 	
+    //~ const double width_rho = this->getThickness();
 
     // Current			
-	const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
+	//~ const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
 
 	//~ double GPRhoValues[NG_rho];
 	//~ double GPRhoWeights[NG_rho];
 
 	//~ const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
-	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho/2.0,NElementsRho);
+	//~ getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NElementsRho);
 	
-	//~ const double centre_rho = innerRadius + width_rho/2.0;
+	//~ const double centre_rho = innerRadius + width_rho*0.5;
 
     double BCylVec_i[3];
 	for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
