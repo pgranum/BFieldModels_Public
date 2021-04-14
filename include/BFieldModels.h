@@ -141,11 +141,19 @@ class McD_Shell : public Shell {
 class NWire_Shell : public Shell{
 	private:
 	const int N_z; // the number of wires in the shell
+	std::vector<SimpleAnalyticModel> loops;
 	
 	public:
 	NWire_Shell(const int N_z, const double R, const int N, const double i, const double L, 
 				const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z){
-	
+		
+		// Spacing
+		const double delta_z = L/N_z; // the spcing between the individual loops
+		const double I = i*N/N_z;
+		
+		for(int n_z = 0; n_z < N_z; n_z++){
+			loops.push_back(SimpleAnalyticModel(R,I,x,y,z - 0.5*L + delta_z*0.5 + n_z*delta_z));
+		}
 	} // end of constructor
 	
 	~NWire_Shell(){
@@ -157,18 +165,25 @@ class NWire_Shell : public Shell{
 class GaussianQuadratureLoops_Shell : public Shell, public GQ_Support{
 	private:
 	const int N_z; // the number of wires making up the Shell
-	const int NG_z; // the number of wires used to represent the shell in the Gaussian Quadrature
+	const int NGP_z; // the number of wires used to represent the shell in the Gaussian Quadrature
 	std::vector<double> GPZValues;
 	std::vector<double> GPZWeights;
+	std::vector<SimpleAnalyticModel> loops;
 	
 	public:
-	GaussianQuadratureLoops_Shell(const int N_z, const int NG_z, const double R, const int N, const double i, const double L,
-								  const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z), NG_z(NG_z){
+	GaussianQuadratureLoops_Shell(const int N_z, const int NGP_z, const double R, const int N, const double i, const double L,
+								  const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z), NGP_z(NGP_z){
 		assert(N_z % 2 == 0); // N_z has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
 		
 		const double width_z = this->getL(); 
 		
-		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,N_z/2);
+		getGaussianQuadratureParams(NGP_z,GPZValues,GPZWeights,width_z*0.5,N_z/2);
+		
+		const double I = i*N/(N_z);	// divide the current of the shell on N_z loops
+		
+		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
+			loops.push_back(SimpleAnalyticModel(R,I,x,y,z+GPZValues[nGP_z]));
+		}
 	} // end of constructor
 	
 	~GaussianQuadratureLoops_Shell(){
@@ -340,15 +355,15 @@ class NWire_Tube : public Tube{
 	private:
 	const int N_z; // the number of wires making up the Tube
 	const int N_rho; // the number of layers making up the Tube
-	const int NG_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
-	const int NG_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
+	const int NGP_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
+	const int NGP_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
 	std::vector<std::vector<SimpleAnalyticModel>> loops;
 	
 	
 	public:
-	NWire_Tube(const int N_z, const int N_rho, const int NG_z, const int NG_rho, const double R1, const double R2, 
+	NWire_Tube(const int N_z, const int N_rho, const int NGP_z, const int NGP_rho, const double R1, const double R2, 
 			   const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
-			   N_z(N_z), N_rho(N_rho), NG_z(NG_z), NG_rho(NG_rho){
+			   N_z(N_z), N_rho(N_rho), NGP_z(NGP_z), NGP_rho(NGP_rho){
 		
 		// Dimension of Tube			
 		const double width_rho = this->getThickness();
@@ -383,8 +398,8 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	private:
 	const int N_z; // the number of wires making up the Tube
 	const int N_rho; // the number of layers making up the Tube
-	const int NG_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
-	const int NG_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
+	const int NGP_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
+	const int NGP_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
 	std::vector<double> GPZValues;
 	std::vector<double> GPZWeights;
 	std::vector<double> GPRhoValues;
@@ -392,9 +407,9 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	std::vector<std::vector<SimpleAnalyticModel>> loops;
 	
 	public:
-	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NG_z, const int NG_rho, const double R1, const double R2, 
+	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NGP_z, const int NGP_rho, const double R1, const double R2, 
 								 const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
-								 N_z(N_z), N_rho(N_rho), NG_z(NG_z), NG_rho(NG_rho){
+								 N_z(N_z), N_rho(N_rho), NGP_z(NGP_z), NGP_rho(NGP_rho){
 		assert(N_z % 2 == 0); // N_z has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
 		assert(N_rho % 2 == 0); // N_rho has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
 		
@@ -404,16 +419,16 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
 		const int NWiresZ = N_z/2;		
 		
-		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
-		getGaussianQuadratureParams(NG_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
+		getGaussianQuadratureParams(NGP_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
+		getGaussianQuadratureParams(NGP_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
 		
 		const double I_temp = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
 		const double centre_rho = R1 + width_rho*0.5;
 		
-		for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
+		for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 			loops.push_back(std::vector<SimpleAnalyticModel>());
-			for(int nG_z = 0; nG_z < NG_z; nG_z++){
-				loops[nG_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nG_rho],I_temp,x,y,z+GPZValues[nG_z]));
+			for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
+				loops[nGP_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I_temp,x,y,z+GPZValues[nGP_z]));
 			}
 		}
 		
@@ -428,27 +443,27 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 	private:
 	const int N_rho; // the number of layers making up the Tube
-	const int NG_rho; // the number of shells used to represent the Tube in the Gaussian Quadrature
+	const int NGP_rho; // the number of shells used to represent the Tube in the Gaussian Quadrature
 	std::vector<double> GPRhoValues;
 	std::vector<double> GPRhoWeights;
 	
 	std::vector<Conway1D> shells;
 	
 	public:
-	GaussianQuadratureShells_Tube(const int N_rho, const int NG_rho, const double R1, const double R2, const int N, const double i, const double L,
-								  const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z), N_rho(N_rho), NG_rho(NG_rho) {
+	GaussianQuadratureShells_Tube(const int N_rho, const int NGP_rho, const double R1, const double R2, const int N, const double i, const double L,
+								  const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z), N_rho(N_rho), NGP_rho(NGP_rho) {
 		
 		const double width_rho = this->getThickness();
 		const int NWiresRho = N_rho/2; // half the number of wires in each dimension
-		getGaussianQuadratureParams(NG_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
+		getGaussianQuadratureParams(NGP_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
 		
 		const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
 		//~ const double innerRadius = this->getR1();
 		//~ const double width_z = this->getL(); 	
 		const double centre_rho = R1 + width_rho*0.5;
 		
-		for(int nG_rho = 0; nG_rho < NG_rho; nG_rho++){
-			shells.push_back(Conway1D(centre_rho + GPRhoValues[nG_rho],1,I,L,x,y,z));
+		for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
+			shells.push_back(Conway1D(centre_rho + GPRhoValues[nGP_rho],1,I,L,x,y,z));
 		}
 	
 	} // end of constructor
