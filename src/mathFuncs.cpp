@@ -1,5 +1,3 @@
-//~ #define __STDCPP_MATH_SPEC_FUNCS__ 
-//~ #define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1 // needed for elliptic integral functions
 #include "mathFuncs.h"
 
 // vector functions

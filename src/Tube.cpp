@@ -39,5 +39,3 @@ double Tube::getThickness() const{
 void Tube::print() {
 	std::cout << "Tube: " << "R1 = " << R1 << "; R2 = " << R2 << "; N = " << N << "; i = " << i << "; x = " << x << "; y = " << y << "; z = " << z <<std:: endl;
 }
-
-

@@ -25,9 +25,7 @@ public:
 // Class Constructor
 
 Loop(const double R, const double I, const double x, const double y, const double z);
-//Loop(const double R, const double I, const double x, const double y, const double z, const int NSegments);
 Loop();
-
 
 void print();
 
@@ -74,4 +72,4 @@ double getyi(const int i) const;
 
 };
 
-#endif // LOOP_H
+#endif

@@ -361,11 +361,19 @@ class Helix : public Tube, public BiotSavart{
 	const int N_z; // the number of wires making up the Tube
 	const int N_rho; // the number of layers making up the Tube
 	const int N_BS; // the number of straigt line segments per turn
+	const double delta_rho; // the spacing between layers
+	const double delta_z; // the spapring between wires in a layer	
 	
 	public:
 	Helix(const int N_z, const int N_rho, const int N_BS, const double R1, const double R2, 
-			   const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
-			   N_z(N_z), N_rho(N_rho), N_BS(N_BS){
+			   const int N, const double i, const double L, const double x, const double y, const double z) : 
+	Tube(R1,R2,N,i,L,x,y,z),
+	N_z(N_z), 
+	N_rho(N_rho), 
+	N_BS(N_BS),
+	delta_rho(Tube::getThickness()/N_rho),
+	delta_z(L/N_z)
+	{
 	
 	} // end of constructor
 	
@@ -497,7 +505,6 @@ class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 	
 	void getB(const double cylP[3], double BCylVec[3]) const ;
 };
-
 
 
 #endif

@@ -1,4 +1,3 @@
-//~ #define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1 // needed for elliptic integral functions
 #include "BFieldModels.h"
 
 // Utility Functions
@@ -96,7 +95,7 @@ void GQ_Support::getGaussianQuadratureParams(const int N, std::vector<double> &p
 		weights.push_back((322.+13.*sqrt(70))/900.*NWires);
 		weights.push_back((322.-13.*sqrt(70))/900.*NWires);
 	}else{
-		printf("N is not a valid value (In function getGussianQuadratureParams)");
+		std::cout << "N is not a valid value (In function getGussianQuadratureParams)" << std::endl;
 	}
 }
 
@@ -109,11 +108,6 @@ void SimpleAnalyticModel::getB(const double cylP[3], double BCylVec[3]) const {
  * @param cylP the cylindrical coordinate of interest where the magnetfield is calculated
  * @param BCylVec the magnetfield in cylP being calulated in cylindrical coordinates
 */
-	
-	// Unpacking Loop 
-	//~ const double R = this->getR();
-	//~ const double R2 = this->getRR();
-
 	// Coordinates
 	const double rho = cylP[0];
 	const double z   = cylP[2]-Loop::z;
@@ -159,16 +153,11 @@ void BiotSavart_Loop::getB(const double carP[3], double BCarVec[3]) const {
 	// calculates the B-field of a current loop in the x-y plane by using the BS method
 	// radius R, z position z, current I, number of segments N, obs point carP
 
-	//~ const double I = this->getI();
-	//~ const double z_loop = this->getz();
-
 	// make sure that the placeholder for the magnetic field is 0
 	BCarVec[0] = 0;
 	BCarVec[1] = 0;
 	BCarVec[2] = 0;
 
-	//~ double x0 = this->getxi(0);
-	//~ double y0 = this->getyi(0);
 	double x0 = xs[0];
 	double y0 = ys[0];
 	double x1;
@@ -199,15 +188,6 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	// Coordinates
 	const double rho = cylP[0];
 	const double z   = cylP[2]-Loop::z;
-	//~ const double R  = this->getR();
-	//~ const double I  = this->getI();
-	
-	//~ std::cout << "rho = " << rho << std::endl;
-	//~ std::cout << "z = " << z << std::endl;
-	//~ std::cout << "R = " << R << std::endl;
-	//~ std::cout << "I = " << I << std::endl;
-	
-	//~ std::cout << "McDOrder = " << McDOrder << std::endl;
 	
 	double an[2*McDOrder+2];
 	mcDonaldLoopSupFunc(McDOrder,z,R,an);
@@ -238,7 +218,6 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	}
 	
 	// Preparing result
-	//~ const double C = PhysicsConstants::mu0*I*R*R/2;
 	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
 	B_z *= C;
@@ -364,43 +343,31 @@ if (n>6){
 void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	// From the "Exact Solution..." paper by J. T. Conway
 	
-
-	//~ const double Z1 = this->getz() - this->getL()*0.5;
-	//~ const double Z2 = this->getz() + this->getL()*0.5;
-	const double z = cylP[2] - Shell::z;
-	//~ const double R = this->getR();
-	
+	const double z = cylP[2] - Shell::z;	
 	//~ std::cout << "Z1 = " << Z1 << std::endl;
 	//~ std::cout << "Z2 = " << Z2 << std::endl;
 	//~ std::cout << "z = " << z << std::endl;
 	
-	//~ const double IDens = this->getI()/this->getL(); // the current density [A/m]
-	//~ const double C = PhysicsConstants::mu0*IDens*R*0.5;	
-	
 	if(z < Z1){
-		BCylVec[2] = C * ( I_010(R, Z1-z, cylP) - I_010(R, Z2-z, cylP) );
-						 
+		BCylVec[2] = C * ( I_010(R, Z1-z, cylP) - I_010(R, Z2-z, cylP) );						 
 		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
 	}else if(z >= Z1 && z <= Z2){
 		BCylVec[2] = C * ( 2* I_010(R, 0.0 , cylP)
 							- I_010(R, Z1-z, cylP)
-							- I_010(R, Z2-z, cylP) );
-							
+							- I_010(R, Z2-z, cylP) );							
 		//~ std::cout << "I_010(0.0) =  " << I_010(R, 0.0 , cylP) << std::endl;
 		//~ std::cout << "I_010(Z1-z) = " << I_010(R, Z1-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z2-z) = " << I_010(R, Z2-z, cylP) << std::endl;
 	}else if(z > Z2){
-		BCylVec[2] = C * ( I_010(R, Z2-z, cylP) - I_010(R, Z1-z, cylP) );
-						 
+		BCylVec[2] = C * ( I_010(R, Z2-z, cylP) - I_010(R, Z1-z, cylP) );						 
 		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
 	}else{
 		std::cout << "Error, cannot determine z in Conway1D" << std::endl;
 	}
 		
-	BCylVec[0] = C * ( I_011(R, Z2-z, cylP) - I_011(R, Z1-z, cylP) );
-	
+	BCylVec[0] = C * ( I_011(R, Z2-z, cylP) - I_011(R, Z1-z, cylP) );	
 	//~ std::cout << "I_011(Z2-z) = " << I_011(R, Z2-z, cylP) << std::endl;
 	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
 }
@@ -416,12 +383,6 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	
 	// Coordinates
 	const double rho = cylP[0];
-	//~ const double z   = cylP[2] - this->getz();
-	//~ const double R  = this->getR();
-	//~ const double I  = this->getI();
-	//~ const double L  = this->getL();
-	//~ const double L_2  = 0.5*L;
-	
 	const double z1 = cylP[2] - Z1;
 	const double z2 = cylP[2] - Z2;
 	
@@ -572,30 +533,9 @@ void NWire_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[0] = 0;
 	BCylVec[1] = 0;
 	BCylVec[2] = 0;
-		
-    // Tube Center
-    //~ const double x = this->getx();
-    //~ const double y = this->gety();
-    //~ const double z = this->getz();
 
-	// Radii
-	//~ const double radius = this->getR();
-
-    // Length
-	//~ const double width_z = this->getL(); 	
-
-    // Spacing
-	//~ const double delta_z = width_z/N_z; 
-
-    // Current			
-	//~ const double I = this->getI();					
-	
     double BCylVec_i[3];
 	for(int n_z = 0; n_z < N_z; n_z++){
-		//~ const Loop loop = Loop(radius, I/N_z, x, y, z - 0.5*width_z + delta_z*0.5 + n_z*delta_z);
-		//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(radius,I/N_z,x,y,z - 0.5*width_z + delta_z*0.5 + n_z*delta_z);
-				
-		//~ loopExactSAM(loop, cylP, BCylVec_i);
 		loops[n_z].getB(cylP,BCylVec_i);
 		
 		BCylVec[0] += BCylVec_i[0];
@@ -609,37 +549,10 @@ void GaussianQuadratureLoops_Shell::getB(const double cylP[3], double BCylVec[3]
 	BCylVec[0] = 0;
 	BCylVec[1] = 0;
 	BCylVec[2] = 0;
-    
-    // Tube Center
-    //~ const double x = this->getx();
-    //~ const double y = this->gety();
-    //~ const double z = this->getz();
-
-	// Radii
-	//~ const double radius = this->getR();					
-	
-    // Dimension of Tube
-	//~ const double width_z = this->getL();
-
-    // Current			
-	//~ const double I = this->getI()/(N_z);	// divide the current of the shell on N_z loops
-
-	//~ double GPZValues[NGP_z];
-
-	//~ double GPZWeights[NGP_z];
-
-	//~ const int NWiresZ = N_z/2;
-	
-	//~ getGaussianQuadratureParams(NGP_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
-	
+ 
     double BCylVec_i[3];
 	for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
-		//~ const Loop loop(radius,I,x,y,z+GPZValues[nGP_z]);	
-		//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(radius,I,x,y,z+GPZValues[nGP_z]);
-		
-		//~ loopExactSAM(loop, cylP, BCylVec_i);
 		loops[nGP_z].getB(cylP,BCylVec_i);		
-		
 		//~ printVec(BCylVec_i,"BCyl_i");
 		
 		const double GFac = GPZWeights[nGP_z];
@@ -663,25 +576,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	 * @param McDSupport	this function uses a class to precalculate the derivatives of the McD model. This is FASTER AND BETTER
 	 */
 	
-	//~ std::cout <<"McD tube with support and Vectors in the class" << std::endl;
-	//~ std::cout << "P = (" << cylP.GetRho() << ", " << cylP.GetPhi() << ", " << cylP.GetZ() << ")" << std::endl;
-	//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
-	
 	// Coordinates
 	const double rho = cylP[0];
-	//~ const double z   = cylP[2]-this->getz();  	// Posistion the tube in the center
 	const double z1 = cylP[2] - Z1; // define coordinates relative to the position of the solenoid
-	const double z2 = cylP[2] - Z2;
-	//~ const double R1  = this->getR1();				// inner radius
-	//~ const double R2  = this->getR2();				// outer radius
-	//~ const double I  = this->getI();					// current
-	//~ std::cout << "getB called with I = " << I << std::endl;
-	//~ const double L  = this->getL();					// length of solenoid
-	//~ const double L_2 = 0.5*L;
-	
-	//~ const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
-	//~ const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
-	
+	const double z2 = cylP[2] - Z2;	
 	
 	double an11[Na];		// array to hold terms with z1 and R1
 	double an12[Na];		// array to hold terms with z1 and R2
@@ -700,26 +598,16 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	
 	// Preparing terms for loop
 	double B_z = an12[0]-an11[0]-an22[0]+an21[0];
-	//~ BCylVec.SetZ(an12[0]-an11[0]-an22[0]+an21[0]);
-	double constZTerm = 1;
-	
+	double constZTerm = 1;	
 	double B_rho = -(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]);
-	//~ BCylVec.SetRho(-(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]));
 	double constRTerm = -(rho/2);
 	
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
 			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
 			B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
-			//~ BCylVec.AddZ(constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]));
 			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
 			B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
-			//~ BCylVec.AddRho(constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]));
-			
-			//~ std::cout << "n = " << n << std::endl;
-			//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
-			//~ std::cout << "constZTerm = " << constZTerm << std::endl;
-			//~ std::cout << "constRTerm = " << constRTerm << std::endl;
 	}
 	
 	// Preparing result
@@ -730,12 +618,7 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	//~ std::cout << "R2 = " << R2 << std::endl;
 	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
-	//~ BCylVec.MultRho(C);
 	B_z *= C;
-	//~ BCylVec.MultZ(C);
-	
-	//~ std::cout << "P = (" << cylP.GetRho() << ", " << cylP.GetPhi() << ", " << cylP.GetZ() << ")" << std::endl;
-	//~ std::cout << "B = (" << BCylVec.GetRho() << ", " << BCylVec.GetPhi() << ", " << BCylVec.GetZ() << ")" << std::endl;
 	
 	// Result
 	BCylVec[0]=B_rho;
@@ -749,12 +632,8 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	// was instantiated to be able to go to a given order. The requested order has to
 	// be below this
 	// various outcommented debugging code has been left here
-	
-	//Constructor makes this check
-	//assert(n_McD <= McDOrder); // make sure that the requested order is not bigger then the max order the class is configured to calculate
-	
-	//~ const int n = 2 + 2*McDOrder;
-	//~ std::cout << "number of a_n terms to calculate, n = " << n <<std::endl;
+
+	//~ std::cout << "number of a_n terms to calculate, Na = " << Na <<std::endl;
 	for(int i=0; i<Na; i++){
 		a0_array[i] = 0; //make sure all elements are 0
 	}	
@@ -773,8 +652,7 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	//~ std::cout << "z = " << z << std::endl;
 	//~ std::cout << "A = " << A << std::endl;
 	//~ std::cout << "B = " << B << std::endl;
-	//~ std::cout << "z*logB = " << z*logB << std::endl;
-		
+	//~ std::cout << "z*logB = " << z*logB << std::endl;		
 	
 	if(Na>1){
 	const int z_power_needed = 3 + (Na-2);
@@ -819,13 +697,10 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	
 	//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
 	//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
-	
-	
-	
+		
 	//~ std::cout << "total number of terms, NT = " << NT << std::endl;
 	for(int i=0; i<NT; i++){
 		a0_array[Ti_arr[i]] += k_arr[i]*z_powers[lambda_arr[i]]*a_powers[mu_arr[i]]*b_powers[nu_arr[i]];
-		//~ a0_array[Ti_arr.at(i)] += k_arr.at(i)*z_powers[lambda_arr.at(i)]*a_powers[mu_arr.at(i)]*b_powers[nu_arr.at(i)];	
 		//~ std::cout << "T_i = " << k_arr.at(i)*z_powers[lambda_arr.at(i)]*a_powers[mu_arr.at(i)]*b_powers[nu_arr.at(i)] << std::endl;
 	}
 	
@@ -842,8 +717,7 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	}	
 }
 
-void TAVP::getB(const double sphP[3], double BSphVec[3]) const {
-	
+void TAVP::getB(const double sphP[3], double BSphVec[3]) const {	
 	// an approximation of the B-field of a current loop
 	// based on eq A.2 in https://iopscience.iop.org/article/10.1088/1367-2630/14/1/015010
 	// input: radius R, mirror z position z, current I, model parameter lambda,
@@ -917,21 +791,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	// make sure that the placeholder for the magnetic field is 0
 	BCarVec[0] = 0;
 	BCarVec[1] = 0;
-	BCarVec[2] = 0;	
-		
-    // Tube Center
-    //~ const double z = this->getz();
-
-	// Dimension of Tube		
-	const double width_rho = this->getThickness();
-	const double width_z = this->getL(); 	
-
-    // Spacing			
-	const double delta_rho = width_rho/N_rho; 	
-	const double delta_z = width_z/N_z; 
-
-    // Current			
-	//~ const double i = this->geti();				
+	BCarVec[2] = 0;		
 	
 	//~ std::cout << "tube centre = " << z << std::endl;
 	//~ std::cout << "R1 = " << R1 << std::endl;
@@ -947,7 +807,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	
 	for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
 		double cylS0[3];
-		double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-width_z*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
+		double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-L*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
 		cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
 	
 		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
@@ -957,7 +817,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 				cylS0[1] = cylS1[1]; 
 				cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
 				cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
-				cylS1[2] = z + pow(-1,n_rho)*(-width_z*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+				cylS1[2] = z + pow(-1,n_rho)*(-L*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
 				
 				double carS0[3], carS1[3];
 				cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
@@ -992,39 +852,12 @@ void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[0] = 0;
 	BCylVec[1] = 0;
 	BCylVec[2] = 0;
-		
-    // Tube Center
-    //~ const double x = this->getx();
-    //~ const double y = this->gety();
-    //~ const double z = this->getz();
 
-	//~ // Dimension of Tube
-	//~ const double innerRadius = this->getR1();			
-	//~ const double width_rho = this->getThickness();
-	
-    //~ // Number of wires
-	//~ const int N_wires = N_rho*N_z;
-
-    //~ // Length
-	//~ const double width_z = this->getL(); 	
-
-    //~ // Spacing			
-	//~ const double delta_rho = width_rho/N_rho; 	
-	//~ const double delta_z = width_z/N_z; 
-
-    // Current			
-	//~ const double I = this->getI();					
-	
     double BCylVec_i[3];
 	for(int n_rho = 0; n_rho < N_rho; n_rho++){
 		for(int n_z = 0; n_z < N_z; n_z++){	
 			//~ std::cout << " i, j = " << i << ", " << j << std::endl;
 			
-			//~ Loop loop = Loop(innerRadius + delta_rho*0.5 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z*0.5 + j*delta_z);
-			//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(innerRadius + delta_rho*0.5 + i*delta_rho, I/N_wires, x, y, z - 0.5*width_z + delta_z*0.5 + j*delta_z);
-			
-					
-			//~ loopExactSAM(loop, cylP, BCylVec_i);
 			loops[n_rho][n_z].getB(cylP, BCylVec_i);
 
 			BCylVec[0] += BCylVec_i[0];
@@ -1040,43 +873,10 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 	BCylVec[1] = 0;
 	BCylVec[2] = 0;
     
-    // Tube Center
-    //~ const double x = this->getx();
-    //~ const double y = this->gety();
-    //~ const double z = this->getz();
-
-    // Dimension of Tube
-    //~ const double innerRadius = this->getR1();
-	//~ const double width_z = this->getL(); 	
-    //~ const double width_rho = this->getThickness();
-
-    // Current			
-	//~ const double I = i/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
-
-	
-	//~ double GPRhoValues[NGP_rho];
-	//~ double GPZValues[NGP_z];
-	
-	//~ double GPRhoWeights[NGP_rho];
-	//~ double GPZWeights[NGP_z];
-	
-	//~ const int NWiresRho = N_rho/2; // half the number of wires in each dimension
-	//~ const int NWiresZ = N_z/2;
-	
-	//~ getGaussianQuadratureParams(NGP_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
-	//~ getGaussianQuadratureParams(NGP_z,GPZValues,GPZWeights,width_z*0.5,NWiresZ);
-	
-	//~ const double centre_rho = R1 + L*0.5;
-	
     double BCylVec_i[3];
 	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){			
-			//~ const Loop loop(centre_rho + GPRhoValues[nGP_rho],I,x,y,z+GPZValues[nGP_z]);
-			//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I,x,y,z+GPZValues[nGP_z]);					
-			
-			//~ loopExactSAM(loop, cylP, BCylVec_i);
-			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);
-			
+			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);			
 			//~ printVec(BCylVec_i,"BCyl_i");
 			
 			const double GFac = GPZWeights[nGP_z]*GPRhoWeights[nGP_rho];
@@ -1096,36 +896,10 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
 	BCylVec[1] = 0;
 	BCylVec[2] = 0;
     
-    // Tube Center
-    //~ const double x = this->getx();
-    //~ const double y = this->gety();
-    //~ const double z = this->getz();
-
-    // Dimension of Tube
-    //~ const double innerRadius = this->getR1();	
-	//~ const double width_z = this->getL(); 	
-    //~ const double width_rho = this->getThickness();
-
-    // Current			
-	//~ const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
-
-	//~ double GPRhoValues[NGP_rho];
-	//~ double GPRhoWeights[NGP_rho];
-
-	//~ const int NElementsRho = N_rho/2; // half the number of layers in each dimension	
-	//~ getGaussianQuadratureParams(NGP_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NElementsRho);
-	
-	//~ const double centre_rho = innerRadius + width_rho*0.5;
-
     double BCylVec_i[3] = {0.,0.,0.};
 	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 		//~ std::cout << "nG_Rho = " << nGP_rho << std::endl;
 		
-		//~ const Shell shell = Shell(centre_rho + GPRhoValues[nGP_rho],I,width_z,x,y,z);
-		//~ Conway1D conway1D = Conway1D(centre_rho + GPRhoValues[nGP_rho],1,I,width_z,x,y,z); // INSERTING THE 1 HERE IS A HACK	
-		
-		//~ Conway1D(shell, cylP, BCylVec_i);
-		//~ conway1D.getB(cylP, BCylVec_i);
 		shells[nGP_rho].getB(cylP, BCylVec_i);
 		
 		const double GFac = GPRhoWeights[nGP_rho];

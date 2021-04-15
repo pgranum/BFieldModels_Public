@@ -18,7 +18,7 @@ int main(){
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
 	
-	const int N_t = 10000;
+	const int N_t = 100;
 	double time;
 	double time_squared;
 	double mean;
@@ -220,23 +220,23 @@ int main(){
 	
 	
 	std::cout << "Using the detailed Biot-Savart model:\n";
-	//~ time = 0;
-	//~ time_squared = 0;
-	//~ Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L2,x,y,z);
-	//~ for(int i=0; i<N_t; i++){
-		//~ auto start = std::chrono::steady_clock::now();
-		//~ helix.getB(carP,BCarVec);
-		//~ auto end = std::chrono::steady_clock::now();
-		//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-		//~ time += t;
-		//~ time_squared += t*t;
-	//~ }
-	//~ carVecToCylVec(BCarVec,carP,BCylVec);		
-	//~ printVec(BCylVec,"B");
-	//~ mean = time/(double)N_t;
-	//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
-	//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-	//~ std::cout << "\n";
+	time = 0;
+	time_squared = 0;
+	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L2,x,y,z);
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		helix.getB(carP,BCarVec);
+		auto end = std::chrono::steady_clock::now();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
+	}
+	carVecToCylVec(BCarVec,carP,BCylVec);		
+	printVec(BCylVec,"B");
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	std::cout << "\n";
 	
 	std::cout << "Using the TAVP model:\n";
 	time = 0;

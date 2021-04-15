@@ -13,14 +13,14 @@ class Tube {
 	
 	protected: 
 	// Class Variables
-	const double R1; // The radius of the inside of the tube
-	const double R2; // The radius of the outside of the tube
-	const int	 N; // The number of wires in the tube
-	const double i; // The current in each wire
-	const double L; // The length of the tube
-	const double x; // The the x position of the center of the tube
-	const double y; // The the y position of the center of the tube
-	const double z; // The the z position of the center of the tube
+	const double R1; 	// The radius of the inside of the tube
+	const double R2; 	// The radius of the outside of the tube
+	const int	 N; 	// The number of wires in the tube
+	const double i; 	// The current in each wire
+	const double L; 	// The length of the tube
+	const double x; 	// The the x position of the center of the tube
+	const double y; 	// The the y position of the center of the tube
+	const double z; 	// The the z position of the center of the tube
 	const double Z1; 	// The lower end of the shell
 	const double Z2;	// The higher end of the shell
 	
@@ -82,6 +82,5 @@ class Tube {
 	void print();
 
 };
-
 
 #endif // TUBE_H

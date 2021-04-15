@@ -2,24 +2,17 @@
 #define MATH_FUNCS_H
 
 #include <iostream>
-//~ #include <functional>
-
-//~ typedef const std::function<double(double)>& func;
 #include <cmath>
 #include <tr1/cmath> // adds the special elliptic integrals
 
-//~ #include <vector>
-//~ #include "printFuncs.h"
 #include "PhysicsConstants.hpp"
-//~ #include "Generic3Vector.hpp"
 
-//~ // vector manipulation
+// vector manipulation
 
 void vecAdd(const double a[3], const double b[3], double c[3]);
 void vecAddOvrwrt(double a[3], const double b[3]);
 void vecSub(const double a[3], const double b[3], double c[3]);
 void vecMult(const double a[3], const double b[3], double c[3]);
-//~ void vecDiv(double a[3], double b[3], double c[3]);
 double vecDotP(const double a[3], const double b[3]);
 void vecCrsP(const double  a[3], const double  b[3], double  c[3]);
 double vecNorm(const double a[3]);
