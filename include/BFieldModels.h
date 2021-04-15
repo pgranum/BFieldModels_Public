@@ -47,10 +47,11 @@ class GQ_Support {
 
 class SimpleAnalyticModel : public Loop{
 	private:
+	double R2;
 	
 	public:
 	SimpleAnalyticModel(const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z){
-	
+		R2 = R*R;
 	} // end of constructor
 	
 	~SimpleAnalyticModel(){
@@ -85,10 +86,13 @@ class BiotSavart_Loop : public Loop, public BiotSavart{
 class McD_Loop : public Loop{
 	private:
 	const int McDOrder;
+	const double C;
 	
 	public:
-	McD_Loop(const int McDOrder, const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z), McDOrder(McDOrder){
-	
+	McD_Loop(const int McDOrder, const double R, const double I, const double x, const double y, const double z) : 
+		Loop(R,I,x,y,z), McDOrder(McDOrder),
+		C(PhysicsConstants::mu0*I*R*R*0.5)
+	{
 	} // end of constructor
 	
 	~McD_Loop(){
@@ -102,9 +106,15 @@ class McD_Loop : public Loop{
 
 class Conway1D : public Shell{
 	private:
+	const double IDens;
+	const double C;
 	
 	public:
-	Conway1D(const double R, const int N, const double i, const double L, const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z){
+	Conway1D(const double R, const int N, const double i, const double L, const double x, const double y, const double z) : 
+	Shell(R,N,i,L,x,y,z),
+	IDens(i*N/L),
+	C(PhysicsConstants::mu0*IDens*R*0.5)
+	{
 		// R	shell radius
 		// N 	number of wire turns in the shell/number of loops representing the shell
 		// i 	current in wire/current per loop
@@ -125,10 +135,15 @@ class McD_Shell : public Shell {
 	private:
 	const int McDOrder;
 	const double L_2 = 0.5*this->getL();
+	const double C;
 	
 	public:
 	McD_Shell(const int McDOrder, const double R, const int N, const double i, const double L, 
-			  const double x, const double y, const double z): Shell(R,N,i,L,x,y,z), McDOrder(McDOrder){
+			  const double x, const double y, const double z): 
+	Shell(R,N,i,L,x,y,z), 
+	McDOrder(McDOrder),
+	C(PhysicsConstants::mu0*i*N/(2*L))
+	{
 	} // end of constructor
 	
 	~McD_Shell(){
@@ -197,6 +212,10 @@ class GaussianQuadratureLoops_Shell : public Shell, public GQ_Support{
 class McD_Tube : public Tube{
 	private:
 	const int McDOrder;
+	const int Na; 	// the number of derivatives needed to calculate the requested order (McDOrder)
+	const double L_2;
+	const double C;
+	
 	std::vector<int> k_arr = {3, -1, -1};
 	std::vector<int> lambda_arr = {1, 3, 3};
 	std::vector<int> mu_arr = {1, 2, 3};
@@ -210,8 +229,13 @@ class McD_Tube : public Tube{
 	}
 	
 	McD_Tube(const int McDOrder, const double R1, const double R2, 
-			 const int N, const double i, const double L, const double x, const double y, const double z) : Tube(R1,R2,N,i,L,x,y,z),
-			 McDOrder(McDOrder){	
+			 const int N, const double i, const double L, const double x, const double y, const double z) : 
+	Tube(R1,R2,N,i,L,x,y,z),
+	McDOrder(McDOrder),
+	Na(2*McDOrder + 2),
+	L_2(0.5*L),
+	C(PhysicsConstants::mu0*i*N/(2*L*(R2-R1)))
+	{	
 		//~ std::cout << "Constructing McD Class..." << std::endl;
 		int n = 2 + 2*McDOrder; // To calc the (n_McD)'th order in the McD expansion, (2+2*n_McD) orders are needed for a_n
 		// for n = 2 and higher there is a system to an[]. Each terms will be of the form k*pow(z,lambda)*pow(a,mu)*pow(b,nu)

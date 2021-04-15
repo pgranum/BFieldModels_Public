@@ -111,12 +111,12 @@ void SimpleAnalyticModel::getB(const double cylP[3], double BCylVec[3]) const {
 */
 	
 	// Unpacking Loop 
-	const double R = this->getR();
-	const double R2 = this->getRR();
+	//~ const double R = this->getR();
+	//~ const double R2 = this->getRR();
 
 	// Coordinates
 	const double rho = cylP[0];
-	const double z   = cylP[2]-this->getz();
+	const double z   = cylP[2]-Loop::z;
 	
 	// Powers
 	const double rho2 = rho*rho;
@@ -132,7 +132,7 @@ void SimpleAnalyticModel::getB(const double cylP[3], double BCylVec[3]) const {
 	const double K = std::tr1::comp_ellint_1(k);
 	
 	//Preparing Result
-	const double C = PhysicsConstants::mu0*this->getI()/PhysicsConstants::pi;
+	const double C = PhysicsConstants::mu0*I/PhysicsConstants::pi;
 	const double denom_rho = 2*alpha2*beta*rho; // Denominator
 	const double denom_z = 2*alpha2*beta; // Denominator
 	
@@ -159,8 +159,8 @@ void BiotSavart_Loop::getB(const double carP[3], double BCarVec[3]) const {
 	// calculates the B-field of a current loop in the x-y plane by using the BS method
 	// radius R, z position z, current I, number of segments N, obs point carP
 
-	const double I = this->getI();
-	const double z_loop = this->getz();
+	//~ const double I = this->getI();
+	//~ const double z_loop = this->getz();
 
 	// make sure that the placeholder for the magnetic field is 0
 	BCarVec[0] = 0;
@@ -177,8 +177,8 @@ void BiotSavart_Loop::getB(const double carP[3], double BCarVec[3]) const {
 	for(int i=0; i<N_BS-1; i++){
 		x1 = xs[i+1];
 		y1 = ys[i+1];
-		double r0[3]{x0,y0,z_loop};
-		double r1[3]{x1,y1,z_loop};
+		double r0[3]{x0,y0,Loop::z};
+		double r1[3]{x1,y1,Loop::z};
 			
 		this->BSSegment(r0,r1,carP,I,BCarVec);
 		
@@ -198,9 +198,9 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 
 	// Coordinates
 	const double rho = cylP[0];
-	const double z   = cylP[2]-this->getz();
-	const double R  = this->getR();
-	const double I  = this->getI();
+	const double z   = cylP[2]-Loop::z;
+	//~ const double R  = this->getR();
+	//~ const double I  = this->getI();
 	
 	//~ std::cout << "rho = " << rho << std::endl;
 	//~ std::cout << "z = " << z << std::endl;
@@ -238,7 +238,7 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	}
 	
 	// Preparing result
-	const double C = PhysicsConstants::mu0*I*R*R/2;
+	//~ const double C = PhysicsConstants::mu0*I*R*R/2;
 	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
 	B_z *= C;
@@ -365,21 +365,20 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	// From the "Exact Solution..." paper by J. T. Conway
 	
 
-	const double Z1 = this->getz() - this->getL()*0.5;
-	const double Z2 = this->getz() + this->getL()*0.5;
-	const double z = cylP[2];
-	const double R = this->getR();
+	//~ const double Z1 = this->getz() - this->getL()*0.5;
+	//~ const double Z2 = this->getz() + this->getL()*0.5;
+	const double z = cylP[2] - Shell::z;
+	//~ const double R = this->getR();
 	
 	//~ std::cout << "Z1 = " << Z1 << std::endl;
 	//~ std::cout << "Z2 = " << Z2 << std::endl;
 	//~ std::cout << "z = " << z << std::endl;
 	
-	const double IDens = this->getI()/this->getL(); // the current density [A/m]
-	const double C = PhysicsConstants::mu0*IDens*R*0.5;	
+	//~ const double IDens = this->getI()/this->getL(); // the current density [A/m]
+	//~ const double C = PhysicsConstants::mu0*IDens*R*0.5;	
 	
 	if(z < Z1){
-		BCylVec[2] = C * ( I_010(R, Z1-z, cylP)
-						 - I_010(R, Z2-z, cylP) );
+		BCylVec[2] = C * ( I_010(R, Z1-z, cylP) - I_010(R, Z2-z, cylP) );
 						 
 		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
@@ -392,8 +391,7 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 		//~ std::cout << "I_010(Z1-z) = " << I_010(R, Z1-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z2-z) = " << I_010(R, Z2-z, cylP) << std::endl;
 	}else if(z > Z2){
-		BCylVec[2] = C * ( I_010(R, Z2-z, cylP)
-						 - I_010(R, Z1-z, cylP) );
+		BCylVec[2] = C * ( I_010(R, Z2-z, cylP) - I_010(R, Z1-z, cylP) );
 						 
 		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
 		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
@@ -401,8 +399,7 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 		std::cout << "Error, cannot determine z in Conway1D" << std::endl;
 	}
 		
-	BCylVec[0] = C * ( I_011(R, Z2-z, cylP)
-					 - I_011(R, Z1-z, cylP) );
+	BCylVec[0] = C * ( I_011(R, Z2-z, cylP) - I_011(R, Z1-z, cylP) );
 	
 	//~ std::cout << "I_011(Z2-z) = " << I_011(R, Z2-z, cylP) << std::endl;
 	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
@@ -419,14 +416,14 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	
 	// Coordinates
 	const double rho = cylP[0];
-	const double z   = cylP[2]-this->getz();
+	//~ const double z   = cylP[2] - this->getz();
 	//~ const double R  = this->getR();
 	//~ const double I  = this->getI();
 	//~ const double L  = this->getL();
 	//~ const double L_2  = 0.5*L;
 	
-	const double z1 = z + L_2;
-	const double z2 = z - L_2;
+	const double z1 = cylP[2] - Z1;
+	const double z2 = cylP[2] - Z2;
 	
 	double an1[2*McDOrder+2];
 	double an2[2*McDOrder+2];
@@ -448,8 +445,7 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 			B_rho += constRTerm*(an1[2*n+1]-an2[2*n+1]);
 	}
 	
-	// Preparing result
-	const double C = PhysicsConstants::mu0*this->getI()/(2*this->getL());
+	// Preparing result	
 	B_rho *= C;
 	B_z *= C;
 	
@@ -472,7 +468,7 @@ void McD_Shell::mcDonaldShellSupFunc(const int n, const double z, double an[]) c
 	const double z2=z*z;  
 
 	// Powers of R
-	const double R2 = this->getR()*this->getR();
+	const double R2 = R*R;
 		
 	// Powers of d
 	const double d = 1/(z2+R2);
@@ -673,22 +669,24 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	
 	// Coordinates
 	const double rho = cylP[0];
-	const double z   = cylP[2]-this->getz();  	// Posistion the tube in the center
-	const double R1  = this->getR1();				// inner radius
-	const double R2  = this->getR2();				// outer radius
-	const double I  = this->getI();					// current
+	//~ const double z   = cylP[2]-this->getz();  	// Posistion the tube in the center
+	const double z1 = cylP[2] - Z1; // define coordinates relative to the position of the solenoid
+	const double z2 = cylP[2] - Z2;
+	//~ const double R1  = this->getR1();				// inner radius
+	//~ const double R2  = this->getR2();				// outer radius
+	//~ const double I  = this->getI();					// current
 	//~ std::cout << "getB called with I = " << I << std::endl;
-	const double L  = this->getL();					// length of solenoid
-	const double L_2 = 0.5*L;
+	//~ const double L  = this->getL();					// length of solenoid
+	//~ const double L_2 = 0.5*L;
 	
-	const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
-	const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
+	//~ const double z1 = z + L_2;	// The distance from the lower point of the tube to the point of evaluation
+	//~ const double z2 = z - L_2;	// The distance from the upper point of the tube to the point of evaluation
 	
-	const int arraySize = 2*McDOrder + 2; 	// the number of coefficients needed to calculate the requested order (McDOrder)
-	double an11[arraySize];		// array to hold terms with z1 and R1
-	double an12[arraySize];		// array to hold terms with z1 and R2
-	double an21[arraySize];		// array to hold terms with z2 and R1
-	double an22[arraySize];		// array to hold terms with z2 and R2
+	
+	double an11[Na];		// array to hold terms with z1 and R1
+	double an12[Na];		// array to hold terms with z1 and R2
+	double an21[Na];		// array to hold terms with z2 and R1
+	double an22[Na];		// array to hold terms with z2 and R2
 	
 	this->getA0(z1,R1,an11);
 	this->getA0(z1,R2,an12);
@@ -725,7 +723,7 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	}
 	
 	// Preparing result
-	const double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
+	//~ const double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
 	//~ std::cout << "I = " << I << std::endl;
 	//~ std::cout << "L = " << L << std::endl;
 	//~ std::cout << "R1 = " << R1 << std::endl;
@@ -755,9 +753,9 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	//Constructor makes this check
 	//assert(n_McD <= McDOrder); // make sure that the requested order is not bigger then the max order the class is configured to calculate
 	
-	const int n = 2 + 2*McDOrder;
+	//~ const int n = 2 + 2*McDOrder;
 	//~ std::cout << "number of a_n terms to calculate, n = " << n <<std::endl;
-	for(int i=0; i<n; i++){
+	for(int i=0; i<Na; i++){
 		a0_array[i] = 0; //make sure all elements are 0
 	}	
 	
@@ -778,10 +776,10 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	//~ std::cout << "z*logB = " << z*logB << std::endl;
 		
 	
-	if(n>1){
-	const int z_power_needed = 3 + (n-2);
-	const int a_power_needed = 3 + 2*(n-2);
-	const int b_power_needed = 2 + (n-2);
+	if(Na>1){
+	const int z_power_needed = 3 + (Na-2);
+	const int a_power_needed = 3 + 2*(Na-2);
+	const int b_power_needed = 2 + (Na-2);
 	
 	double z_powers[z_power_needed];
 	double a_powers[a_power_needed];
@@ -1119,7 +1117,7 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
 	
 	//~ const double centre_rho = innerRadius + width_rho*0.5;
 
-    double BCylVec_i[3];
+    double BCylVec_i[3] = {0.,0.,0.};
 	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 		//~ std::cout << "nG_Rho = " << nGP_rho << std::endl;
 		
