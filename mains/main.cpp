@@ -243,6 +243,7 @@ int main(){
 	time_squared = 0;
 	TAVP tavp = TAVP(lambda,R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
+		//~ std::cout << "i = " << i << "\n";
 		auto start = std::chrono::steady_clock::now();
 		tavp.getB(sphP,BSphVec);
 		auto end = std::chrono::steady_clock::now();

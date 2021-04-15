@@ -343,7 +343,7 @@ if (n>6){
 void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	// From the "Exact Solution..." paper by J. T. Conway
 	
-	const double z = cylP[2] - Shell::z;	
+	const double z = cylP[2];		
 	//~ std::cout << "Z1 = " << Z1 << std::endl;
 	//~ std::cout << "Z2 = " << Z2 << std::endl;
 	//~ std::cout << "z = " << z << std::endl;
@@ -717,15 +717,23 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	}	
 }
 
-void TAVP::getB(const double sphP[3], double BSphVec[3]) const {	
+void TAVP::getB(double sphP[3], double BSphVec[3]) const {	
 	// an approximation of the B-field of a current loop
 	// based on eq A.2 in https://iopscience.iop.org/article/10.1088/1367-2630/14/1/015010
 	// input: radius R, mirror z position z, current I, model parameter lambda,
 	// observation point r, placeholder for B in cartesian coor B_vec
 	
-	const double R = this->getR();
-	const double r = sphP[0];
-	const double theta = sphP[1];
+	//~ printVec(sphP,"sphP");
+	double carP[3] = {0.,0.,0.};
+	double sphPRel[3] = {0.,0.,0.};
+	sphPToCarP(sphP,carP);
+	carP[2] = carP[2] - this->getz();
+	carPToSphP(carP,sphPRel);
+	//~ printVec(sphPRel,"sphP");
+	
+	//~ const double R = this->getR();
+	const double r = sphPRel[0];
+	const double theta = sphPRel[1];
 
 	// Constants
 	const double C = 0.125*PhysicsConstants::mu0*this->getI()*R/lambda;

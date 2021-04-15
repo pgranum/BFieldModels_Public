@@ -146,19 +146,19 @@ void carPToCylP(const double carP[3], double cylP[3]){
 	
 }
 
-void sphPToCarP(double sphP[3], double carP[3]){
+void sphPToCarP(const double sphP[3], double carP[3]){
 	// converts a point in spherical coordinates to cartesian coordinates
 	
-	double rsintheta = sphP[0]*sin(sphP[1]);
+	const double rsintheta = sphP[0]*sin(sphP[1]);
 	carP[0]=rsintheta*cos(sphP[2]);
 	carP[1]=rsintheta*sin(sphP[2]);
 	carP[2]=sphP[0]*cos(sphP[1]);	
 }
 
-void carPToSphP(double carP[3], double sphP[3]){
+void carPToSphP(const double carP[3], double sphP[3]){
 	// converts a POINT in cartesian coordinates to cylindrical coordinates
 	
-	double s2 = carP[0]*carP[0] + carP[1]*carP[1]; 
+	const double s2 = carP[0]*carP[0] + carP[1]*carP[1]; 
 	
 	sphP[0] = std::sqrt(s2 + carP[2]*carP[2]);
 	

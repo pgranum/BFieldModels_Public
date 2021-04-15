@@ -12,6 +12,7 @@
 #include "Loop.h"
 #include "Shell.h"
 #include "Tube.h"
+#include "utils.h"
 #include "PhysicsConstants.hpp"
 #include "mathFuncs.h"
 
@@ -353,7 +354,7 @@ class TAVP : public Loop{
 	~TAVP(){
 	} // end of destructor
 	
-	void getB(const double sphP[3], double BSphVec[3]) const ;
+	void getB(double sphP[3], double BSphVec[3]) const ;
 };
 
 class Helix : public Tube, public BiotSavart{
