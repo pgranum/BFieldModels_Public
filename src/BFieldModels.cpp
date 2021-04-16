@@ -194,7 +194,7 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	const double z   = cylP[2]-Loop::z;
 	
 	double an[2*McDOrder+2];
-	mcDonaldLoopSupFunc(McDOrder,z,R,an);
+	mcDonaldLoopSupFunc(z,an);
 	
 	// Preparing terms for loop
 	double B_z = an[0]; 
@@ -232,7 +232,7 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[2]=B_z;
 }
 
-void McD_Loop::mcDonaldLoopSupFunc(const int n, const double z, const double R, double an[]) const {
+void McD_Loop::mcDonaldLoopSupFunc(const double z, double an[]) const {
 	
 /* This function is a support function to loopApproxMcDonald it generates  the an[] list depending on the order of n to reduce calculation time.
  * 
@@ -244,9 +244,6 @@ void McD_Loop::mcDonaldLoopSupFunc(const int n, const double z, const double R, 
 	
 	// Powers of z
 	const double z2=z*z;  
-
-	// Powers of R
-	const double R2 = R*R;
 		
 	// Powers of d
 	const double d = 1/(z2+R2); 
@@ -255,7 +252,7 @@ void McD_Loop::mcDonaldLoopSupFunc(const int n, const double z, const double R, 
 	
 	an[0]=d3_2;
 	an[1]=-3*z*d5_2;
-if (n > 0){ 
+if (McDOrder > 0){ 
 	const double z3=z2*z;
 			
 	const double d7_2=d5_2*d;
@@ -264,7 +261,7 @@ if (n > 0){
 	an[2]=(12*z2-3*R2)*d7_2;
 	an[3]=(-60*z3+45*R2*z)*d9_2;
 		
-if (n > 1){
+if (McDOrder > 1){
 	const double z4=z3*z;
 	const double z5=z4*z;
 
@@ -275,7 +272,7 @@ if (n > 1){
 			
 	an[4]=(360*z4-540*R2*z2+45*R4)*d11_2;
 	an[5]=(-2520*z5+6300*R2*z3-1575*R4*z)*d13_2;
-if (n > 2){
+if (McDOrder > 2){
 	const double z6=z5*z;
 	const double z7=z6*z;
 
@@ -288,7 +285,7 @@ if (n > 2){
 	an[6]=(20160*z6-75600*R2*z4+37800*R4*z2-1575*R6)*d15_2;
 	an[7]=(-181440*z7+952560*R2*z5-793800*R4*z3+99225*R6*z)*d17_2;
 
-if (n > 3){
+if (McDOrder > 3){
 	const double z8=z7*z;
 	const double z9=z8*z;
 	
@@ -299,7 +296,7 @@ if (n > 3){
 	
 	an[8]=(1814400*z8-12700800*R2*z6+15876000*R4*z4-3969000*R6*z2+99225*R8)*d19_2;
 	an[9]=-(19958400*z9-179625600*R2*z7+314344800*R4*z5-130977000*R6*z3+9823275*R8*z)*d21_2;
-if (n > 4){
+if (McDOrder > 4){
 	const double z10=z9*z;
 	const double z11=z10*z;
 
@@ -310,7 +307,7 @@ if (n > 4){
 
 	an[10]=(239500800*z10-2694384000*R2*z8+6286896000*R4*z6-3929310000*R6*z4+589396500*R8*z2-9823275*R10)*d23_2;
 	an[11]=-(3113510400*z11-42810768000*R2*z9+128432304000*R4*z7-112378266000*R6*z5+28094566500*R8*z3-1404728325*R10*z)*d25_2;
-if (n> 5){
+if (McDOrder> 5){
 
 	const double z12=z11*z;
 	const double z13= z12*z;
@@ -322,7 +319,7 @@ if (n> 5){
 
 	an[12]=(43589145600*z12-719220902400*R2*z10+2697078384000*R4*z8-3146591448000*R6*z6+1179971793000*R8*z4-117997179300*R10*z2+1404728325*R12)*d27_2;
 	an[13]=-(653837184000*z13-12749825088000*R2*z11+58436698320000*R4*z9-87655047480000*R6*z7+46018899927000*R8*z5-7669816654500*R10*z3+273922023375*R12*z)*d29_2;
-if (n>6){
+if (McDOrder>6){
 	const double z14=z13*z;
 	const double z15= z14*z;
 
@@ -582,10 +579,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	const double z1 = cylP[2] - Z1; // define coordinates relative to the position of the solenoid
 	const double z2 = cylP[2] - Z2;	
 	
-	double an11[Na];		// array to hold terms with z1 and R1
-	double an12[Na];		// array to hold terms with z1 and R2
-	double an21[Na];		// array to hold terms with z2 and R1
-	double an22[Na];		// array to hold terms with z2 and R2
+	double an11[Na] = {0};		// array to hold terms with z1 and R1
+	double an12[Na] = {0};		// array to hold terms with z1 and R2
+	double an21[Na] = {0};		// array to hold terms with z2 and R1
+	double an22[Na] = {0};		// array to hold terms with z2 and R2
 	
 	this->getA0(z1,R1,an11);
 	this->getA0(z1,R2,an12);
@@ -635,12 +632,12 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	// various outcommented debugging code has been left here
 
 	//~ std::cout << "number of a_n terms to calculate, Na = " << Na <<std::endl;
-	for(int i=0; i<Na; i++){
-		a0_array[i] = 0; //make sure all elements are 0
-	}	
+	//~ for(int i=0; i<Na; i++){
+		//~ a0_array[i] = 0; //make sure all elements are 0
+	//~ }	
 	
-	const double R2 = R*R;
 	const double z2 = z*z;
+	const double R2 = R*R;
 	const double A=sqrt(R2+z2);	// sqrt(R²+z²)
 	const double B = A + R;       // sqrt(R²+z²)+R
 	const double b = 1/B;   
@@ -656,9 +653,9 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	//~ std::cout << "z*logB = " << z*logB << std::endl;		
 	
 	if(Na>1){
-	const int z_power_needed = 3 + (Na-2);
-	const int a_power_needed = 3 + 2*(Na-2);
-	const int b_power_needed = 2 + (Na-2);
+	//~ const int z_power_needed = 3 + (Na-2);
+	//~ const int a_power_needed = 3 + 2*(Na-2);
+	//~ const int b_power_needed = 2 + (Na-2);
 	
 	double z_powers[z_power_needed];
 	double a_powers[a_power_needed];
@@ -815,9 +812,9 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	//~ std::cout << "L = " << width_z << std::endl;
 	//~ std::cout << "delta_rho = " << delta_rho << std::endl;
 	//~ std::cout << "delta_z = " << delta_z << std::endl;
-	std::cout << "N_rho = " << N_rho << std::endl;
-	std::cout << "N_z = " << N_z << std::endl;
-	std::cout << "N_BS = " << N_BS << std::endl;
+	//~ std::cout << "N_rho = " << N_rho << std::endl;
+	//~ std::cout << "N_z = " << N_z << std::endl;
+	//~ std::cout << "N_BS = " << N_BS << std::endl;
 	//~ std::cout << "I = " << i << std::endl;
 
 for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers

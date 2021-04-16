@@ -46,7 +46,6 @@ class GQ_Support {
 	~GQ_Support(){
 	} // end of destructor
 	
-	//~ void getGaussianQuadratureParams(const int N, double points[], double weights[], const double dimLength, const double NWires) const ;
 	void getGaussianQuadratureParams(const int N, std::vector<double> &points, std::vector<double> &weights, const double dimLength, const double NWires) const ;
 };
 
@@ -54,11 +53,13 @@ class GQ_Support {
 
 class SimpleAnalyticModel : public Loop{
 	private:
-	double R2;
+	const double R2;
 	
 	public:
-	SimpleAnalyticModel(const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z){
-		R2 = R*R;
+	SimpleAnalyticModel(const double R, const double I, const double x, const double y, const double z) :
+	Loop(R,I,x,y,z),
+	R2(R*R)
+	{		
 	} // end of constructor
 	
 	~SimpleAnalyticModel(){
@@ -70,8 +71,6 @@ class SimpleAnalyticModel : public Loop{
 class BiotSavart_Loop : public Loop{
 	private:
 	const int N_BS;
-	//~ std::vector<double> xs;
-	//~ std::vector<double> ys;
 	std::vector<BiotSavart> segments;
 	
 	public:
@@ -83,9 +82,6 @@ class BiotSavart_Loop : public Loop{
 		const double dPhi = 2*PhysicsConstants::pi/N_BS;
 		double carS0[3] = {0.,0.,z};
 		double carS1[3] = {R,0.,z};
-		//~ printVec(carS0,"S0");
-		//~ printVec(carS1,"S1");
-		//~ segments.push_back(BiotSavart(carS0,carS1));
 		
 		for(int n_BS=0; n_BS<N_BS; n_BS++){
 			const double phi = (n_BS+1)*dPhi;
@@ -94,7 +90,7 @@ class BiotSavart_Loop : public Loop{
 			carS0[1] = carS1[1];
 			carS1[0] = cos(phi)*R;
 			carS1[1] = sin(phi)*R;
-			
+						
 			//~ std::cout << n_BS << std::endl;
 			//~ printVec(carS0,"S0");
 			//~ printVec(carS1,"S1");
@@ -113,11 +109,13 @@ class McD_Loop : public Loop{
 	private:
 	const int McDOrder;
 	const double C;
+	const double R2;
 	
 	public:
 	McD_Loop(const int McDOrder, const double R, const double I, const double x, const double y, const double z) : 
-		Loop(R,I,x,y,z), McDOrder(McDOrder),
-		C(PhysicsConstants::mu0*I*R*R*0.5)
+	Loop(R,I,x,y,z), McDOrder(McDOrder),
+	C(PhysicsConstants::mu0*I*R*R*0.5),
+	R2(R*R)
 	{
 	} // end of constructor
 	
@@ -125,7 +123,7 @@ class McD_Loop : public Loop{
 	} // end of destructor
 	
 	void getB(const double carP[3], double BCarVec[3]) const ;
-	void mcDonaldLoopSupFunc(const int n, const double z, const double R, double an[]) const ;
+	void mcDonaldLoopSupFunc(const double z, double an[]) const ;
 };
 
 // SHELL
@@ -187,9 +185,10 @@ class NWire_Shell : public Shell{
 	std::vector<SimpleAnalyticModel> loops;
 	
 	public:
-	NWire_Shell(const int N_z, const double R, const int N, const double i, const double L, 
-				const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z){
-		
+	NWire_Shell(const int N_z, const double R, const int N, const double i, const double L, const double x, const double y, const double z) : 
+	Shell(R,N,i,L,x,y,z),
+	N_z(N_z)
+	{	
 		// Spacing
 		const double delta_z = L/N_z; // the spcing between the individual loops
 		const double I = i*N/N_z;
@@ -218,11 +217,11 @@ class GaussianQuadratureLoops_Shell : public Shell, public GQ_Support{
 								  const double x, const double y, const double z) : Shell(R,N,i,L,x,y,z), N_z(N_z), NGP_z(NGP_z){
 		assert(N_z % 2 == 0); // N_z has to be even, as the GQ alogorithm assumes the same number of wires in each half of the magnet
 		
-		const double width_z = this->getL(); 
+		const double width_z = Shell::getL(); 
 		
 		getGaussianQuadratureParams(NGP_z,GPZValues,GPZWeights,width_z*0.5,N_z/2);
 		
-		const double I = i*N/(N_z);	// divide the current of the shell on N_z loops
+		const double I = i*N/N_z;	// divide the current of the shell on N_z loops
 		
 		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
 			loops.push_back(SimpleAnalyticModel(R,I,x,y,z+GPZValues[nGP_z]));
@@ -244,6 +243,10 @@ class McD_Tube : public Tube{
 	const double L_2;
 	const double C;
 	
+	const int z_power_needed;
+	const int a_power_needed;
+	const int b_power_needed;
+	
 	std::vector<int> k_arr = {3, -1, -1};
 	std::vector<int> lambda_arr = {1, 3, 3};
 	std::vector<int> mu_arr = {1, 2, 3};
@@ -256,13 +259,15 @@ class McD_Tube : public Tube{
         return McDOrder;
 	}
 	
-	McD_Tube(const int McDOrder, const double R1, const double R2, 
-			 const int N, const double i, const double L, const double x, const double y, const double z) : 
+	McD_Tube(const int McDOrder, const double R1, const double R2, const int N, const double i, const double L, const double x, const double y, const double z) : 
 	Tube(R1,R2,N,i,L,x,y,z),
 	McDOrder(McDOrder),
 	Na(2*McDOrder + 2),
 	L_2(0.5*L),
-	C(PhysicsConstants::mu0*i*N/(2*L*(R2-R1)))
+	C(PhysicsConstants::mu0*i*N/(2*L*(R2-R1))),
+	z_power_needed(3 + (Na-2)),
+	a_power_needed(3 + 2*(Na-2)),
+	b_power_needed(2 + (Na-2))
 	{	
 		//~ std::cout << "Constructing McD Class..." << std::endl;
 		int n = 2 + 2*McDOrder; // To calc the (n_McD)'th order in the McD expansion, (2+2*n_McD) orders are needed for a_n
