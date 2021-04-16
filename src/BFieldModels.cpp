@@ -401,10 +401,10 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
-			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
-			B_z+= constZTerm*(an1[2*n]-an2[2*n]);
-			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
-			B_rho += constRTerm*(an1[2*n+1]-an2[2*n+1]);
+		constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
+		B_z+= constZTerm*(an1[2*n]-an2[2*n]);
+		constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
+		B_rho += constRTerm*(an1[2*n+1]-an2[2*n+1]);
 	}
 	
 	// Preparing result	
@@ -533,6 +533,7 @@ void NWire_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[2] = 0;
 
     double BCylVec_i[3];
+    
 	for(int n_z = 0; n_z < N_z; n_z++){
 		loops[n_z].getB(cylP,BCylVec_i);
 		
@@ -549,6 +550,7 @@ void GaussianQuadratureLoops_Shell::getB(const double cylP[3], double BCylVec[3]
 	BCylVec[2] = 0;
  
     double BCylVec_i[3];
+    
 	for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
 		loops[nGP_z].getB(cylP,BCylVec_i);		
 		//~ printVec(BCylVec_i,"BCyl_i");
@@ -559,8 +561,6 @@ void GaussianQuadratureLoops_Shell::getB(const double cylP[3], double BCylVec[3]
 		BCylVec[1] += BCylVec_i[1]*GFac;
 		BCylVec[2] += BCylVec_i[2]*GFac;
 	}
-	
-	//~ printVec(BCylVec,"BCyl");
 }
 
 // Tube
@@ -609,12 +609,6 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	}
 	
 	// Preparing result
-	//~ const double C = PhysicsConstants::mu0*I/(2*L*(R2-R1));
-	//~ std::cout << "I = " << I << std::endl;
-	//~ std::cout << "L = " << L << std::endl;
-	//~ std::cout << "R1 = " << R1 << std::endl;
-	//~ std::cout << "R2 = " << R2 << std::endl;
-	//~ std::cout << "C = " << C << std::endl;
 	B_rho *= C;
 	B_z *= C;
 	
@@ -653,65 +647,60 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	//~ std::cout << "z*logB = " << z*logB << std::endl;		
 	
 	if(Na>1){
-	//~ const int z_power_needed = 3 + (Na-2);
-	//~ const int a_power_needed = 3 + 2*(Na-2);
-	//~ const int b_power_needed = 2 + (Na-2);
-	
-	double z_powers[z_power_needed];
-	double a_powers[a_power_needed];
-	double b_powers[b_power_needed];
-	
-	for(int i = 0; i<z_power_needed; i++){
-		if(i==0){
-			z_powers[i] = 1;
-		}else{
-			z_powers[i] = z_powers[i-1]*z;
-		}		
-	}
-	for(int i = 0; i<a_power_needed; i++){
-		if(i==0){
-			a_powers[i] = 1;
-		}else{
-			a_powers[i] = a_powers[i-1]*a;
-		}		
-	}
-	for(int i = 0; i<b_power_needed; i++){
-		if(i==0){
-			b_powers[i] = 1;
-		}else{
-			b_powers[i] = b_powers[i-1]*b;
-		}		
-	}
-	
-	//~ printStdVec(k_arr, "k");
-	//~ printStdVec(lambda_arr, "lambda");
-	//~ printStdVec(mu_arr, "mu");
-	//~ printStdVec(nu_arr, "nu");
-	//~ printStdVec(Ti_arr, "T_i");	
-
-	//~ printArr(z_powers, z_power_needed, "z^n");
-	//~ printArr(a_powers, a_power_needed, "a^n");
-	//~ printArr(b_powers, b_power_needed, "b^n");
-	
-	//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
-	//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
+		double z_powers[z_power_needed];
+		double a_powers[a_power_needed];
+		double b_powers[b_power_needed];
 		
-	//~ std::cout << "total number of terms, NT = " << NT << std::endl;
-	for(int i=0; i<NT; i++){
-		a0_array[Ti_arr[i]] += k_arr[i]*z_powers[lambda_arr[i]]*a_powers[mu_arr[i]]*b_powers[nu_arr[i]];
-		//~ std::cout << "T_i = " << k_arr.at(i)*z_powers[lambda_arr.at(i)]*a_powers[mu_arr.at(i)]*b_powers[nu_arr.at(i)] << std::endl;
-	}
+		for(int i = 0; i<z_power_needed; i++){
+			if(i==0){
+				z_powers[i] = 1;
+			}else{
+				z_powers[i] = z_powers[i-1]*z;
+			}		
+		}
+		for(int i = 0; i<a_power_needed; i++){
+			if(i==0){
+				a_powers[i] = 1;
+			}else{
+				a_powers[i] = a_powers[i-1]*a;
+			}		
+		}
+		for(int i = 0; i<b_power_needed; i++){
+			if(i==0){
+				b_powers[i] = 1;
+			}else{
+				b_powers[i] = b_powers[i-1]*b;
+			}		
+		}
+		
+		//~ printStdVec(k_arr, "k");
+		//~ printStdVec(lambda_arr, "lambda");
+		//~ printStdVec(mu_arr, "mu");
+		//~ printStdVec(nu_arr, "nu");
+		//~ printStdVec(Ti_arr, "T_i");	
 	
-	//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
-	//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
-	//~ std::cout << "an_2 = " << a0_array[2] << std::endl;
-	//~ std::cout << "an_3 = " << a0_array[3] << std::endl;
-	//~ std::cout << "an_4 = " << a0_array[4] << std::endl;
-	//~ std::cout << "an_5 = " << a0_array[5] << std::endl;
-	//~ std::cout << "an_6 = " << a0_array[6] << std::endl;
-	//~ std::cout << "an_7 = " << a0_array[7] << std::endl;
-	//~ std::cout << " " << std::endl;
-	
+		//~ printArr(z_powers, z_power_needed, "z^n");
+		//~ printArr(a_powers, a_power_needed, "a^n");
+		//~ printArr(b_powers, b_power_needed, "b^n");
+		
+		//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
+		//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
+			
+		//~ std::cout << "total number of terms, NT = " << NT << std::endl;
+		for(int i=0; i<NT; i++){
+			a0_array[Ti_arr[i]] += k_arr[i]*z_powers[lambda_arr[i]]*a_powers[mu_arr[i]]*b_powers[nu_arr[i]];
+			//~ std::cout << "T_i = " << k_arr.at(i)*z_powers[lambda_arr.at(i)]*a_powers[mu_arr.at(i)]*b_powers[nu_arr.at(i)] << std::endl;
+		}
+		
+		//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
+		//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
+		//~ std::cout << "an_2 = " << a0_array[2] << std::endl;
+		//~ std::cout << "an_3 = " << a0_array[3] << std::endl;
+		//~ std::cout << "an_4 = " << a0_array[4] << std::endl;
+		//~ std::cout << "an_5 = " << a0_array[5] << std::endl;
+		//~ std::cout << "an_6 = " << a0_array[6] << std::endl;
+		//~ std::cout << "an_7 = " << a0_array[7] << std::endl;
+		//~ std::cout << " " << std::endl;	
 	}	
 }
 
@@ -742,11 +731,11 @@ void TAVP::getB(const double sphP[3], double BSphVec[3]) const {
 		theta = atan2(sqrt(s2),carP[2]); // arctan(sqrt(y^2 + x^2)/z)
 	};
 
-	const double r2 = r*r;
-	
+
 	double B_r;
 	double B_theta;
-
+	
+	const double r2 = r*r;
 	const double sintheta = sin(theta);
 	const double crossterm = 2*R*lambda*r*sintheta;
 
@@ -756,7 +745,6 @@ void TAVP::getB(const double sphP[3], double BSphVec[3]) const {
 	// leads to B being wrong by a factor of 1/2
 	// Hence, we treat  sin(theta) < 1e-7 to be  sin(theta) = 0
 	// r has a similar problem. The result starts to deviate on the 1e-5 level when r < 1e-12
-
 	if(r < 1e-12){
 		//~ std::cout << "in centre" << std::endl;
 		B_r = PhysicsConstants::mu0*I/(2*R);		
@@ -815,60 +803,21 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	//~ std::cout << "N_rho = " << N_rho << std::endl;
 	//~ std::cout << "N_z = " << N_z << std::endl;
 	//~ std::cout << "N_BS = " << N_BS << std::endl;
-	//~ std::cout << "I = " << i << std::endl;
+	//~ std::cout << "I = " << i << std::endl;	
 
-for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
-		//~ double carS0[3] = {0.,0.,0.};
-		//~ double carS1[3] = segments[n_rho*]; // initial value for cylS1 (to copy into cylS0 in the loop) 
-		//~ cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
-	
+	for(int n_rho = 0; n_rho < N_rho; n_rho++){			// loop over all layers
 		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
-			for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
-				
-                double BCarVec_i[3]{0.,0.,0.};
-				//~ carS0 = carS1; // the last end point of a segment is now the start point
-				//~ carS1 = segments[n_rho][n_z*N_BS + n_BS];
-				
-				//~ this->BSSegment(carS0,carS1,carP,i,BCarVec_i);
-				
-				//~ std::cout << "i = " << n_rho*N_z*N_BS + n_z*N_BS + n_BS << std::endl;
-				
+			for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding				
+				double BCarVec_i[3]{0.,0.,0.};
 				segments[n_rho*N_z*N_BS + n_z*N_BS + n_BS].getB(carP,i,BCarVec_i);
+				//~ std::cout << "i = " << n_rho*N_z*N_BS + n_z*N_BS + n_BS << std::endl;
 					
 				BCarVec[0] += BCarVec_i[0];
 				BCarVec[1] += BCarVec_i[1];
-				BCarVec[2] += BCarVec_i[2];					
-							
+				BCarVec[2] += BCarVec_i[2];	
 			}
 		}
 	}
-	
-	//~ for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
-		//~ double cylS0[3];
-		//~ double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-L*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
-		//~ cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
-	
-		//~ for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
-			//~ for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
-				
-                //~ double BCarVec_i[3]{0.,0.,0.};				
-				//~ cylS0[1] = cylS1[1]; 
-				//~ cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
-				//~ cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
-				//~ cylS1[2] = z + pow(-1,n_rho)*(-L*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
-				
-				//~ double carS0[3], carS1[3];
-				//~ cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
-				//~ cylPToCarP(cylS1,carS1);				
-
-				//~ this->BSSegment(carS0,carS1,carP,i,BCarVec_i);	
-				//~ BCarVec[0] += BCarVec_i[0];
-				//~ BCarVec[1] += BCarVec_i[1];
-				//~ BCarVec[2] += BCarVec_i[2];					
-							
-			//~ }
-		//~ }
-	//~ }
 }
 
 void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
@@ -882,10 +831,9 @@ void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[2] = 0;
 
     double BCylVec_i[3];
+    
 	for(int n_rho = 0; n_rho < N_rho; n_rho++){
-		for(int n_z = 0; n_z < N_z; n_z++){	
-			//~ std::cout << " i, j = " << i << ", " << j << std::endl;
-			
+		for(int n_z = 0; n_z < N_z; n_z++){				
 			loops[n_rho][n_z].getB(cylP, BCylVec_i);
 
 			BCylVec[0] += BCylVec_i[0];
@@ -902,11 +850,12 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 	BCylVec[2] = 0;
     
     double BCylVec_i[3];
+    
 	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){			
 			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);			
 			//~ printVec(BCylVec_i,"BCyl_i");
-
+			
 			const double GFac = GFacs[nGP_rho][nGP_z];
 			
             BCylVec[0] += BCylVec_i[0]*GFac;
@@ -914,8 +863,6 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 			BCylVec[2] += BCylVec_i[2]*GFac;
 		}
 	}
-	
-	//~ printVec(BCylVec,"BCyl");
 }
 
 void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]) const {	
@@ -925,18 +872,14 @@ void GaussianQuadratureShells_Tube::getB(const double cylP[3], double BCylVec[3]
 	BCylVec[2] = 0;
     
     double BCylVec_i[3] = {0.,0.,0.};
-	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
-		//~ std::cout << "nG_Rho = " << nGP_rho << std::endl;
-		
+    
+	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){		
 		shells[nGP_rho].getB(cylP, BCylVec_i);
-		
+				
 		const double GFac = GPRhoWeights[nGP_rho];
 			
 		BCylVec[0] += BCylVec_i[0]*GFac;
 		BCylVec[1] += BCylVec_i[1]*GFac;
-		BCylVec[2] += BCylVec_i[2]*GFac;
-	
+		BCylVec[2] += BCylVec_i[2]*GFac;	
 	}
-	
-	//~ printVec(BCylVec,"BCyl");
 }
