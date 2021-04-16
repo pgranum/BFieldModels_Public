@@ -28,10 +28,10 @@ void sphPToCarP(const double sphP[3], double carP[3]);
 
 // Conversion of vectors
 
-void carVecToCylVec(double carVec[3], double carP[3], double cylVec[3]);
-void carVecToSphVec(double carVec[3], double carP[3], double sphVec[3]);
-void cylVecToCarVec(double cylVec[3], double cylP[3], double carVec[3]);
-void sphVecToCarVec(double sphVec[3], double sphP[3], double carVec[3]);
+void carVecToCylVec(const double carVec[3], const double carP[3], double cylVec[3]);
+void carVecToSphVec(const double carVec[3], const double carP[3], double sphVec[3]);
+void cylVecToCarVec(const double cylVec[3], const double cylP[3], double carVec[3]);
+void sphVecToCarVec(const double sphVec[3], const double sphP[3], double carVec[3]);
 
 //~ // interpolation
 

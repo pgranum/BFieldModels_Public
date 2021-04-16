@@ -388,8 +388,8 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	
 	double an1[2*McDOrder+2];
 	double an2[2*McDOrder+2];
-	mcDonaldShellSupFunc(McDOrder,z1,an1);
-	mcDonaldShellSupFunc(McDOrder,z2,an2);
+	mcDonaldShellSupFunc(z1,an1);
+	mcDonaldShellSupFunc(z2,an2);
 	
 	// Preparing terms for loop
 	double B_z = an1[0]-an2[0]; 
@@ -416,7 +416,7 @@ void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
 	BCylVec[2]=B_z;
 }
 
-void McD_Shell::mcDonaldShellSupFunc(const int n, const double z, double an[]) const {	
+void McD_Shell::mcDonaldShellSupFunc(const double z, double an[]) const {	
 /* This function is a support function to loopApproxMcDonald it generates  the an[] list depending on the order of n to reduce calculation time.
  * 
  * @param n		the order of the McDonald model required
@@ -427,9 +427,6 @@ void McD_Shell::mcDonaldShellSupFunc(const int n, const double z, double an[]) c
 	
 	// Powers of z
 	const double z2=z*z;  
-
-	// Powers of R
-	const double R2 = R*R;
 		
 	// Powers of d
 	const double d = 1/(z2+R2);
@@ -438,7 +435,7 @@ void McD_Shell::mcDonaldShellSupFunc(const int n, const double z, double an[]) c
 
 	an[0]=z*d1_2;
 	an[1]=d3_2;
-if (n > 0){ 
+if (McDOrder > 0){ 
 	const double z2 = z*z;
 	
 	const double d5_2=d3_2*d;
@@ -446,7 +443,7 @@ if (n > 0){
 	an[2]=-3*z*d5_2;
 	an[3]=(12*z2-3*R2)*d7_2;
 		
-if (n > 1){
+if (McDOrder > 1){
 	const double z3=z2*z;
 	const double z4=z3*z;
 
@@ -457,7 +454,7 @@ if (n > 1){
 	an[4]=(-60*z3+45*R2*z)*d9_2;			
 	an[5]=(360*z4-540*R2*z2+45*R4)*d11_2;
 
-if (n > 2){
+if (McDOrder > 2){
 	const double z5=z4*z;
 	const double z6=z5*z;
 
@@ -469,7 +466,7 @@ if (n > 2){
 	an[6]=(-2520*z5+6300*R2*z3-1575*R4*z)*d13_2;
 	an[7]=(20160*z6-75600*R2*z4+37800*R4*z2-1575*R6)*d15_2;
 
-if (n > 3){
+if (McDOrder > 3){
 	const double z7=z6*z;
 	const double z8=z7*z;
 	
@@ -481,7 +478,7 @@ if (n > 3){
 	an[8]=(-181440*z7+952560*R2*z5-793800*R4*z3+99225*R6*z)*d17_2;
 	an[9]=(1814400*z8-12700800*R2*z6+15876000*R4*z4-3969000*R6*z2+99225*R8)*d19_2;
 
-if (n > 4){
+if (McDOrder > 4){
 	const double z9=z8*z;
 	const double z10=z9*z;
 
@@ -492,7 +489,7 @@ if (n > 4){
 	
 	an[10]=-(19958400*z9-179625600*R2*z7+314344800*R4*z5-130977000*R6*z3+9823275*R8*z)*d21_2;
 	an[11]=(239500800*z10-2694384000*R2*z8+6286896000*R4*z6-3929310000*R6*z4+589396500*R8*z2-9823275*R10)*d23_2;
-if (n> 5){
+if (McDOrder> 5){
 	const double z11=z10*z;
 	const double z12=z11*z;
 
@@ -504,7 +501,7 @@ if (n> 5){
 	an[12]=-(3113510400*z11-42810768000*R2*z9+128432304000*R4*z7-112378266000*R6*z5+28094566500*R8*z3-1404728325*R10*z)*d25_2;
 	an[13]=(43589145600*z12-719220902400*R2*z10+2697078384000*R4*z8-3146591448000*R6*z6+1179971793000*R8*z4-117997179300*R10*z2+1404728325*R12)*d27_2;
 
-if (n>6){
+if (McDOrder>6){
 	const double z13 = z12*z;
 	const double z14 = z13*z;
 	
@@ -717,28 +714,34 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 	}	
 }
 
-void TAVP::getB(double sphP[3], double BSphVec[3]) const {	
+void TAVP::getB(const double sphP[3], double BSphVec[3]) const {	
 	// an approximation of the B-field of a current loop
 	// based on eq A.2 in https://iopscience.iop.org/article/10.1088/1367-2630/14/1/015010
 	// input: radius R, mirror z position z, current I, model parameter lambda,
 	// observation point r, placeholder for B in cartesian coor B_vec
 	
 	//~ printVec(sphP,"sphP");
-	double carP[3] = {0.,0.,0.};
-	double sphPRel[3] = {0.,0.,0.};
-	sphPToCarP(sphP,carP);
-	carP[2] = carP[2] - this->getz();
-	carPToSphP(carP,sphPRel);
-	//~ printVec(sphPRel,"sphP");
 	
-	//~ const double R = this->getR();
-	const double r = sphPRel[0];
-	const double theta = sphPRel[1];
+	// Converting the spherical point to cartesian coordinates, and makes it realtive to the centre of the magnet
+	const double rsintheta = sphP[0]*sin(sphP[1]);
+	const double carP[3] = {rsintheta*cos(sphP[2]), rsintheta*sin(sphP[2]), sphP[0]*cos(sphP[1]) - Loop::getz()};
+	// Convert back to sphericla coordinates. The transformation has not affected phi = sphP[2]
+	const double s2 = carP[0]*carP[0] + carP[1]*carP[1]; 
+	const double r = std::sqrt(s2 + carP[2]*carP[2]);
+	double theta;
+	if (s2 == 0 && carP[2] == 0){
+		theta = 0;
+	}else if (s2 == 0 && carP[2] > 0){
+		theta = 0;
+	}else if (s2 == 0 && carP[2] < 0){
+		theta = PhysicsConstants::pi;
+	}else if (carP[2] == 0){
+		theta = PhysicsConstants::pi/2.0;
+	}else{
+		theta = atan2(sqrt(s2),carP[2]); // arctan(sqrt(y^2 + x^2)/z)
+	};
 
-	// Constants
-	const double C = 0.125*PhysicsConstants::mu0*this->getI()*R/lambda;
 	const double r2 = r*r;
-	const double R2 = R*R;
 	
 	double B_r;
 	double B_theta;
@@ -755,7 +758,7 @@ void TAVP::getB(double sphP[3], double BSphVec[3]) const {
 
 	if(r < 1e-12){
 		//~ std::cout << "in centre" << std::endl;
-		B_r = PhysicsConstants::mu0*this->getI()/(2*R);		
+		B_r = PhysicsConstants::mu0*I/(2*R);		
 		B_theta = 0;
 	}else if(sin(theta) < 1e-7){ 
 		//~ std::cout << "on axis" << std::endl;
@@ -886,8 +889,8 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){			
 			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);			
 			//~ printVec(BCylVec_i,"BCyl_i");
-			
-			const double GFac = GPZWeights[nGP_z]*GPRhoWeights[nGP_rho];
+
+			const double GFac = GFacs[nGP_z][nGP_rho];
 			
             BCylVec[0] += BCylVec_i[0]*GFac;
 			BCylVec[1] += BCylVec_i[1]*GFac;

@@ -171,7 +171,7 @@ void carPToSphP(const double carP[3], double sphP[3]){
 	}else if (carP[2] == 0){
 		sphP[1] = PhysicsConstants::pi/2.0;
 	}else{
-		sphP[1] = atan2(sqrt(s2),carP[2]); // arctan(y/x)
+		sphP[1] = atan2(sqrt(s2),carP[2]); // arctan(sqrt(y^2 + x^2)/z)
 	};
 	
 	if (carP[0] == 0 && carP[1] == 0){
@@ -184,7 +184,7 @@ void carPToSphP(const double carP[3], double sphP[3]){
 
 // Conversion of vectors
 
-void carVecToCylVec(double carVec[3], double carP[3], double cylVec[3]){
+void carVecToCylVec(const double carVec[3], const double carP[3], double cylVec[3]){
 	// converts a cartesian vector to a cylindrical vector
 	
 	double cylP[3];
@@ -198,7 +198,7 @@ void carVecToCylVec(double carVec[3], double carP[3], double cylVec[3]){
 	cylVec[2]= carVec[2];
 }
 
-void carVecToSphVec(double carVec[3], double carP[3], double sphVec[3]){
+void carVecToSphVec(const double carVec[3], const double carP[3], double sphVec[3]){
 	// converst a cartesian vector at the azimuthal angle phi and polar angle theta 
 	// to a spherical vector
 	double sphP[3];
@@ -213,7 +213,7 @@ void carVecToSphVec(double carVec[3], double carP[3], double sphVec[3]){
 	sphVec[2]=-sinPhi*carVec[0]+cosPhi*carVec[1];	
 }
 
-void cylVecToCarVec(double cylVec[3], double cylP[3], double carVec[3]){
+void cylVecToCarVec(const double cylVec[3], const double cylP[3], double carVec[3]){
 	// converts a cylindrical VECTOR at point P to a cartesian vector
 	// P should be in cylindrical coordinates
 	double cphi = cos(cylP[1]);
@@ -224,7 +224,7 @@ void cylVecToCarVec(double cylVec[3], double cylP[3], double carVec[3]){
 	carVec[2] = cylVec[2];
 }
 
-void sphVecToCarVec(double sphVec[3], double sphP[3], double carVec[3]){
+void sphVecToCarVec(const double sphVec[3], const double sphP[3], double carVec[3]){
 	// converts a spherical VECTOR at point P to a cartesian vector
 	// P should be in spherical coordinates
 	double ctheta = cos(sphP[1]);

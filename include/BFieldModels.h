@@ -136,6 +136,7 @@ class McD_Shell : public Shell {
 	private:
 	const int McDOrder;
 	const double L_2 = 0.5*this->getL();
+	const double R2;
 	const double C;
 	
 	public:
@@ -143,6 +144,7 @@ class McD_Shell : public Shell {
 			  const double x, const double y, const double z): 
 	Shell(R,N,i,L,x,y,z), 
 	McDOrder(McDOrder),
+	R2(R*R),
 	C(PhysicsConstants::mu0*i*N/(2*L))
 	{
 	} // end of constructor
@@ -151,7 +153,7 @@ class McD_Shell : public Shell {
 	} // end of destructor
 	
 	void getB(const double cylP[3], double BCylVec[3]) const ; 
-	void mcDonaldShellSupFunc(const int n, const double z, double an[]) const ;
+	void mcDonaldShellSupFunc(const double z, double an[]) const ;
 };
 
 class NWire_Shell : public Shell{
@@ -345,16 +347,23 @@ class McD_Tube : public Tube{
 class TAVP : public Loop{
 	private:
 	const double lambda;
+	const double R2;
+	const double C;
 	
 	public:
-	TAVP(const double lambda, const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z), lambda(lambda){
+	TAVP(const double lambda, const double R, const double I, const double x, const double y, const double z) : 
+	Loop(R,I,x,y,z),
+	lambda(lambda),
+	R2(R*R),
+	C(0.125*PhysicsConstants::mu0*I*R/lambda)
+	{
 	
 	} // end of constructor
 	
 	~TAVP(){
 	} // end of destructor
 	
-	void getB(double sphP[3], double BSphVec[3]) const ;
+	void getB(const double sphP[3], double BSphVec[3]) const ;
 };
 
 class Helix : public Tube, public BiotSavart{
@@ -438,6 +447,7 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	std::vector<double> GPRhoValues;
 	std::vector<double> GPRhoWeights;
 	std::vector<std::vector<SimpleAnalyticModel>> loops;
+	std::vector<std::vector<double>> GFacs;
 	
 	public:
 	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NGP_z, const int NGP_rho, const double R1, const double R2, 
@@ -458,10 +468,15 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 		const double I_temp = this->getI()/(N_rho*N_z);	// divide the current of the tube between the loops use for GQ  (N_rho*N_z loops)
 		const double centre_rho = R1 + width_rho*0.5;
 		
+		
+		
+		// constructin 2D array of loops:
 		for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
 			loops.push_back(std::vector<SimpleAnalyticModel>());
+			GFacs.push_back(std::vector<double>());
 			for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
 				loops[nGP_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I_temp,x,y,z+GPZValues[nGP_z]));
+				GFacs[nGP_rho].push_back(GPZWeights[nGP_z]*GPRhoWeights[nGP_rho]);
 			}
 		}
 		
@@ -491,8 +506,6 @@ class GaussianQuadratureShells_Tube : public Tube, public GQ_Support{
 		getGaussianQuadratureParams(NGP_rho,GPRhoValues,GPRhoWeights,width_rho*0.5,NWiresRho);
 		
 		const double I = this->getI()/N_rho; // devide the current of the tube on N_rho shells
-		//~ const double innerRadius = this->getR1();
-		//~ const double width_z = this->getL(); 	
 		const double centre_rho = R1 + width_rho*0.5;
 		
 		for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
