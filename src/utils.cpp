@@ -25,7 +25,7 @@
 		//~ << "] " << std::endl;
 //~ }
 
-void printVec(double vec[3], std::string vecName){
+void printVec(const double vec[3], const std::string vecName){
 /* This function print the entries of a vector with its name
 * 
 * @param vec 		the vector being printed

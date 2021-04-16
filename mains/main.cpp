@@ -9,7 +9,7 @@
 int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	
-	double carP[3] = {0.,0.,0.1}; 		// point to calculate field at in cartesian coordinates
+	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
 	double sphP[3];						// point to calculate field at in spherical coordinates
 	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coordinates
@@ -18,7 +18,7 @@ int main(){
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
 	
-	const int N_t = 100;
+	const int N_t = 1;
 	double time;
 	double time_squared;
 	double mean;
@@ -37,7 +37,7 @@ int main(){
 	const double I = 120*600;
 	const double x = 0;
 	const double y = 0;
-	const double z = 0.1;
+	const double z = 0.;
 	const int McDOrder = 7;	// number of terms to use in the McDonald model
 	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 		

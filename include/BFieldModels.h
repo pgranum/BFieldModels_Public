@@ -20,13 +20,19 @@
 
 class BiotSavart {
 	private:
+	const double carS0[3]; 	// start point of the stright line segment
+	const double carS1[3]; 	// end point of the stright line segment
 	
 	public:
-	BiotSavart(){} // end of constructor
+	BiotSavart(const double carS0[3], const double carS1[3]) : 
+	carS0{carS0[0],carS0[1],carS0[2]},
+	carS1{carS1[0],carS1[1],carS1[2]}
+	{
+	}  // end of constructor
 	
 	~BiotSavart(){} // end of destructor
 	
-	void BSSegment(const double s0[3], const double s1[3], const double r[3], const double I, double B_vec[3]) const ;
+	void getB(const double carP[3], const double I, double BCarVec[3]) const ;
 };
 
 class GQ_Support {
@@ -61,20 +67,39 @@ class SimpleAnalyticModel : public Loop{
 	void getB(const double cylP[3], double BCylVec[3]) const ;
 };
 
-class BiotSavart_Loop : public Loop, public BiotSavart{
+class BiotSavart_Loop : public Loop{
 	private:
 	const int N_BS;
-	std::vector<double> xs;
-	std::vector<double> ys;
+	//~ std::vector<double> xs;
+	//~ std::vector<double> ys;
+	std::vector<BiotSavart> segments;
 	
 	public:
-	BiotSavart_Loop(const int N_BS, const double R, const double I, const double x, const double y, const double z) : Loop(R,I,x,y,z), N_BS(N_BS){
+	BiotSavart_Loop(const int N_BS, const double R, const double I, const double x, const double y, const double z) : 
+	Loop(R,I,x,y,z),
+	N_BS(N_BS)
+	{
 		// setting up the straght line segments used by the Biot-Savart method
-		const double dPhi = 2*PhysicsConstants::pi/(N_BS-1);
-		for(int i=0; i<N_BS; i++){
-			const double phi = i*dPhi;
-			xs.push_back(cos(phi)*R);
-			ys.push_back(sin(phi)*R);
+		const double dPhi = 2*PhysicsConstants::pi/N_BS;
+		double carS0[3] = {0.,0.,z};
+		double carS1[3] = {R,0.,z};
+		//~ printVec(carS0,"S0");
+		//~ printVec(carS1,"S1");
+		//~ segments.push_back(BiotSavart(carS0,carS1));
+		
+		for(int n_BS=0; n_BS<N_BS; n_BS++){
+			const double phi = (n_BS+1)*dPhi;
+			
+			carS0[0] = carS1[0];
+			carS0[1] = carS1[1];
+			carS1[0] = cos(phi)*R;
+			carS1[1] = sin(phi)*R;
+			
+			//~ std::cout << n_BS << std::endl;
+			//~ printVec(carS0,"S0");
+			//~ printVec(carS1,"S1");
+			
+			segments.push_back(BiotSavart(carS0,carS1));
 		}
 	} // end of constructor
 	
@@ -366,13 +391,15 @@ class TAVP : public Loop{
 	void getB(const double sphP[3], double BSphVec[3]) const ;
 };
 
-class Helix : public Tube, public BiotSavart{
+class Helix : public Tube{
 	private:
 	const int N_z; // the number of wires making up the Tube
 	const int N_rho; // the number of layers making up the Tube
 	const int N_BS; // the number of straigt line segments per turn
 	const double delta_rho; // the spacing between layers
 	const double delta_z; // the spapring between wires in a layer	
+	
+	std::vector<BiotSavart> segments;
 	
 	public:
 	Helix(const int N_z, const int N_rho, const int N_BS, const double R1, const double R2, 
@@ -384,7 +411,57 @@ class Helix : public Tube, public BiotSavart{
 	delta_rho(Tube::getThickness()/N_rho),
 	delta_z(L/N_z)
 	{
+		for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
+			//~ segments.push_back(std::vector<BiotSavart>());
+			
+			double carS0[3] = {0.,0.,0.};
+			double carS1[3] = {0.,0.,0.};
+			double cylS0[3] = {0.,0.,0.};
+			double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-L*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
+			
+			//~ cylPToCarP(cylS1,carS1); // convert the point to cartesian coordinates
+			//~ segments[n_rho].push_back(carS);
+			
+			cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
+		
+			for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
+				//~ segments[n_rho].push_back(std::vector<double>());
+				
+				for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
+					
+					//~ const double cylS = {0.,0.,0.};
+					
+					
+					
+					
+	                //~ double BCarVec_i[3]{0.,0.,0.};				
+					cylS0[1] = cylS1[1]; 
+					cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
+					cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
+					cylS1[2] = z + pow(-1,n_rho)*(-L*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+
+					cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
+					cylPToCarP(cylS1,carS1);				
+					segments.push_back(BiotSavart(carS0,carS1));
 	
+					//~ if(n_z == 0 && n_BS == 0){
+					//~ std::cout << "BS params:" << std::endl;
+					//~ std::cout << "n_rho = " << n_rho << " n_z = " << n_z << " n_BS = " << n_BS << std::endl;
+					//~ printVec(carS0,"s0");
+					//~ printVec(carS1,"s1");
+					//~ printVec(carP,"r_i");
+					//~ std::cout << "I = " << i << std::endl;
+					//~ printVec(BCarVec_i,"B_i");
+					//~ }
+	
+					//~ this->BSSegment(carS0,carS1,carP,i,BCarVec_i);	
+					//~ BCarVec[0] += BCarVec_i[0];
+					//~ BCarVec[1] += BCarVec_i[1];
+					//~ BCarVec[2] += BCarVec_i[2];					
+								
+				}
+			}
+		}
 	} // end of constructor
 	
 	~Helix(){
@@ -478,6 +555,7 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 				loops[nGP_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I_temp,x,y,z+GPZValues[nGP_z]));
 				GFacs[nGP_rho].push_back(GPZWeights[nGP_z]*GPRhoWeights[nGP_rho]);
 			}
+			
 		}
 		
 	} // end of constructor

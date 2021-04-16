@@ -20,7 +20,7 @@
 //~ void printVec(double vec[3]);
 //~ void printVec(long double vec[3]);
 
-void printVec(double vec[3], std::string vecName);
+void printVec(const double vec[3], const std::string vecName);
 
 //~ void printVec(long double vec[3], std::string vecName);
 //~ void printArr(double arr[], int N);

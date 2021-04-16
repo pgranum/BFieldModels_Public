@@ -2,17 +2,17 @@
 
 // Utility Functions
 
-void BiotSavart::BSSegment(const double s0[3], const double s1[3], const double r[3], const double I, double B_vec[3]) const {
+void BiotSavart::getB(const double carP[3], const double I, double BCarVec[3]) const {
 
-	//~ printVec(s0,"s0");
-	//~ printVec(s1,"s1");
-	//~ printVec(r,"r");
-	//~ printVec(B_vec,"B in");
+	//~ printVec(carS0,"carS0");
+	//~ printVec(carS1,"carS1");
+	//~ printVec(carP,"carP");
+	//~ printVec(BCarVec,"B in");
 	
 	double i[3]={0.}; double k0[3]={0.}; double k1[3]={0.};
-	vecSub(s1,s0,i);
-	vecSub(s0,r,k0);
-	vecSub(s1,r,k1);
+	vecSub(carS1,carS0,i);
+	vecSub(carS0,carP,k0);
+	vecSub(carS1,carP,k1);
 	
 	//~ double i_norm; double k0_norm; double k1_norm;
 	const double i_norm = vecNorm(i);
@@ -48,9 +48,9 @@ void BiotSavart::BSSegment(const double s0[3], const double s1[3], const double 
 	//~ std::cout << "C = " << C << std::endl;
 	//~ printVec(A,"A*C");
 	
-	vecAddOvrwrt(B_vec,A);
+	vecAddOvrwrt(BCarVec,A);
 	
-	//~ printVec(B_vec,"B out");
+	//~ printVec(BCarVec,"B out");
 }
 
 void GQ_Support::getGaussianQuadratureParams(const int N, std::vector<double> &points, std::vector<double> &weights, const double dimLength, const double NWires) const {
@@ -158,21 +158,25 @@ void BiotSavart_Loop::getB(const double carP[3], double BCarVec[3]) const {
 	BCarVec[1] = 0;
 	BCarVec[2] = 0;
 
-	double x0 = xs[0];
-	double y0 = ys[0];
-	double x1;
-	double y1;
+	//~ double x0 = xs[0];
+	//~ double y0 = ys[0];
+	//~ double x1;
+	//~ double y1;
+	//~ printVec(BCarVec,"B"); 
 	
-	for(int i=0; i<N_BS-1; i++){
-		x1 = xs[i+1];
-		y1 = ys[i+1];
-		double r0[3]{x0,y0,Loop::z};
-		double r1[3]{x1,y1,Loop::z};
+	for(int n_BS=0; n_BS<N_BS; n_BS++){
+		//~ x1 = xs[i+1];
+		//~ y1 = ys[i+1];
+		//~ double r0[3]{x0,y0,Loop::z};
+		//~ double r1[3]{x1,y1,Loop::z};
 			
-		this->BSSegment(r0,r1,carP,I,BCarVec);
+		//~ this->BSSegment(r0,r1,carP,I,BCarVec);
+		segments[n_BS].getB(carP, I, BCarVec);
 		
-		x0 = x1;
-		y0 = y1;
+		//~ printVec(BCarVec,"B"); 
+		
+		//~ x0 = x1;
+		//~ y0 = y1;
 	}	
 }
 
@@ -811,40 +815,29 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	//~ std::cout << "L = " << width_z << std::endl;
 	//~ std::cout << "delta_rho = " << delta_rho << std::endl;
 	//~ std::cout << "delta_z = " << delta_z << std::endl;
-	//~ std::cout << "N_rho = " << N_rho << std::endl;
-	//~ std::cout << "N_z = " << N_z << std::endl;
-	//~ std::cout << "N_BS = " << N_BS << std::endl;
+	std::cout << "N_rho = " << N_rho << std::endl;
+	std::cout << "N_z = " << N_z << std::endl;
+	std::cout << "N_BS = " << N_BS << std::endl;
 	//~ std::cout << "I = " << i << std::endl;
-	
-	for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
-		double cylS0[3];
-		double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-L*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
-		cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
+
+for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
+		//~ double carS0[3] = {0.,0.,0.};
+		//~ double carS1[3] = segments[n_rho*]; // initial value for cylS1 (to copy into cylS0 in the loop) 
+		//~ cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
 	
 		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
 			for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
 				
-                double BCarVec_i[3]{0.,0.,0.};				
-				cylS0[1] = cylS1[1]; 
-				cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
-				cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
-				cylS1[2] = z + pow(-1,n_rho)*(-L*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+                double BCarVec_i[3]{0.,0.,0.};
+				//~ carS0 = carS1; // the last end point of a segment is now the start point
+				//~ carS1 = segments[n_rho][n_z*N_BS + n_BS];
 				
-				double carS0[3], carS1[3];
-				cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
-				cylPToCarP(cylS1,carS1);				
-
-				//~ if(n_z == 0 && n_BS == 0){
-				//~ std::cout << "BS params:" << std::endl;
-				//~ std::cout << "n_rho = " << n_rho << " n_z = " << n_z << " n_BS = " << n_BS << std::endl;
-				//~ printVec(carS0,"s0");
-				//~ printVec(carS1,"s1");
-				//~ printVec(carP,"r_i");
-				//~ std::cout << "I = " << i << std::endl;
-				//~ printVec(BCarVec_i,"B_i");
-				//~ }
-
-				this->BSSegment(carS0,carS1,carP,i,BCarVec_i);	
+				//~ this->BSSegment(carS0,carS1,carP,i,BCarVec_i);
+				
+				//~ std::cout << "i = " << n_rho*N_z*N_BS + n_z*N_BS + n_BS << std::endl;
+				
+				segments[n_rho*N_z*N_BS + n_z*N_BS + n_BS].getB(carP,i,BCarVec_i);
+					
 				BCarVec[0] += BCarVec_i[0];
 				BCarVec[1] += BCarVec_i[1];
 				BCarVec[2] += BCarVec_i[2];					
@@ -852,6 +845,33 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 			}
 		}
 	}
+	
+	//~ for(int n_rho = 0; n_rho < N_rho; n_rho++){				// loop over all layers
+		//~ double cylS0[3];
+		//~ double cylS1[3]{R1 + delta_rho*0.5 + n_rho*delta_rho, 0.0, z + pow(-1,n_rho)*(-L*0.5) }; // initial value for cylS1 (to copy into cylS0 in the loop) 
+		//~ cylS0[0] = cylS1[0]; // for a given layer, the rho-coordinate stays the same for all segments
+	
+		//~ for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
+			//~ for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
+				
+                //~ double BCarVec_i[3]{0.,0.,0.};				
+				//~ cylS0[1] = cylS1[1]; 
+				//~ cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
+				//~ cylS1[1] = 2.0*PhysicsConstants::pi/N_BS*(n_BS+1);
+				//~ cylS1[2] = z + pow(-1,n_rho)*(-L*0.5 + delta_z/N_BS*(n_BS+1) + n_z*delta_z);
+				
+				//~ double carS0[3], carS1[3];
+				//~ cylPToCarP(cylS0,carS0); // convert the start and end point to cartesian coordinates
+				//~ cylPToCarP(cylS1,carS1);				
+
+				//~ this->BSSegment(carS0,carS1,carP,i,BCarVec_i);	
+				//~ BCarVec[0] += BCarVec_i[0];
+				//~ BCarVec[1] += BCarVec_i[1];
+				//~ BCarVec[2] += BCarVec_i[2];					
+							
+			//~ }
+		//~ }
+	//~ }
 }
 
 void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
@@ -890,7 +910,7 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
 			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);			
 			//~ printVec(BCylVec_i,"BCyl_i");
 
-			const double GFac = GFacs[nGP_z][nGP_rho];
+			const double GFac = GFacs[nGP_rho][nGP_z];
 			
             BCylVec[0] += BCylVec_i[0]*GFac;
 			BCylVec[1] += BCylVec_i[1]*GFac;
