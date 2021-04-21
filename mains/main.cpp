@@ -18,7 +18,7 @@ int main(){
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
 	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
 	
-	const int N_t = 1;
+	const int N_t = 1000;
 	double time;
 	double time_squared;
 	double mean;

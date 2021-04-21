@@ -9,16 +9,10 @@ void BiotSavart::getB(const double carP[3], const double I, double BCarVec[3]) c
 	//~ printVec(carP,"carP");
 	//~ printVec(BCarVec,"B in");
 	
-	double i[3]={carS1[0]-carS0[0], carS1[1]-carS0[1], carS1[2]-carS0[2]}; 
-	double k0[3]={carS0[0]-carP[0], carS0[1]-carP[1], carS0[2]-carP[2]}; 
-	double k1[3]={carS1[0]-carP[0], carS1[1]-carP[1], carS1[2]-carP[2]}; 
-	
-	//~ double k0[3]={0.}; 
-	//~ double k1[3]={0.};
-	//~ vecSub(carS1,carS0,i);
-	//~ vecSub(carS0,carP,k0);
-	//~ vecSub(carS1,carP,k1);
-	
+	const double i[3]={carS1[0]-carS0[0], carS1[1]-carS0[1], carS1[2]-carS0[2]}; 
+	const double k0[3]={carS0[0]-carP[0], carS0[1]-carP[1], carS0[2]-carP[2]}; 
+	const double k1[3]={carS1[0]-carP[0], carS1[1]-carP[1], carS1[2]-carP[2]}; 
+
 	//~ double i_norm; double k0_norm; double k1_norm;
 	const double i_norm = sqrt(i[0]*i[0] + i[1]*i[1] + i[2]*i[2]);
 	const double k0_norm = sqrt(k0[0]*k0[0] + k0[1]*k0[1] + k0[2]*k0[2]);
@@ -32,9 +26,6 @@ void BiotSavart::getB(const double carP[3], const double I, double BCarVec[3]) c
 	const double i_unit[3] = {i[0]*i_inorm, i[1]*i_inorm, i[2]*i_inorm}; 
 	const double k0_unit[3] = {k0[0]*k0_inorm, k0[1]*k0_inorm, k0[2]*k0_inorm};
 	const double k1_unit[3] = {k1[0]*k1_inorm, k1[1]*k1_inorm, k1[2]*k1_inorm};
-	//~ vecMultScal(i, 1.0/i_norm, i_unit);
-	//~ vecMultScal(k0,1.0/k0_norm,k0_unit);
-	//~ vecMultScal(k1,1.0/k1_norm,k1_unit);
 	
 	//~ printVec(k0,"k0");
 	//~ printVec(k1,"k1");
@@ -42,35 +33,23 @@ void BiotSavart::getB(const double carP[3], const double I, double BCarVec[3]) c
 	double A[3] = {k0[1]*i_unit[2] - k0[2]*i_unit[1],
 				   k0[2]*i_unit[0] - k0[0]*i_unit[2],
 				   k0[0]*i_unit[1] - k0[1]*i_unit[0]};
-	//~ vecCrsP(k0,i_unit,A);
 	
 	const double A_inorm = 1.0/sqrt(A[0]*A[0] + A[1]*A[1] + A[2]*A[2]);
 	const double A_inorm2 = A_inorm*A_inorm;
-	//~ A_norm = vecNorm(A);
-	//~ vecMultScalOvrwrt(A,1/(A_norm*A_norm));
 	A[0] = A[0]*A_inorm2;
 	A[1] = A[1]*A_inorm2;
 	A[2] = A[2]*A_inorm2;
 	
-	//~ printVec(A,"A");
-	
+	//~ printVec(A,"A");	
 	
 	const double dk[3] = {k1_unit[0]-k0_unit[0], k1_unit[1]-k0_unit[1], k1_unit[2]-k0_unit[2]};
-	//~ vecSub(k1_unit,k0_unit,dk);
 	
 	const double a0 = dk[0]*i_unit[0] + dk[1]*i_unit[1] + dk[2]*i_unit[2]; 
-	//~ a0 = vecDotP(dk,i_unit);
 		
 	const double C = PhysicsConstants::mu0/(4*PhysicsConstants::pi)*I*a0;
 	BCarVec[0] = A[0]*C;
 	BCarVec[1] = A[1]*C;
 	BCarVec[2] = A[2]*C;
-	//~ vecMultScalOvrwrt(A,C);
-	
-	//~ std::cout << "C = " << C << std::endl;
-	//~ printVec(A,"A*C");
-	
-	//~ vecAddOvrwrt(BCarVec,A);
 	
 	//~ printVec(BCarVec,"B out");
 }
@@ -179,26 +158,15 @@ void BiotSavart_Loop::getB(const double carP[3], double BCarVec[3]) const {
 	BCarVec[0] = 0;
 	BCarVec[1] = 0;
 	BCarVec[2] = 0;
-
-	//~ double x0 = xs[0];
-	//~ double y0 = ys[0];
-	//~ double x1;
-	//~ double y1;
-	//~ printVec(BCarVec,"B"); 
 	
+	double BCarVec_i[3]{0.,0.,0.};
+		
 	for(int n_BS=0; n_BS<N_BS; n_BS++){
-		//~ x1 = xs[i+1];
-		//~ y1 = ys[i+1];
-		//~ double r0[3]{x0,y0,Loop::z};
-		//~ double r1[3]{x1,y1,Loop::z};
-			
-		//~ this->BSSegment(r0,r1,carP,I,BCarVec);
-		segments[n_BS].getB(carP, I, BCarVec);
+		segments[n_BS].getB(carP, I, BCarVec_i);
 		
-		//~ printVec(BCarVec,"B"); 
-		
-		//~ x0 = x1;
-		//~ y0 = y1;
+		BCarVec[0] += BCarVec_i[0];
+		BCarVec[1] += BCarVec_i[1];
+		BCarVec[2] += BCarVec_i[2];	
 	}	
 }
 
@@ -832,16 +800,6 @@ void McD_Tube::getA0(const double z, const double R, double a0_array[]) const{
 			a0_array[Ti_arr[i]] += k_arr[i]*z_powers[lambda_arr[i]]*a_powers[mu_arr[i]]*b_powers[nu_arr[i]];
 			//~ std::cout << "T_i = " << k_arr.at(i)*z_powers[lambda_arr.at(i)]*a_powers[mu_arr.at(i)]*b_powers[nu_arr.at(i)] << std::endl;
 		}
-		
-		//~ std::cout << "an_0 = " << a0_array[0] << std::endl;
-		//~ std::cout << "an_1 = " << a0_array[1] << std::endl;
-		//~ std::cout << "an_2 = " << a0_array[2] << std::endl;
-		//~ std::cout << "an_3 = " << a0_array[3] << std::endl;
-		//~ std::cout << "an_4 = " << a0_array[4] << std::endl;
-		//~ std::cout << "an_5 = " << a0_array[5] << std::endl;
-		//~ std::cout << "an_6 = " << a0_array[6] << std::endl;
-		//~ std::cout << "an_7 = " << a0_array[7] << std::endl;
-		//~ std::cout << " " << std::endl;	
 	}	
 }
 
@@ -954,8 +912,7 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 			
 		BCarVec[0] += BCarVec_i[0];
 		BCarVec[1] += BCarVec_i[1];
-		BCarVec[2] += BCarVec_i[2];	
-		
+		BCarVec[2] += BCarVec_i[2];			
 	}
 }
 
