@@ -9,7 +9,7 @@
 int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	
-	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
+	double carP[3] = {0.01,0.,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
 	double sphP[3];						// point to calculate field at in spherical coordinates
 	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coordinates
@@ -58,6 +58,8 @@ int main(){
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
+	
+	
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
@@ -110,10 +112,11 @@ int main(){
 	//~ const double x = 0;
 	//~ const double y = 0;
 	//~ const double z = 0;
-	//~ const Shell shell = Shell(R,N,i,L,x,y,z); // a shell class that is instantiated with the relevant parameters
 	//~ McDOrder = 7; // I would like the option to change here
 	const int N_z = 30;
 	const int NG_z = 3;
+	
+	
 	
 	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
@@ -133,14 +136,8 @@ int main(){
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
-	
-	
-	//~ double i010 = conway1D.I_010(0.1,cylP);
-	//~ double i011 = conway1D.I_011(0.1,cylP);
-	//~ std::cout << i010 << std::endl;
-	//~ std::cout << i011 << std::endl;
-	
-	//~ return(1);
+
+
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
@@ -198,12 +195,10 @@ int main(){
 	mean = time/(double)N_t;
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-	std::cout << "\n";
-	
+	std::cout << "\n";	
 	
 		
-	std::cout << "\n";
-	
+	std::cout << "\n";	
 	
 	
 	//////////////////// FINITE SOLENOID ////////////////////
@@ -218,7 +213,7 @@ int main(){
 	//~ const double y = 0;
 	//~ const double z = 0;
 	
-	const int McDOrder2 = 3; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
+	const int McDOrder2 = 5; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
 	const int N_rho = 4;
 	//~ const int N_z = 30;
 	//~ const int N_BS = 10000; // I would like the option to change here
@@ -246,6 +241,8 @@ int main(){
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
 	
+	
+	
 	std::cout << "Using the TAVP model:\n";
 	time = 0;
 	time_squared = 0;
@@ -266,6 +263,8 @@ int main(){
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 	std::cout << "\n";
+	
+	
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;

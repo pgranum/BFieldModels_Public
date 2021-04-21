@@ -709,17 +709,32 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	double B_rho = -(rho/2)*(an12[1]-an11[1]-an22[1]+an21[1]);
 	double constRTerm = -(rho/2);
 	
+	//~ std::cout << "B_z = " << B_z << std::endl;
+	//~ std::cout << "B_rho = " << B_rho << std::endl;
+	
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
+		//~ std::cout << "n = " << n << std::endl;
 		constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
 		B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
 		constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
 		B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
+		
+		//~ std::cout << "constZTerm = " << constZTerm << std::endl;
+		//~ std::cout << "constRTerm = " << constRTerm << std::endl;
+		//~ std::cout << "B_z_i = " << (an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]) << std::endl;
+		//~ std::cout << "B_rho_i = " << (an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]) << std::endl;
+		
+		//~ std::cout << "B_z = " << B_z << std::endl;
+		//~ std::cout << "B_rho = " << B_rho << std::endl;
 	}
 	
 	// Preparing result
 	B_rho *= C;
 	B_z *= C;
+	
+	//~ std::cout << "B_z = " << B_z << std::endl;
+	//~ std::cout << "B_rho = " << B_rho << std::endl;
 	
 	// Result
 	BCylVec[0]=B_rho;
