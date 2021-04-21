@@ -153,6 +153,9 @@ class Conway1D : public Shell{
 	} // end of destructor
 	
 	void getB(const double cylP[3], double BCylVec[3]) const ;
+	double I_010(const double zDiff, const double cylP[3]) const ;
+	double I_011(const double zDiff, const double cylP[3]) const ;
+	double HeumansLambda(const double beta, const double k) const ;
 };
 
 class McD_Shell : public Shell {
@@ -408,7 +411,7 @@ class Helix : public Tube{
 	
 	public:
 	Helix(const int N_z, const int N_rho, const int N_BS, const double R1, const double R2, 
-			   const int N, const double i, const double L, const double x, const double y, const double z) : 
+		  const int N, const double i, const double L, const double x, const double y, const double z) : 
 	Tube(R1,R2,N,i,L,x,y,z),
 	N_z(N_z), 
 	N_rho(N_rho), 
@@ -435,10 +438,6 @@ class Helix : public Tube{
 				for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding
 					
 					//~ const double cylS = {0.,0.,0.};
-					
-					
-					
-					
 	                //~ double BCarVec_i[3]{0.,0.,0.};				
 					cylS0[1] = cylS1[1]; 
 					cylS0[2] = cylS1[2]; // the last end point of a segment is now the start point
@@ -481,7 +480,7 @@ class NWire_Tube : public Tube{
 	const int N_rho; // the number of layers making up the Tube
 	const int NGP_z; // the number of wires used to represent the Tube in the Gaussian Quadrature
 	const int NGP_rho; // the number of layers used to represent the Tube in the Gaussian Quadrature
-	std::vector<std::vector<SimpleAnalyticModel>> loops;
+	std::vector<SimpleAnalyticModel> loops;
 	
 	
 	public:
@@ -505,9 +504,8 @@ class NWire_Tube : public Tube{
 		const double delta_z = width_z/N_z; 
 				
 		for(int n_rho = 0; n_rho < N_rho; n_rho++){
-			loops.push_back(std::vector<SimpleAnalyticModel>());
 			for(int n_z = 0; n_z < N_z; n_z++){
-				loops[n_rho].push_back(SimpleAnalyticModel(R1 + delta_rho*0.5 + n_rho*delta_rho, I, x, y, z - 0.5*width_z + delta_z*0.5 + n_z*delta_z));
+				loops.push_back(SimpleAnalyticModel(R1 + delta_rho*0.5 + n_rho*delta_rho, I, x, y, z - 0.5*width_z + delta_z*0.5 + n_z*delta_z));
 			}
 		}
 	} // end of constructor
@@ -528,8 +526,8 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 	std::vector<double> GPZWeights;
 	std::vector<double> GPRhoValues;
 	std::vector<double> GPRhoWeights;
-	std::vector<std::vector<SimpleAnalyticModel>> loops;
-	std::vector<std::vector<double>> GFacs;
+	std::vector<SimpleAnalyticModel> loops;
+	std::vector<double> GFacs;
 	
 	public:
 	GaussianQuadratureLoops_Tube(const int N_z, const int N_rho, const int NGP_z, const int NGP_rho, const double R1, const double R2, 
@@ -554,11 +552,11 @@ class GaussianQuadratureLoops_Tube : public Tube, public GQ_Support{
 		
 		// constructin 2D array of loops:
 		for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
-			loops.push_back(std::vector<SimpleAnalyticModel>());
-			GFacs.push_back(std::vector<double>());
+			//~ loops.push_back(std::vector<SimpleAnalyticModel>());
+			//~ GFacs.push_back(std::vector<double>());
 			for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){
-				loops[nGP_rho].push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I_temp,x,y,z+GPZValues[nGP_z]));
-				GFacs[nGP_rho].push_back(GPZWeights[nGP_z]*GPRhoWeights[nGP_rho]);
+				loops.push_back(SimpleAnalyticModel(centre_rho + GPRhoValues[nGP_rho],I_temp,x,y,z+GPZValues[nGP_z]));
+				GFacs.push_back(GPZWeights[nGP_z]*GPRhoWeights[nGP_rho]);
 			}
 			
 		}

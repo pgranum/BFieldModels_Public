@@ -135,6 +135,12 @@ int main(){
 	std::cout << "\n";
 	
 	
+	//~ double i010 = conway1D.I_010(0.1,cylP);
+	//~ double i011 = conway1D.I_011(0.1,cylP);
+	//~ std::cout << i010 << std::endl;
+	//~ std::cout << i011 << std::endl;
+	
+	//~ return(1);
 	
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
@@ -197,6 +203,8 @@ int main(){
 	
 		
 	std::cout << "\n";
+	
+	
 	
 	//////////////////// FINITE SOLENOID ////////////////////
 	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";

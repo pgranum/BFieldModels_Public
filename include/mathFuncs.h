@@ -9,15 +9,15 @@
 
 // vector manipulation
 
-void vecAdd(const double a[3], const double b[3], double c[3]);
-void vecAddOvrwrt(double a[3], const double b[3]);
-void vecSub(const double a[3], const double b[3], double c[3]);
-void vecMult(const double a[3], const double b[3], double c[3]);
-double vecDotP(const double a[3], const double b[3]);
-void vecCrsP(const double  a[3], const double  b[3], double  c[3]);
-double vecNorm(const double a[3]);
-void vecMultScal(const double a[3], const double k, double c[3]);
-void vecMultScalOvrwrt(double a[3], const double k);
+//~ void vecAdd(const double a[3], const double b[3], double c[3]);
+//~ void vecAddOvrwrt(double a[3], const double b[3]);
+//~ void vecSub(const double a[3], const double b[3], double c[3]);
+//~ void vecMult(const double a[3], const double b[3], double c[3]);
+//~ double vecDotP(const double a[3], const double b[3]);
+//~ void vecCrsP(const double  a[3], const double  b[3], double  c[3]);
+//~ double vecNorm(const double a[3]);
+//~ void vecMultScal(const double a[3], const double k, double c[3]);
+//~ void vecMultScalOvrwrt(double a[3], const double k);
 
 // Conversion of points
 
@@ -67,9 +67,9 @@ void sphVecToCarVec(const double sphVec[3], const double sphP[3], double carVec[
 //~ double standdev(int N, double arr[]);
 
 // integrals
-double I_010(const double R, const double zDiff, const double cylP[3]);
-double I_011(const double R, const double zDiff, const double cylP[3]);
-double HeumansLambda(const double beta, const double k);
+//~ double I_010(const double R, const double zDiff, const double cylP[3]);
+//~ double I_011(const double R, const double zDiff, const double cylP[3]);
+//~ double HeumansLambda(const double beta, const double k);
 
 //~ // elliptical integrals
 //~ double complEllipK1(double x2);

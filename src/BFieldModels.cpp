@@ -9,46 +9,68 @@ void BiotSavart::getB(const double carP[3], const double I, double BCarVec[3]) c
 	//~ printVec(carP,"carP");
 	//~ printVec(BCarVec,"B in");
 	
-	double i[3]={0.}; double k0[3]={0.}; double k1[3]={0.};
-	vecSub(carS1,carS0,i);
-	vecSub(carS0,carP,k0);
-	vecSub(carS1,carP,k1);
+	double i[3]={carS1[0]-carS0[0], carS1[1]-carS0[1], carS1[2]-carS0[2]}; 
+	double k0[3]={carS0[0]-carP[0], carS0[1]-carP[1], carS0[2]-carP[2]}; 
+	double k1[3]={carS1[0]-carP[0], carS1[1]-carP[1], carS1[2]-carP[2]}; 
+	
+	//~ double k0[3]={0.}; 
+	//~ double k1[3]={0.};
+	//~ vecSub(carS1,carS0,i);
+	//~ vecSub(carS0,carP,k0);
+	//~ vecSub(carS1,carP,k1);
 	
 	//~ double i_norm; double k0_norm; double k1_norm;
-	const double i_norm = vecNorm(i);
-	const double k0_norm = vecNorm(k0);
-	const double k1_norm = vecNorm(k1);
+	const double i_norm = sqrt(i[0]*i[0] + i[1]*i[1] + i[2]*i[2]);
+	const double k0_norm = sqrt(k0[0]*k0[0] + k0[1]*k0[1] + k0[2]*k0[2]);
+	const double k1_norm = sqrt(k1[0]*k1[0] + k1[1]*k1[1] + k1[2]*k1[2]);
 	
+	// the inverse norm
+	const double i_inorm = 1.0/i_norm;
+	const double k0_inorm = 1.0/k0_norm;
+	const double k1_inorm = 1.0/k1_norm;	
 	
-	double i_unit[3]={0.}; double k0_unit[3]={0.}; double k1_unit[3]={0.};
-	vecMultScal(i, 1.0/i_norm, i_unit);
-	vecMultScal(k0,1.0/k0_norm,k0_unit);
-	vecMultScal(k1,1.0/k1_norm,k1_unit);
+	const double i_unit[3] = {i[0]*i_inorm, i[1]*i_inorm, i[2]*i_inorm}; 
+	const double k0_unit[3] = {k0[0]*k0_inorm, k0[1]*k0_inorm, k0[2]*k0_inorm};
+	const double k1_unit[3] = {k1[0]*k1_inorm, k1[1]*k1_inorm, k1[2]*k1_inorm};
+	//~ vecMultScal(i, 1.0/i_norm, i_unit);
+	//~ vecMultScal(k0,1.0/k0_norm,k0_unit);
+	//~ vecMultScal(k1,1.0/k1_norm,k1_unit);
 	
 	//~ printVec(k0,"k0");
 	//~ printVec(k1,"k1");
 
-	double A[3];
-	vecCrsP(k0,i_unit,A);
+	double A[3] = {k0[1]*i_unit[2] - k0[2]*i_unit[1],
+				   k0[2]*i_unit[0] - k0[0]*i_unit[2],
+				   k0[0]*i_unit[1] - k0[1]*i_unit[0]};
+	//~ vecCrsP(k0,i_unit,A);
 	
-	double A_norm;
-	A_norm = vecNorm(A);
-	vecMultScalOvrwrt(A,1/(A_norm*A_norm));
+	const double A_inorm = 1.0/sqrt(A[0]*A[0] + A[1]*A[1] + A[2]*A[2]);
+	const double A_inorm2 = A_inorm*A_inorm;
+	//~ A_norm = vecNorm(A);
+	//~ vecMultScalOvrwrt(A,1/(A_norm*A_norm));
+	A[0] = A[0]*A_inorm2;
+	A[1] = A[1]*A_inorm2;
+	A[2] = A[2]*A_inorm2;
 	
 	//~ printVec(A,"A");
 	
-	double a0; double dk[3];
-	vecSub(k1_unit,k0_unit,dk);
 	
-	a0 = vecDotP(dk,i_unit);
+	const double dk[3] = {k1_unit[0]-k0_unit[0], k1_unit[1]-k0_unit[1], k1_unit[2]-k0_unit[2]};
+	//~ vecSub(k1_unit,k0_unit,dk);
+	
+	const double a0 = dk[0]*i_unit[0] + dk[1]*i_unit[1] + dk[2]*i_unit[2]; 
+	//~ a0 = vecDotP(dk,i_unit);
 		
 	const double C = PhysicsConstants::mu0/(4*PhysicsConstants::pi)*I*a0;
-	vecMultScalOvrwrt(A,C);
+	BCarVec[0] = A[0]*C;
+	BCarVec[1] = A[1]*C;
+	BCarVec[2] = A[2]*C;
+	//~ vecMultScalOvrwrt(A,C);
 	
 	//~ std::cout << "C = " << C << std::endl;
 	//~ printVec(A,"A*C");
 	
-	vecAddOvrwrt(BCarVec,A);
+	//~ vecAddOvrwrt(BCarVec,A);
 	
 	//~ printVec(BCarVec,"B out");
 }
@@ -210,15 +232,15 @@ void McD_Loop::getB(const double cylP[3], double BCylVec[3]) const {
 	double rho2_4 = rho_2*rho_2; //(rho/2)²
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
-			constZTerm *= -rho2_4/(n*n); // -(rho/2)²/n²
-			B_z+= constZTerm*an[2*n];	
-			constRTerm *= -rho2_4/((n+1)*n); //-(rho/2)²n/((n+1)n²)
-			B_rho += constRTerm*an[2*n+1];
-			
-			//~ std::cout << "B_z_i = " << constZTerm*an[2*n] << std::endl;
-			//~ std::cout << "B_rho_i = " << constRTerm*an[2*n+1] << std::endl;
-			//~ std::cout << "B_z_i_Acc = " << B_z << std::endl;
-			//~ std::cout << "B_rho_i_Acc = " << B_rho << std::endl;
+		constZTerm *= -rho2_4/(n*n); // -(rho/2)²/n²
+		B_z+= constZTerm*an[2*n];	
+		constRTerm *= -rho2_4/((n+1)*n); //-(rho/2)²n/((n+1)n²)
+		B_rho += constRTerm*an[2*n+1];
+		
+		//~ std::cout << "B_z_i = " << constZTerm*an[2*n] << std::endl;
+		//~ std::cout << "B_rho_i = " << constRTerm*an[2*n+1] << std::endl;
+		//~ std::cout << "B_z_i_Acc = " << B_z << std::endl;
+		//~ std::cout << "B_rho_i_Acc = " << B_rho << std::endl;
 	}
 	
 	// Preparing result
@@ -350,27 +372,146 @@ void Conway1D::getB(const double cylP[3], double BCylVec[3]) const {
 	//~ std::cout << "z = " << z << std::endl;
 	
 	if(z < Z1){
-		BCylVec[2] = C * ( I_010(R, Z1-z, cylP) - I_010(R, Z2-z, cylP) );						 
-		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
+		BCylVec[2] = C * ( I_010(Z1-z, cylP) - I_010(Z2-z, cylP) );						 
+		//~ std::cout << "I_010(Z1-z) =  " << I_010(Z1-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z2-z) =  " << I_010(Z2-z, cylP) << std::endl;
 	}else if(z >= Z1 && z <= Z2){
-		BCylVec[2] = C * ( 2* I_010(R, 0.0 , cylP)
-							- I_010(R, Z1-z, cylP)
-							- I_010(R, Z2-z, cylP) );							
-		//~ std::cout << "I_010(0.0) =  " << I_010(R, 0.0 , cylP) << std::endl;
-		//~ std::cout << "I_010(Z1-z) = " << I_010(R, Z1-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z2-z) = " << I_010(R, Z2-z, cylP) << std::endl;
+		BCylVec[2] = C * ( 2* I_010(0.0 , cylP)
+							- I_010(Z1-z, cylP)
+							- I_010(Z2-z, cylP) );							
+		//~ std::cout << "I_010(0.0) =  " << I_010(0.0 , cylP) << std::endl;
+		//~ std::cout << "I_010(Z1-z) = " << I_010(Z1-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z2-z) = " << I_010(Z2-z, cylP) << std::endl;
 	}else if(z > Z2){
-		BCylVec[2] = C * ( I_010(R, Z2-z, cylP) - I_010(R, Z1-z, cylP) );						 
-		//~ std::cout << "I_010(Z2-z) =  " << I_010(R, Z2-z, cylP) << std::endl;
-		//~ std::cout << "I_010(Z1-z) =  " << I_010(R, Z1-z, cylP) << std::endl;
+		BCylVec[2] = C * ( I_010(Z2-z, cylP) - I_010(Z1-z, cylP) );						 
+		//~ std::cout << "I_010(Z2-z) =  " << I_010(Z2-z, cylP) << std::endl;
+		//~ std::cout << "I_010(Z1-z) =  " << I_010(Z1-z, cylP) << std::endl;
 	}else{
 		std::cout << "Error, cannot determine z in Conway1D" << std::endl;
 	}
 		
-	BCylVec[0] = C * ( I_011(R, Z2-z, cylP) - I_011(R, Z1-z, cylP) );	
-	//~ std::cout << "I_011(Z2-z) = " << I_011(R, Z2-z, cylP) << std::endl;
-	//~ std::cout << "I_011(Z1-z) = " << I_011(R, Z1-z, cylP) << std::endl;
+	BCylVec[0] = C * ( I_011(Z2-z, cylP) - I_011(Z1-z, cylP) );	
+	//~ std::cout << "I_011(Z2-z) = " << I_011(Z2-z, cylP) << std::endl;
+	//~ std::cout << "I_011(Z1-z) = " << I_011(Z1-z, cylP) << std::endl;
+}
+
+double Conway1D::I_010(const double zDiff, const double cylP[3]) const {
+	// A Bessel-Laplace integral from the "Exact Solution..." paper by J. T. Conway
+	// Radius of cylindrical shell, R
+	// Axial distance between observation point and the centre of the cylindrical shell
+	// observation point cylP = (r, phi, z)
+	
+	//~ std::cout << "zDiff = " << zDiff << std::endl;
+	
+	const double rho = cylP[0];
+	//~ std::cout << "rho = " << zDiff << std::endl;	
+	
+	const double rSum = rho+R;
+	const double rSum2 = rSum*rSum;
+	const double rDiff = rho-R;
+	const double rDiff2 = rDiff*rDiff;
+	const double zDiff2 = zDiff*zDiff;
+	
+	const double k0 = 2.0/sqrt(rSum2 + zDiff2);
+	const double k = sqrt(rho*R)*k0;
+	const double beta = std::asin( zDiff / (sqrt( rDiff2 + zDiff2 )) );
+	const double K_comp = std::tr1::comp_ellint_1(k); 
+	
+	//~ std::cout << "k 010 = " << k << std::endl;
+	//~ std::cout << "beta 010 = " << beta << std::endl;
+	//~ std::cout << "K_comp 010 = " << K_comp << std::endl;
+
+	if(zDiff == 0 || beta == 0){
+		//~ std::cout << "zDiff = 0 => beta = 0, 010" << std::endl;
+		if(rho < R){
+			//~ std::cout << "I_010 = " << 1.0/R << std::endl;
+			return 1.0/R;
+		}
+		if(rho > R){
+			return 0.0;
+		}
+	}
+
+	if(rho == 0){
+		//~ std::cout << "rho = 0, 010" << std::endl;
+		if(rho < R){
+			//~ std::cout << "I_010 = " << 1.0/R * (1 - fabs(zDiff)/(2.0*sqrt(R*R+zDiff2)) - std::tr1::ellint_2(1,fabs(beta))/2.0) << std::endl;
+			return 1.0/R * (1 - fabs(zDiff)/(2.0*sqrt(R*R+zDiff2)) - std::tr1::ellint_2(1,fabs(beta))/2.0);
+		}
+		if(rho > R){
+			return 1.0/R * (-fabs(zDiff)/(2.0*sqrt(R*R+zDiff2)) - std::tr1::ellint_2(1,fabs(beta))/2.0);
+		}
+	}
+		
+	if(rho < R){
+		//~ std::cout << "I_010 = " << 1.0/R * ( 1 - fabs(zDiff)*k0*K_comp/(2*PhysicsConstants::pi) - HeumansLambda(fabs(beta),k)/2.0 ) << std::endl;
+		return 1.0/R * ( 1 - fabs(zDiff)*k0*K_comp/(2*PhysicsConstants::pi) - HeumansLambda(fabs(beta),k)/2.0 );		
+	}else if(rho > R){		
+		return 1.0/R * ( -fabs(zDiff)*k0*K_comp/(2*PhysicsConstants::pi) + HeumansLambda(fabs(beta),k)/2.0 );		
+	}else{		
+		std::cout << "Error in I_010 function. Cannot evaluate integraol for rho=R" << std::endl;
+		return 0;
+	}
+	
+}
+
+double Conway1D::I_011(const double z_src, const double cylP[3]) const {
+	// A Bessel-Laplace integral from the "Exact Solution..." paper by J. T. Conway
+	// Radius of cylindrical shell, R
+	// Axial distance between observation point and the centre of the cylindrical shell
+	// observation point cylP = (rho, phi, z)
+	
+	const double rho = cylP[0];
+	
+	if(rho==0){
+		//~ std::cout << "rho = 0 => I_011 = 0" << std::endl; 
+		return 0.0;
+	}
+	
+	const double rSum = rho+R;
+	const double rSum2 = rSum*rSum;
+	const double zDiff = z_src;
+	const double zDiff2 = zDiff*zDiff;
+	
+	const double k2 = 4*rho*R / (rSum2 + zDiff2);
+	const double k = sqrt(k2);
+	
+	//~ std::cout << "k 011 = " << k << std::endl;
+	
+	const double E_comp = std::tr1::comp_ellint_2(k); // complete elliptic integral of second kind
+	const double K_comp = std::tr1::comp_ellint_1(k); // complete elliptic integral of first kind
+	
+	//~ std::cout << "E_comp 011 = " << E_comp << std::endl;
+	//~ std::cout << "K_comp 011 = " << K_comp << std::endl;
+	
+	//~ std::cout << "pi*k*sqrt(rho*R) = " << PhysicsConstants::pi*k*sqrt(rho*R)<< std::endl;
+	
+	return 1.0/(PhysicsConstants::pi*k*sqrt(rho*R)) * ( (2-k2)*K_comp - 2*E_comp );
+}
+
+double Conway1D::HeumansLambda(const double beta, const double k) const {
+	// Heumans Lambda function. Used in the "Exact Solution..." paper by J. T. Conway
+	
+	if(beta == 0){
+		return 0.0;
+	}	
+	
+	const double kPrime = sqrt(1.0 - k*k);
+	const double E_comp = std::tr1::comp_ellint_2(k); // complete elliptic integral of second kind
+	const double K_comp = std::tr1::comp_ellint_1(k); // complete elliptic integral of first kind
+	const double E = std::tr1::ellint_2(kPrime,beta); // elliptic integral of second kind
+	const double F = std::tr1::ellint_1(kPrime,beta); // elliptic integral of first kind
+	
+	if(k == 0){
+		return E;
+	}
+	
+	//~ std::cout << "k = " << k << std::endl;
+	//~ std::cout << "beta = " << beta << std::endl;
+	//~ std::cout << "E = " << E << std::endl;
+	//~ std::cout << "F = " << F << std::endl;
+	
+	return 2.0/PhysicsConstants::pi * (E_comp*F + K_comp*E - K_comp*F);
 }
 
 void McD_Shell::getB(const double cylP[3], double BCylVec[3]) const {
@@ -602,10 +743,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	
 	// Looping over the series
 	for (int n=1; n<=McDOrder; n++){ 
-			constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
-			B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
-			constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
-			B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
+		constZTerm *= (-1)*pow(rho/2,2)/pow(n,2);
+		B_z+= constZTerm*(an12[2*n]-an11[2*n]-an22[2*n]+an21[2*n]);
+		constRTerm *= (-1)*pow(rho/2,2)*(n)/((n+1)*pow(n,2));
+		B_rho += constRTerm*(an12[2*n+1]-an11[2*n+1]-an22[2*n+1]+an21[2*n+1]);
 	}
 	
 	// Preparing result
@@ -804,19 +945,17 @@ void Helix::getB(const double carP[3], double BCarVec[3]) const {
 	//~ std::cout << "N_z = " << N_z << std::endl;
 	//~ std::cout << "N_BS = " << N_BS << std::endl;
 	//~ std::cout << "I = " << i << std::endl;	
-
-	for(int n_rho = 0; n_rho < N_rho; n_rho++){			// loop over all layers
-		for(int n_z = 0; n_z < N_z; n_z++){				// loop over all windings in a layer
-			for(int n_BS = 0; n_BS < N_BS; n_BS++){		// loop over all straight line segments in a winding				
-				double BCarVec_i[3]{0.,0.,0.};
-				segments[n_rho*N_z*N_BS + n_z*N_BS + n_BS].getB(carP,i,BCarVec_i);
-				//~ std::cout << "i = " << n_rho*N_z*N_BS + n_z*N_BS + n_BS << std::endl;
-					
-				BCarVec[0] += BCarVec_i[0];
-				BCarVec[1] += BCarVec_i[1];
-				BCarVec[2] += BCarVec_i[2];	
-			}
-		}
+	
+	double BCarVec_i[3]{0.,0.,0.};
+	
+	for(int n=0; n<N_rho*N_z*N_BS; n++){
+		segments[n].getB(carP,i,BCarVec_i);
+		//~ std::cout << "i = " << n_rho*N_z*N_BS + n_z*N_BS + n_BS << std::endl;
+			
+		BCarVec[0] += BCarVec_i[0];
+		BCarVec[1] += BCarVec_i[1];
+		BCarVec[2] += BCarVec_i[2];	
+		
 	}
 }
 
@@ -832,14 +971,12 @@ void NWire_Tube::getB(const double cylP[3], double BCylVec[3]) const {
 
     double BCylVec_i[3];
     
-	for(int n_rho = 0; n_rho < N_rho; n_rho++){
-		for(int n_z = 0; n_z < N_z; n_z++){				
-			loops[n_rho][n_z].getB(cylP, BCylVec_i);
-
-			BCylVec[0] += BCylVec_i[0];
-			BCylVec[1] += BCylVec_i[1];
-			BCylVec[2] += BCylVec_i[2];		
-		}
+    for(int n=0; n<N_rho*N_z; n++){
+		loops[n].getB(cylP, BCylVec_i);
+		
+		BCylVec[0] += BCylVec_i[0];
+		BCylVec[1] += BCylVec_i[1];
+		BCylVec[2] += BCylVec_i[2];	
 	}
 }
 
@@ -851,17 +988,14 @@ void GaussianQuadratureLoops_Tube::getB(const double cylP[3], double BCylVec[3])
     
     double BCylVec_i[3];
     
-	for(int nGP_rho = 0; nGP_rho < NGP_rho; nGP_rho++){
-		for(int nGP_z = 0; nGP_z < NGP_z; nGP_z++){			
-			loops[nGP_rho][nGP_z].getB(cylP, BCylVec_i);			
-			//~ printVec(BCylVec_i,"BCyl_i");
-			
-			const double GFac = GFacs[nGP_rho][nGP_z];
-			
-            BCylVec[0] += BCylVec_i[0]*GFac;
-			BCylVec[1] += BCylVec_i[1]*GFac;
-			BCylVec[2] += BCylVec_i[2]*GFac;
-		}
+	for(int n=0; n<NGP_rho*NGP_z; n++){
+		loops[n].getB(cylP, BCylVec_i);
+		
+		const double GFac = GFacs[n];
+		
+		BCylVec[0] += BCylVec_i[0]*GFac;
+		BCylVec[1] += BCylVec_i[1]*GFac;
+		BCylVec[2] += BCylVec_i[2]*GFac;	
 	}
 }
 
