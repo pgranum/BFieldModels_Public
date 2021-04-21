@@ -9,16 +9,35 @@
 int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	
-	double carP[3] = {0.01,0.,0.}; 		// point to calculate field at in cartesian coordinates
+	double carP[3] = {0.,0.,0.}; 		// point to calculate field at in cartesian coordinates
 	double cylP[3];						// point to calculate field at in cylindrical coordinates
 	double sphP[3];						// point to calculate field at in spherical coordinates
 	carPToCylP(carP,cylP);				// converting the point in cartesian coor to cylindrical coordinates
 	carPToSphP(carP,sphP);				// converting the point in cartesian coor to spherical coordiantes
 	double BCarVec[3] = {0.,0.,0.}; 	// placeholder for the field in cartesian coordinates
 	double BCylVec[3] = {0.,0.,0.}; 	// placeholder for the field in cylindrical coordinates
-	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates
+	double BSphVec[3] = {0.,0.,0.}; 	// placeholder for the field in spherical coordinates	
 	
-	const int N_t = 1000;
+	const double R1 = 0.04125;			// inner radius
+	const double R2 = 0.0463701;		// outer radius
+	const double R = (R2-R1)/2.0+R1;	// radius to represent an object without radial extension
+	const double L = 0.0346811; 		// Length
+	const double i = 600; 				// current per loop/current in the wire
+	const int N_z = 30; 				// number of wire turns/loops per layer/shell
+	const int N_rho = 4; 				// number of layers/shell
+	const int N_wires = N_z*N_rho;		// total number of wires
+	const double I = N_z*N_rho*i;		// "total" amount of current
+	const double x = 0.;				// x coordinate of magnet centre
+	const double y = 0.;				// y coordinate of magnet centre
+	const double z = 0.;				// z coordinate of magnet centre	
+	
+	int McDOrder;	// number of terms to use in the McDonald model
+	int N_BS; 		// number of segments to be used in the Biot-Savart model
+	int NG_z; 		// number of loops used to represent a layer in the GQ methods
+	int NG_rho;		// number of layers used to represent a magnet in the GQ methods
+	double lambda;	// parameter for TAVP model
+	
+	const int N_t = 10;	// number of test of each method
 	double time;
 	double time_squared;
 	double mean;
@@ -33,13 +52,9 @@ int main(){
 	
 	//////////////////// LOOP ////////////////////
 	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
-	const double R = (0.0463701-0.04125)/2.0+0.04125;
-	const double I = 120*600;
-	const double x = 0;
-	const double y = 0;
-	const double z = 0.;
-	const int McDOrder = 7;	// number of terms to use in the McDonald model
-	const int N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
+	
+	McDOrder = 7;	// number of terms to use in the McDonald model
+	N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 		
 	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
@@ -105,23 +120,16 @@ int main(){
 	//////////////////// SHELL ////////////////////
 	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
-	//~ const double R = (0.0463701-0.04125)/2.0+0.04125;
-	const int N = 120;
-	const double i = 600;
-	const double L = 0.0346811;
-	//~ const double x = 0;
-	//~ const double y = 0;
-	//~ const double z = 0;
-	//~ McDOrder = 7; // I would like the option to change here
-	const int N_z = 30;
-	const int NG_z = 3;
+	NG_z = 3;
+	McDOrder = 7;	// number of terms to use in the McDonald model
+	N_BS = 1000; 	// number of segments to be used in the Biot-Savart model
 	
 	
 	
 	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
 	time_squared = 0;
-	Conway1D conway1D = Conway1D(R,N,i,L,x,y,z);
+	Conway1D conway1D = Conway1D(R,N_wires,i,L,x,y,z);
     assert(x == 0 && y == 0); // the solenoid has to be centered around the axis
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
@@ -142,7 +150,7 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
-	McD_Shell mcDShell = McD_Shell(McDOrder,R,N,i,L,x,y,z);
+	McD_Shell mcDShell = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcDShell.getB(cylP,BCylVec);
@@ -162,7 +170,7 @@ int main(){
 	std::cout << "Using the N-Wire model:\n";
 	time = 0;
 	time_squared = 0;
-	NWire_Shell nWire = NWire_Shell(N_z,R,N,i,L,x,y,z);
+	NWire_Shell nWire = NWire_Shell(N_z,R,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		nWire.getB(cylP,BCylVec);
@@ -182,7 +190,7 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model:\n";
 	time = 0;
 	time_squared = 0;
-	GaussianQuadratureLoops_Shell GQL_S = GaussianQuadratureLoops_Shell(N_z,NG_z,R,N,i,L,x,y,z);
+	GaussianQuadratureLoops_Shell GQL_S = GaussianQuadratureLoops_Shell(N_z,NG_z,R,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		GQL_S.getB(cylP,BCylVec);
@@ -203,29 +211,18 @@ int main(){
 	
 	//////////////////// FINITE SOLENOID ////////////////////
 	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
-	
-	const double R1 = 0.04125;
-	const double R2 = 0.04637;
-	const double L2 = 0.03468;
-	//~ const int N = 4*30;
-	//~ const double L = 0.03468;
-	//~ const double x = 0;
-	//~ const double y = 0;
-	//~ const double z = 0;
-	
-	const int McDOrder2 = 5; // I would like the option to change here. PUT IN A WARNING FOR HIGH ORDERS
-	const int N_rho = 4;
-	//~ const int N_z = 30;
-	//~ const int N_BS = 10000; // I would like the option to change here
-	const int NG_rho = 1;
-	//~ const int NG_z = 3;	
-	const double lambda = 0.866;
+
+	McDOrder = 5;
+	N_BS = 10000;
+	NG_rho = 1;
+	NG_z = 3;	
+	lambda = 0.866;
 	
 	
 	std::cout << "Using the detailed Biot-Savart model:\n";
 	time = 0;
 	time_squared = 0;
-	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N,i,L2,x,y,z);
+	Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		helix.getB(carP,BCarVec);
@@ -269,7 +266,7 @@ int main(){
 	std::cout << "Using the McDonald model:\n";
 	time = 0;
 	time_squared = 0;
-	McD_Tube mcD_Tube = McD_Tube(McDOrder2,R1,R2,N,i,L2,x,y,z);
+	McD_Tube mcD_Tube = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		mcD_Tube.getB(cylP,BCylVec);
@@ -289,7 +286,7 @@ int main(){
 	std::cout << "Using the N-Wire model:\n";
 	time = 0;
     time_squared = 0;
-    NWire_Tube nWire_Tube = NWire_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L2,x,y,z);
+    NWire_Tube nWire_Tube = NWire_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		nWire_Tube.getB(cylP,BCylVec);
@@ -309,7 +306,7 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Loops:\n";
 	time = 0;
 	time_squared = 0;
-	GaussianQuadratureLoops_Tube GQL_T = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N,i,L2,x,y,z);
+	GaussianQuadratureLoops_Tube GQL_T = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		GQL_T.getB(cylP,BCylVec);
@@ -329,7 +326,7 @@ int main(){
 	std::cout << "Using the Gaussian Quadrature model with Shells:\n";
 	time = 0;
 	time_squared = 0;
-	GaussianQuadratureShells_Tube GQS_T = GaussianQuadratureShells_Tube(N_rho,NG_rho,R1,R2,N,i,L2,x,y,z);
+	GaussianQuadratureShells_Tube GQS_T = GaussianQuadratureShells_Tube(N_rho,NG_rho,R1,R2,N_wires,i,L,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
 		GQS_T.getB(cylP,BCylVec);
