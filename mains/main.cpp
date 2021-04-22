@@ -43,6 +43,8 @@ int main(){
 	double mean;
 	double stdev;
 	
+	const std::string path = "";
+	
 	std::cout << "\n";
 	std::cout << "Calculating field at point:\n";
 	printVec(carP,"P");
@@ -59,6 +61,8 @@ int main(){
 	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
 	time_squared = 0;
+	//~ double[N_t][3] cylPArr;
+	//~ double[N_t][3] BCylVecArr;
 	SimpleAnalyticModel SAM = SimpleAnalyticModel(R,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
@@ -67,8 +71,17 @@ int main(){
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
 		time_squared += t*t;
+		
+		//~ cylPArr[i][0] = cylP[0];
+		//~ cylPArr[i][1] = cylP[1];
+		//~ cylPArr[i][2] = cylP[2];
+		//~ BCylVecArr[i][0] = BCylVec[0];
+		//~ BCylVecArr[i][1] = BCylVec[1];
+		//~ BCylVecArr[i][2] = BCylVec[2];
 	}	
 	printVec(BCylVec,"B");
+	//~ writeBFieldToFile author_SAM = new writeToFile(path,"SAM_I" + std::to_string(I));
+	//~ author-> write(cylPArr,BCylVecArr,N_t);			
 	mean = time/(double)N_t;
 	stdev = sqrt( time_squared / (double)N_t - mean * mean );
 	std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
