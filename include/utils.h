@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+
 //~ #include <cmath>
 //~ #include <math.h>
 //~ #include "mathFuncs.h"
