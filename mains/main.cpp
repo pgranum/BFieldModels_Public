@@ -21,6 +21,7 @@ int main(){
 	const double R1 = 0.04125;			// inner radius
 	const double R2 = 0.0463701;		// outer radius
 	const double R = (R2-R1)/2.0+R1;	// radius to represent an object without radial extension
+	const double R_TAVP = R2*1.015355; 	// this radius will make B_z match B_z of the helix BS model (R_TAVP = R2_helix*1.015355)
 	const double L = 0.0346811; 		// Length
 	const double i = 600; 				// current per loop/current in the wire
 	const int N_z = 30; 				// number of wire turns/loops per layer/shell
@@ -256,7 +257,7 @@ int main(){
 	std::cout << "Using the TAVP model:\n";
 	time = 0;
 	time_squared = 0;
-	TAVP tavp = TAVP(lambda,R,I,x,y,z);
+	TAVP tavp = TAVP(lambda,R_TAVP,I,x,y,z);
 	for(int i=0; i<N_t; i++){
 		//~ std::cout << "i = " << i << "\n";
 		auto start = std::chrono::steady_clock::now();
