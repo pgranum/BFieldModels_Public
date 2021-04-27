@@ -688,10 +688,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	const double z1 = cylP[2] - Z1; // define coordinates relative to the position of the solenoid
 	const double z2 = cylP[2] - Z2;	
 	
-	double an11[Na] = {0};		// array to hold terms with z1 and R1
-	double an12[Na] = {0};		// array to hold terms with z1 and R2
-	double an21[Na] = {0};		// array to hold terms with z2 and R1
-	double an22[Na] = {0};		// array to hold terms with z2 and R2
+	double an11[Na];		// array to hold terms with z1 and R1
+	double an12[Na];		// array to hold terms with z1 and R2
+	double an21[Na];		// array to hold terms with z2 and R1
+	double an22[Na];		// array to hold terms with z2 and R2
 	
 	this->getA0(z1,R1,an11);
 	this->getA0(z1,R2,an12);
