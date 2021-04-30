@@ -29,7 +29,7 @@ void printVec(const double vec[3], const std::string vecName);
 //~ void printArr(double arr[], int N);
 //~ void printArr(long double arr[], int N);
 //~ void printArr(int arr[], int N, std::string vecArrName);
-//~ void printArr(double arr[], int N, std::string vecArrName);
+void printArr(const double arr[], const int N, std::string vecArrName);
 //~ void printArr(long double arr[], int N, std::string vecName);
 //~ void printStdVec(std::vector<int> vec, std::string vecName);
 //~ void printStdVec(std::vector<double> vec, std::string vecName);

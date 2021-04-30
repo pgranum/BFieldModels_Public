@@ -30,7 +30,7 @@ int main(){
 	const double I = N_z*N_rho*i;		// "total" amount of current
 	const double x = 0.;				// x coordinate of magnet centre
 	const double y = 0.;				// y coordinate of magnet centre
-	const double z = 0.;				// z coordinate of magnet centre	
+	const double z = 0.01;				// z coordinate of magnet centre	
 	
 	int McDOrder;	// number of terms to use in the McDonald model
 	int N_BS; 		// number of segments to be used in the Biot-Savart model
@@ -38,7 +38,7 @@ int main(){
 	int NG_rho;		// number of layers used to represent a magnet in the GQ methods
 	double lambda;	// parameter for TAVP model
 	
-	const int N_t = 10;	// number of test of each method
+	const int N_t = 1;	// number of test of each method
 	double time;
 	double time_squared;
 	double mean;
@@ -48,8 +48,8 @@ int main(){
 	
 	std::cout << "\n";
 	std::cout << "Calculating field at point:\n";
-	printVec(carP,"P");
-	//~ printVec(cylP,"P");
+	printVec(carP,"P_car");
+	printVec(cylP,"P_cyl");
 	//~ printVec(sphP,"P");
 	std::cout << "\n";
 	

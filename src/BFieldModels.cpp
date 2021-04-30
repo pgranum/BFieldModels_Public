@@ -688,6 +688,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	const double z1 = cylP[2] - Z1; // define coordinates relative to the position of the solenoid
 	const double z2 = cylP[2] - Z2;	
 	
+	//~ std::cout << "rho = " << rho << std::endl;
+	//~ std::cout << "z1 = " << z1 << std::endl;
+	//~ std::cout << "z2 = " << z2 << std::endl;
+	
 	double an11[Na] = {0};		// array to hold terms with z1 and R1
 	double an12[Na] = {0};		// array to hold terms with z1 and R2
 	double an21[Na] = {0};		// array to hold terms with z2 and R1
@@ -698,10 +702,10 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	this->getA0(z2,R1,an21);
 	this->getA0(z2,R2,an22);
 	
-	//~ printArr(an11,arraySize);
-	//~ printArr(an12,arraySize);
-	//~ printArr(an21,arraySize);
-	//~ printArr(an11,arraySize);
+	//~ printArr(an11,Na,"an11");
+	//~ printArr(an12,Na,"an11");
+	//~ printArr(an21,Na,"an21");
+	//~ printArr(an22,Na,"an11");
 	
 	// Preparing terms for loop
 	double B_z = an12[0]-an11[0]-an22[0]+an21[0];
@@ -733,6 +737,7 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	B_rho *= C;
 	B_z *= C;
 	
+	//~ std::cout << "C = " << C << std::endl;
 	//~ std::cout << "B_z = " << B_z << std::endl;
 	//~ std::cout << "B_rho = " << B_rho << std::endl;
 	

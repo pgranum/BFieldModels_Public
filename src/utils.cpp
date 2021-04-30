@@ -97,22 +97,22 @@ void printVec(const double vec[3], const std::string vecName){
 	//~ }	
 	//~ std::cout << "]" << std::endl;
 //~ }
-//~ void printArr(double arr[], int N, std::string vecName){
-//~ /* This function print the N entries of an array with its name in front
-//~ * 
-//~ * @param arr		the array being printed
-//~ * @param N 			the length of the array
-//~ * @param vecName 	the name of the vector
-//~ */
-	//~ std::cout << vecName << " = [";
-	//~ for(int i = 0; i<N; i++){
-		//~ std::cout << arr[i];
-		//~ if(i < N-1){
-			//~ std::cout << ", ";
-		//~ }
-	//~ }	
-	//~ std::cout << "]" << std::endl;
-//~ }
+void printArr(const double arr[], const int N, std::string vecName){
+/* This function print the N entries of an array with its name in front
+* 
+* @param arr		the array being printed
+* @param N 			the length of the array
+* @param vecName 	the name of the vector
+*/
+	std::cout << vecName << " = [";
+	for(int i = 0; i<N; i++){
+		std::cout << arr[i];
+		if(i < N-1){
+			std::cout << ", ";
+		}
+	}	
+	std::cout << "]" << std::endl;
+}
 //~ void printArr(long double arr[], int N, std::string vecName){
 //~ /* This function print the N entries of an array with its name in front
 //~ * 
