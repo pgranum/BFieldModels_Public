@@ -272,6 +272,18 @@ class McD_Tube : public Tube{
 	a_power_needed(3 + 2*(Na-2)),
 	b_power_needed(2 + (Na-2))
 	{	
+		
+		std::cout << "McDOrder = " << McDOrder << std::endl;
+		std::cout << "R1 = " << R1 << std::endl;
+		std::cout << "R2 = " << R2 << std::endl;
+		std::cout << "N = " << N << std::endl;
+		std::cout << "i = " << i << std::endl;
+		std::cout << "L = " << L << std::endl;
+		std::cout << "x = " << x << std::endl;
+		std::cout << "y = " << y << std::endl;
+		std::cout << "z = " << z << std::endl;
+		
+		
 		if(McDOrder>5){
 			std::cout << "WARNING: for high orders (n>5) the constructor of the McD_Tube is very slow" << std::endl;
 		}

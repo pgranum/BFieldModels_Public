@@ -737,9 +737,9 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	B_rho *= C;
 	B_z *= C;
 	
-	//~ std::cout << "C = " << C << std::endl;
-	//~ std::cout << "B_z = " << B_z << std::endl;
-	//~ std::cout << "B_rho = " << B_rho << std::endl;
+	std::cout << "C = " << C << std::endl;
+	std::cout << "B_z = " << B_z << std::endl;
+	std::cout << "B_rho = " << B_rho << std::endl;
 	
 	// Result
 	BCylVec[0]=B_rho;

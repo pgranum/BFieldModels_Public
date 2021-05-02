@@ -53,16 +53,16 @@
 	//~ c[2] = a[2] * b[2];
 //~ }
 
-//~ double vecDotP(const double a[3], const double b[3]){
-//~ /* This function finds the dot product of two vectors
-//~ * (a*b=return) (dot product)
-//~ * 
-//~ * @param a		the left vector of the operation
-//~ * @param b 	 	the right vector of the operation
-//~ * @return		the dot product
-//~ */	
-	//~ return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
-//~ }
+double vecDotP(const double a[3], const double b[3]){
+/* This function finds the dot product of two vectors
+* (a*b=return) (dot product)
+* 
+* @param a		the left vector of the operation
+* @param b 	 	the right vector of the operation
+* @return		the dot product
+*/	
+	return a[0]*b[0] + a[1]*b[1] + a[2]*b[2];
+}
 
 //~ void vecCrsP(const double  a[3], const double  b[3], double  c[3]){
 //~ /* This function  finds the crossproduct of two vectors
@@ -77,14 +77,14 @@
 	//~ c[2] = a[0]*b[1] - a[1]*b[0];
 //~ }
 
-//~ double vecNorm(const double a[3]){
-//~ /* This function finds the norm of a vector
-//~ * 
-//~ * @param a		the vector finding the norm of 
-//~ * @return		the norm of vector a
-//~ */	
-	//~ return std::sqrt(vecDotP(a,a));
-//~ }
+double vecNorm(const double a[3]){
+/* This function finds the norm of a vector
+* 
+* @param a		the vector finding the norm of 
+* @return		the norm of vector a
+*/	
+	return std::sqrt(vecDotP(a,a));
+}
 
 //~ void vecMultScal(const double a[3], const double k, double c[3]){
 //~ /* This function multiply the vector a with a scalar k

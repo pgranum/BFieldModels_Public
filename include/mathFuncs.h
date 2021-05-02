@@ -11,11 +11,11 @@
 
 //~ void vecAdd(const double a[3], const double b[3], double c[3]);
 //~ void vecAddOvrwrt(double a[3], const double b[3]);
-//~ void vecSub(const double a[3], const double b[3], double c[3]);
+void vecSub(const double a[3], const double b[3], double c[3]);
 //~ void vecMult(const double a[3], const double b[3], double c[3]);
-//~ double vecDotP(const double a[3], const double b[3]);
+double vecDotP(const double a[3], const double b[3]);
 //~ void vecCrsP(const double  a[3], const double  b[3], double  c[3]);
-//~ double vecNorm(const double a[3]);
+double vecNorm(const double a[3]);
 //~ void vecMultScal(const double a[3], const double k, double c[3]);
 //~ void vecMultScalOvrwrt(double a[3], const double k);
 
