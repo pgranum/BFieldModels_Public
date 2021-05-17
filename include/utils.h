@@ -153,6 +153,15 @@ public:
 			Bz -> write(B[i][2]);
 		}
 	}	
+	
+	void write(double r[3], double B[3]){
+		x -> write(r[0]);
+		y -> write(r[1]);
+		z -> write(r[2]);
+		Bx -> write(B[0]);
+		By -> write(B[1]);
+		Bz -> write(B[2]);
+	}	
 };
 
 

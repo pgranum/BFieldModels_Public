@@ -116,7 +116,7 @@ void dfdx(const double xVec[], const int N, double dfdx[]){
 	const int N_z = 30; 				// number of wire turns/loops per layer/shell
 	const int N_rho = 4; 				// number of layers/shell
 	const int N_wires = N_z*N_rho;		// total number of wires
-	const double I = N_z*N_rho*current;	// "total" amount of current
+	//~ const double I = N_z*N_rho*current;	// "total" amount of current
 	const double x = 0.;				// x coordinate of magnet centre
 	const double y = 0.;				// y coordinate of magnet centre
 	const double z = 0.;				// z coordinate of magnet centre			
