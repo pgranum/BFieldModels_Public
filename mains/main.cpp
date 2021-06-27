@@ -49,43 +49,43 @@ int main(){
 	const double dp = (p_max-p_min)/((double)N_p-1.0);	// length of a stright line segment
 	
 	// setting up files for the code to write results to
-	writeBFieldToFile author_SAM (path,"SAM_I" + std::to_string(I));
+	writeBFieldToFile author_SAM (path,"SAM_I" + std::to_string((int)I));
 	writeToFile author_SAM_t(path,"SAM_t");
 	
-	writeBFieldToFile author_McDLoop (path,"McDLoop_I" + std::to_string(I));
+	writeBFieldToFile author_McDLoop (path,"McDLoop_I" + std::to_string((int)I));
 	writeToFile author_McDLoop_t(path,"McDLoop_t");
 	
-	writeBFieldToFile author_BSLoop (path,"BSLoop_I" + std::to_string(I));
+	writeBFieldToFile author_BSLoop (path,"BSLoop_I" + std::to_string((int)I));
 	writeToFile author_BSLoop_t(path,"BSLoop_t");
 	
-	writeBFieldToFile author_Conway1D (path,"Conway1D_I" + std::to_string(I));
+	writeBFieldToFile author_Conway1D (path,"Conway1D_I" + std::to_string((int)I));
 	writeToFile author_Conway1D_t(path,"Conway1D_t");
 	
-	writeBFieldToFile author_McDShell (path,"McDShell_I" + std::to_string(I));
+	writeBFieldToFile author_McDShell (path,"McDShell_I" + std::to_string((int)I));
 	writeToFile author_McDShell_t(path,"McDShell_t");
 	
-	writeBFieldToFile author_NWireShell (path,"NWireShell_I" + std::to_string(I));
+	writeBFieldToFile author_NWireShell (path,"NWireShell_I" + std::to_string((int)I));
 	writeToFile author_NWireShell_t(path,"NWireShell_t");
 	
-	writeBFieldToFile author_GQLoopsShell (path,"GQLoopsShell_I" + std::to_string(I));
+	writeBFieldToFile author_GQLoopsShell (path,"GQLoopsShell_I" + std::to_string((int)I));
 	writeToFile author_GQLoopsShell_t(path,"GQLoopsShell_t");
 	
-	writeBFieldToFile author_Helix (path,"Helix_I" + std::to_string(I));
+	writeBFieldToFile author_Helix (path,"Helix_I" + std::to_string((int)I));
 	writeToFile author_Helix_t(path,"Helix_t");
 
-	writeBFieldToFile author_TAVP (path,"TAVP_I" + std::to_string(I));
+	writeBFieldToFile author_TAVP (path,"TAVP_I" + std::to_string((int)I));
 	writeToFile author_TAVP_t(path,"TAVP_t");
 	
-	writeBFieldToFile author_McDTube (path,"McDTube_I" + std::to_string(I));
+	writeBFieldToFile author_McDTube (path,"McDTube_I" + std::to_string((int)I));
 	writeToFile author_McDTube_t(path,"McDTube_t");
 	
-	writeBFieldToFile author_NWireTube (path,"NWireTube_I" + std::to_string(I));
+	writeBFieldToFile author_NWireTube (path,"NWireTube_I" + std::to_string((int)I));
 	writeToFile author_NWireTube_t(path,"NWireTube_t");
 	
-	writeBFieldToFile author_GQLoopsTube (path,"GQLoopsTube_I" + std::to_string(I));
+	writeBFieldToFile author_GQLoopsTube (path,"GQLoopsTube_I" + std::to_string((int)I));
 	writeToFile author_GQLoopsTube_t(path,"GQLoopsTube_t");
 	
-	writeBFieldToFile author_GQShellsTube (path,"GQShellsTube_I" + std::to_string(I));
+	writeBFieldToFile author_GQShellsTube (path,"GQShellsTube_I" + std::to_string((int)I));
 	writeToFile author_GQShellsTube_t(path,"GQShellsTube_t");
 	
 	for(int n_t=0; n_t<N_t2; n_t++){
