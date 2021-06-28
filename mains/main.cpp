@@ -32,10 +32,9 @@ int main(){
 	double lambda;	// parameter for TAVP model
 	
 	// setting the code up to run multiple times to get statistics of the computation time
-	const int N_t = 1;			// number of evaluations of each method
-	const int N_t2 = 2;			// number of evaluations of each method
+	const int N_t = 1;			// number of evaluations of each method within the position loop
+	const int N_t2 = 2;			// number of evaluations of each method outside the position loop
 	double time;
-	double t_arr[N_t] = {0.}; 	// array
 	double time_squared;
 	double mean;
 	double stdev;
@@ -120,7 +119,6 @@ int main(){
 		//~ double[N_t][3] BCylVecArr;
 		SimpleAnalyticModel SAM = SimpleAnalyticModel(R,I,x,y,z);		
 		for(int i=0; i<N_t; i++){
-			t_arr[i] = 0;
 			auto start = std::chrono::steady_clock::now();
 			SAM.getB(cylP,BCylVec);
 			auto end = std::chrono::steady_clock::now();
@@ -134,11 +132,10 @@ int main(){
 			//~ BCylVecArr[i][0] = BCylVec[0];
 			//~ BCylVecArr[i][1] = BCylVec[1];
 			//~ BCylVecArr[i][2] = BCylVec[2];
-			t_arr[i] = t;
 		}	
 		printVec(BCylVec,"B");				
 		if(n_t == 0){author_SAM.write(cylP,BCylVec);}
-		author_SAM_t.write(t_arr,N_t);
+		author_SAM_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -160,7 +157,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_McDLoop.write(cylP,BCylVec);}
-		author_McDLoop_t.write(t_arr,N_t);
+		author_McDLoop_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -183,7 +180,7 @@ int main(){
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_BSLoop.write(cylP,BCylVec);}
-		author_BSLoop_t.write(t_arr,N_t);
+		author_BSLoop_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -215,7 +212,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_Conway1D.write(cylP,BCylVec);}
-		author_Conway1D_t.write(t_arr,N_t);
+		author_Conway1D_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -237,7 +234,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_McDShell.write(cylP,BCylVec);}
-		author_McDShell_t.write(t_arr,N_t);
+		author_McDShell_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -259,7 +256,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_NWireShell.write(cylP,BCylVec);}
-		author_NWireShell_t.write(t_arr,N_t);
+		author_NWireShell_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -281,7 +278,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_GQLoopsShell.write(cylP,BCylVec);}
-		author_GQLoopsShell_t.write(t_arr,N_t);
+		author_GQLoopsShell_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -316,7 +313,7 @@ int main(){
 		carVecToCylVec(BCarVec,carP,BCylVec);		
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_Helix.write(cylP,BCylVec);}
-		author_Helix_t.write(t_arr,N_t);
+		author_Helix_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -341,7 +338,7 @@ int main(){
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_TAVP.write(cylP,BCylVec);}
-		author_TAVP_t.write(t_arr,N_t);
+		author_TAVP_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -363,7 +360,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_McDTube.write(cylP,BCylVec);}
-		author_McDTube_t.write(t_arr,N_t);
+		author_McDTube_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -385,7 +382,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_NWireTube.write(cylP,BCylVec);}
-		author_NWireTube_t.write(t_arr,N_t);
+		author_NWireTube_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -407,7 +404,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_GQLoopsTube.write(cylP,BCylVec);}
-		author_GQLoopsTube_t.write(t_arr,N_t);
+		author_GQLoopsTube_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
@@ -429,7 +426,7 @@ int main(){
 		}	
 		printVec(BCylVec,"B");
 		if(n_t == 0){author_GQShellsTube.write(cylP,BCylVec);}
-		author_GQShellsTube_t.write(t_arr,N_t);
+		author_GQShellsTube_t.write(time,N_t);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
