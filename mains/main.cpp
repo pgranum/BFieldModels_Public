@@ -33,110 +33,113 @@ int main(){
 	
 	// setting the code up to run multiple times to get statistics of the computation time
 	const int N_t = 1;			// number of evaluations of each method within the position loop
-	const int N_t2 = 2;			// number of evaluations of each method outside the position loop
+	const int N_t2 = 1;			// number of evaluations of each method outside the position loop
 	double time;
 	double time_squared;
 	double mean;
 	double stdev;
 	
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFiles";
+	const std::string path = "/home/magn5452/Data";
 	
 	// setting the code up to loop over multiple points in space along a straight line
-	const int N_p = 3;									// number of points along the line (number of segments = N_p-1 )
-	const double p_min = -0.5;							// minimum value
-	const double p_max = 0.5;							// maximum value
+	const int N_p = 1000;								// number of points along the line (number of segments = N_p-1 )
+	const double p_min = -R1;							// minimum value
+	const double p_max = R1;							// maximum value
 	const double dp = (p_max-p_min)/((double)N_p-1.0);	// length of a stright line segment
-	
+	const std::string suffix = "/z/on";
+
 	// setting up files for the code to write results to
-	writeBFieldToFile author_SAM (path,"SAM_I" + std::to_string((int)I));
+	writeBFieldToFile author_SAM (path + "/SAM" + suffix,"SAM_I" + std::to_string((int)I));
 	writeToFile author_SAM_t(path,"SAM_t");
 	
-	writeBFieldToFile author_McDLoop1(path,"McDLoop1_I" + std::to_string((int)I));
+	std::cout << path + "/McDonald/Loop" + suffix << std::endl;
+
+	writeBFieldToFile author_McDLoop1(path + "/McDonald/Loop" + suffix,"McD1");
 	writeToFile author_McDLoop1_t(path,"McDLoop1_t");
-	writeBFieldToFile author_McDLoop2(path,"McDLoop2_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop2(path + "/McDonald/Loop" + suffix,"McD2");
 	writeToFile author_McDLoop2_t(path,"McDLoop2_t");
-	writeBFieldToFile author_McDLoop3(path,"McDLoop3_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop3(path + "/McDonald/Loop" + suffix,"McD3");
 	writeToFile author_McDLoop3_t(path,"McDLoop3_t");
-	writeBFieldToFile author_McDLoop4(path,"McDLoop4_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop4(path + "/McDonald/Loop" + suffix,"McD4");
 	writeToFile author_McDLoop4_t(path,"McDLoop4_t");
-	writeBFieldToFile author_McDLoop5(path,"McDLoop5_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop5(path + "/McDonald/Loop" + suffix,"McD5");
 	writeToFile author_McDLoop5_t(path,"McDLoop5_t");
-	writeBFieldToFile author_McDLoop6(path,"McDLoop6_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop6(path + "/McDonald/Loop" + suffix,"McD6");
 	writeToFile author_McDLoop6_t(path,"McDLoop6_t");
-	writeBFieldToFile author_McDLoop7(path,"McDLoop7_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDLoop7(path + "/McDonald/Loop" + suffix,"McD7");
 	writeToFile author_McDLoop7_t(path,"McDLoop7_t");
 	
-	writeBFieldToFile author_BSLoop10(path,"BSLoop10_I" + std::to_string((int)I));
+	writeBFieldToFile author_BSLoop10(path + "/Biot_Savart" + suffix,"BSLoop10");
 	writeToFile author_BSLoop10_t(path,"BSLoop10_t");
-	writeBFieldToFile author_BSLoop100(path,"BSLoop100_I" + std::to_string((int)I));
+	writeBFieldToFile author_BSLoop100(path + "/Biot_Savart" + suffix,"BSLoop100");
 	writeToFile author_BSLoop100_t(path,"BSLoop100_t");
-	writeBFieldToFile author_BSLoop1000(path,"BSLoop1000_I" + std::to_string((int)I));
+	writeBFieldToFile author_BSLoop1000(path + "/Biot_Savart" + suffix,"BSLoop1000");
 	writeToFile author_BSLoop1000_t(path,"BSLoop1000_t");
 	
-	writeBFieldToFile author_Conway1D(path,"Conway1D_I" + std::to_string((int)I));
-	writeToFile author_Conway1D_t(path,"Conway1D_t");
+	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway1D");
+	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway1D_t");
 	
-	writeBFieldToFile author_McDShell1(path,"McDShell1_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell1(path + "/McDonald/Shell" + suffix,"McD1");
 	writeToFile author_McDShell1_t(path,"McDShell1_t");
-	writeBFieldToFile author_McDShell2(path,"McDShell2_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell2(path + "/McDonald/Shell" + suffix,"McD2");
 	writeToFile author_McDShell2_t(path,"McDShell2_t");
-	writeBFieldToFile author_McDShell3(path,"McDShell3_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell3(path + "/McDonald/Shell" + suffix,"McD3");
 	writeToFile author_McDShell3_t(path,"McDShell3_t");
-	writeBFieldToFile author_McDShell4(path,"McDShell4_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell4(path + "/McDonald/Shell" + suffix,"McD4");
 	writeToFile author_McDShell4_t(path,"McDShell4_t");
-	writeBFieldToFile author_McDShell5(path,"McDShell5_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell5(path + "/McDonald/Shell" + suffix,"McD5");
 	writeToFile author_McDShell5_t(path,"McDShell5_t");
-	writeBFieldToFile author_McDShell6(path,"McDShell6_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell6(path + "/McDonald/Shell" + suffix,"McD6");
 	writeToFile author_McDShell6_t(path,"McDShell6_t");
-	writeBFieldToFile author_McDShell7(path,"McDShell7_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDShell7(path + "/McDonald/Shell" + suffix,"McD7");
 	writeToFile author_McDShell7_t(path,"McDShell7_t");
 	
-	writeBFieldToFile author_NWireShell(path,"NWireShell_I" + std::to_string((int)I));
-	writeToFile author_NWireShell_t(path,"NWireShell_t");
+	writeBFieldToFile author_NWireShell(path + "/NWire/Shell" + suffix,"NWireShell");
+	writeToFile author_NWireShell_t(path + "/NWire/Shell" + suffix,"NWireShell_t");
 	
-	writeBFieldToFile author_GQLoopsShell3(path,"GQLoopsShell3_I" + std::to_string((int)I));
-	writeToFile author_GQLoopsShell3_t(path,"GQLoopsShell3_t");
-	writeBFieldToFile author_GQLoopsShell4(path,"GQLoopsShell4_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/LoopShell" + suffix,"GQLoopsShell3");
+	writeToFile author_GQLoopsShell3_t(path ,"GQLoopsShell3_t");
+	writeBFieldToFile author_GQLoopsShell4(path + "/GQ/LoopShell" + suffix,"GQLoopsShell4");
 	writeToFile author_GQLoopsShell4_t(path,"GQLoopsShell4_t");
-	writeBFieldToFile author_GQLoopsShell5(path,"GQLoopsShell5_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsShell5(path + "/GQ/LoopShell" + suffix,"GQLoopsShell5");
 	writeToFile author_GQLoopsShell5_t(path,"GQLoopsShell5_t");
 	
-	writeBFieldToFile author_Helix(path,"Helix_I" + std::to_string((int)I));
+	writeBFieldToFile author_Helix(path + "/Helix" + suffix,"Helix");
 	writeToFile author_Helix_t(path,"Helix_t");
 
-	writeBFieldToFile author_TAVP(path,"TAVP_I" + std::to_string((int)I));
+	writeBFieldToFile author_TAVP(path + "/TAVP" + suffix,"TAVP");
 	writeToFile author_TAVP_t(path,"TAVP_t");
 	
-	writeBFieldToFile author_McDTube1(path,"McDTube1_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDTube1(path + "/McDonald/Tube" + suffix,"McD1");
 	writeToFile author_McDTube1_t(path,"McDTube1_t");
-	writeBFieldToFile author_McDTube2(path,"McDTube2_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDTube2(path + "/McDonald/Tube" + suffix,"McD2");
 	writeToFile author_McDTube2_t(path,"McDTube2_t");
-	writeBFieldToFile author_McDTube3(path,"McDTube3_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDTube3(path + "/McDonald/Tube" + suffix,"McD3");
 	writeToFile author_McDTube3_t(path,"McDTube3_t");
-	writeBFieldToFile author_McDTube4(path,"McDTube4_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDTube4(path + "/McDonald/Tube" + suffix,"McD4");
 	writeToFile author_McDTube4_t(path,"McDTube4_t");
-	writeBFieldToFile author_McDTube5(path,"McDTube5_I" + std::to_string((int)I));
+	writeBFieldToFile author_McDTube5(path + "/McDonald/Tube" + suffix,"McD5");
 	writeToFile author_McDTube5_t(path,"McDTube5_t");
 	
-	writeBFieldToFile author_NWireTube(path,"NWireTube_I" + std::to_string((int)I));
+	writeBFieldToFile author_NWireTube(path + "/NWire/Tube"+ suffix,"NWire");
 	writeToFile author_NWireTube_t(path,"NWireTube_t");
 	
-	writeBFieldToFile author_GQLoopsTube13(path,"GQLoopsTube13_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/LoopTube" + suffix,"GQLoopsTube13");
 	writeToFile author_GQLoopsTube13_t(path,"GQLoopsTube13_t");
-	writeBFieldToFile author_GQLoopsTube14(path,"GQLoopsTube14_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsTube14(path + "/GQ/LoopTube" + suffix,"GQLoopsTube14");
 	writeToFile author_GQLoopsTube14_t(path,"GQLoopsTube14_t");
-	writeBFieldToFile author_GQLoopsTube15(path,"GQLoopsTube15_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsTube15(path + "/GQ/LoopTube" + suffix,"GQLoopsTube15");
 	writeToFile author_GQLoopsTube15_t(path,"GQLoopsTube15_t");
-	writeBFieldToFile author_GQLoopsTube23(path,"GQLoopsTube23_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/LoopTube" + suffix,"GQLoopsTube23");
 	writeToFile author_GQLoopsTube23_t(path,"GQLoopsTube23_t");
 	
-	writeBFieldToFile author_GQShellsTube1(path,"GQShellsTube1_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQShellsTube1(path + "/GQ/ShellTube" + suffix,"GQShellsTube1");
 	writeToFile author_GQShellsTube1_t(path,"GQShellsTube1_t");
-	writeBFieldToFile author_GQShellsTube2(path,"GQShellsTube2_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQShellsTube2(path + "/GQ/ShellTube" + suffix,"GQShellsTube2");
 	writeToFile author_GQShellsTube2_t(path,"GQShellsTube2_t");
-	writeBFieldToFile author_GQShellsTube3(path,"GQShellsTube3_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQShellsTube3(path + "/GQ/ShellTube" + suffix,"GQShellsTube3");
 	writeToFile author_GQShellsTube3_t(path,"GQShellsTube3_t");
-	writeBFieldToFile author_GQShellsTube4(path,"GQShellsTube4_I" + std::to_string((int)I));
+	writeBFieldToFile author_GQShellsTube4(path + "/GQ/ShellTube" + suffix,"GQShellsTube4");
 	writeToFile author_GQShellsTube4_t(path,"GQShellsTube4_t");
 	
 	for(int n_t=0; n_t<N_t2; n_t++){
