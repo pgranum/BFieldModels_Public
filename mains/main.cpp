@@ -42,14 +42,14 @@ int main(){
 	const std::string path = "/home/magn5452/Data";
 	
 	// setting the code up to loop over multiple points in space along a straight line
-	const int N_p = 1000;								// number of points along the line (number of segments = N_p-1 )
-	const double p_min = -R1;							// minimum value
-	const double p_max = R1;							// maximum value
+	const int N_p = 10;								// number of points along the line (number of segments = N_p-1 )
+	const double p_min = -3*R1;							// minimum value
+	const double p_max = 3*R1;							// maximum value
 	const double dp = (p_max-p_min)/((double)N_p-1.0);	// length of a stright line segment
-	const std::string suffix = "/z/on";
+	const std::string suffix = "/z/off";
 
 	// setting up files for the code to write results to
-	writeBFieldToFile author_SAM (path + "/SAM" + suffix,"SAM_I" + std::to_string((int)I));
+	writeBFieldToFile author_SAM (path + "/SAM" + suffix,"SAM");
 	writeToFile author_SAM_t(path,"SAM_t");
 	
 	std::cout << path + "/McDonald/Loop" + suffix << std::endl;
@@ -76,8 +76,8 @@ int main(){
 	writeBFieldToFile author_BSLoop1000(path + "/Biot_Savart" + suffix,"BSLoop1000");
 	writeToFile author_BSLoop1000_t(path,"BSLoop1000_t");
 	
-	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway1D");
-	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway1D_t");
+	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway");
+	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway");
 	
 	writeBFieldToFile author_McDShell1(path + "/McDonald/Shell" + suffix,"McD1");
 	writeToFile author_McDShell1_t(path,"McDShell1_t");
@@ -145,7 +145,7 @@ int main(){
 	for(int n_t=0; n_t<N_t2; n_t++){
 	for(int n_p=0; n_p<N_p; n_p++){
 		
-		double carP[3] = {0.,0.,p_min + n_p*dp}; 	// point to calculate field at in cartesian coordinates
+		double carP[3] = {0.5*R1,0.,p_min + n_p*dp}; 	// point to calculate field at in cartesian coordinates
 		double cylP[3];								// point to calculate field at in cylindrical coordinates
 		double sphP[3];								// point to calculate field at in spherical coordinates
 		carPToCylP(carP,cylP);						// converting the point in cartesian coor to cylindrical coordinates
