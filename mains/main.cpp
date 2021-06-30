@@ -148,9 +148,9 @@ int main(){
 	writeBFieldToFile author_Helix(path + "/Helix" + suffix,"Helix");
 	writeToFile author_Helix_t(path,"Helix_t");
 
-	writeBFieldToFile author_TAVP866(path + "/TAVP866" + suffix,"TAVP");
+	writeBFieldToFile author_TAVP866(path + "/TAVP" + suffix,"TAVP866");
 	writeToFile author_TAVP866_t(path,"TAVP866_t");
-	writeBFieldToFile author_TAVP902(path + "/TAVP902" + suffix,"TAVP");
+	writeBFieldToFile author_TAVP902(path + "/TAVP" + suffix,"TAVP902");
 	writeToFile author_TAVP902_t(path,"TAVP902_t");
 	
 	writeBFieldToFile author_McDTube1(path + "/McDonald/tube" + suffix,"McD1");
@@ -173,7 +173,7 @@ int main(){
 	writeToFile author_GQLoopsTube14_t(path,"GQLoopsTube14_t");
 	writeBFieldToFile author_GQLoopsTube15(path + "/GQ/looptube" + suffix,"GQlooptube15");
 	writeToFile author_GQLoopsTube15_t(path,"GQLoopsTube15_t");
-	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/looptube" + suffix,"GQloopstube23");
+	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/looptube" + suffix,"GQlooptube23");
 	writeToFile author_GQLoopsTube23_t(path,"GQLoopsTube23_t");
 	
 	writeBFieldToFile author_GQShellsTube1(path + "/GQ/shelltube" + suffix,"GQshelltube1");
