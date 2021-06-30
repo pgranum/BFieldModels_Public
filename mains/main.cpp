@@ -23,7 +23,7 @@ int main(){
 	const double I = N_z*N_rho*i;		// "total" amount of current
 	const double x = 0.;				// x coordinate of magnet centre
 	const double y = 0.;				// y coordinate of magnet centre
-	const double z = 0.01;				// z coordinate of magnet centre	
+	const double z = 0;					// z coordinate of magnet centre	
 	
 	int McDOrder;	// number of terms to use in the McDonald model
 	int N_BS; 		// number of segments to be used in the Biot-Savart model
@@ -42,11 +42,17 @@ int main(){
 	const std::string path = "/home/magn5452/Data";
 	
 	// setting the code up to loop over multiple points in space along a straight line
+
 	const int N_p = 10;								// number of points along the line (number of segments = N_p-1 )
-	const double p_min = -3*R1;							// minimum value
-	const double p_max = 3*R1;							// maximum value
-	const double dp = (p_max-p_min)/((double)N_p-1.0);	// length of a stright line segment
-	const std::string suffix = "/z/off";
+	const double z_min = 1/2*R1;							// minimum value
+	const double z_max = 1/2*R1;							// maximum value
+	const double rho_min = 0*R1;							// minimum value
+	const double rho_max = R1;							// maximum value
+	const std::string suffix = "/rho/off";
+
+	const double z_d = (z_max-z_min)/((double)N_p-1.0);	// length of a stright line segment
+	const double rho_d = (rho_max-rho_min)/((double)N_p-1.0);	// length of a stright line segment
+
 
 	// setting up files for the code to write results to
 	writeBFieldToFile author_SAM (path + "/SAM" + suffix,"SAM");
@@ -54,48 +60,48 @@ int main(){
 	
 	std::cout << path + "/McDonald/Loop" + suffix << std::endl;
 
-	writeBFieldToFile author_McDLoop1(path + "/McDonald/Loop" + suffix,"McD1");
+	writeBFieldToFile author_McDLoop1(path + "/McDonald/loop" + suffix,"McD1");
 	writeToFile author_McDLoop1_t(path,"McDLoop1_t");
-	writeBFieldToFile author_McDLoop2(path + "/McDonald/Loop" + suffix,"McD2");
+	writeBFieldToFile author_McDLoop2(path + "/McDonald/loop" + suffix,"McD2");
 	writeToFile author_McDLoop2_t(path,"McDLoop2_t");
-	writeBFieldToFile author_McDLoop3(path + "/McDonald/Loop" + suffix,"McD3");
+	writeBFieldToFile author_McDLoop3(path + "/McDonald/loop" + suffix,"McD3");
 	writeToFile author_McDLoop3_t(path,"McDLoop3_t");
-	writeBFieldToFile author_McDLoop4(path + "/McDonald/Loop" + suffix,"McD4");
+	writeBFieldToFile author_McDLoop4(path + "/McDonald/loop" + suffix,"McD4");
 	writeToFile author_McDLoop4_t(path,"McDLoop4_t");
-	writeBFieldToFile author_McDLoop5(path + "/McDonald/Loop" + suffix,"McD5");
+	writeBFieldToFile author_McDLoop5(path + "/McDonald/loop" + suffix,"McD5");
 	writeToFile author_McDLoop5_t(path,"McDLoop5_t");
-	writeBFieldToFile author_McDLoop6(path + "/McDonald/Loop" + suffix,"McD6");
+	writeBFieldToFile author_McDLoop6(path + "/McDonald/loop" + suffix,"McD6");
 	writeToFile author_McDLoop6_t(path,"McDLoop6_t");
-	writeBFieldToFile author_McDLoop7(path + "/McDonald/Loop" + suffix,"McD7");
+	writeBFieldToFile author_McDLoop7(path + "/McDonald/loop" + suffix,"McD7");
 	writeToFile author_McDLoop7_t(path,"McDLoop7_t");
 	
-	writeBFieldToFile author_BSLoop10(path + "/Biot_Savart" + suffix,"BSLoop10");
+	writeBFieldToFile author_BSLoop10(path + "/Biot_Savart" + suffix,"Biot10");
 	writeToFile author_BSLoop10_t(path,"BSLoop10_t");
-	writeBFieldToFile author_BSLoop100(path + "/Biot_Savart" + suffix,"BSLoop100");
+	writeBFieldToFile author_BSLoop100(path + "/Biot_Savart" + suffix,"Biot100");
 	writeToFile author_BSLoop100_t(path,"BSLoop100_t");
-	writeBFieldToFile author_BSLoop1000(path + "/Biot_Savart" + suffix,"BSLoop1000");
+	writeBFieldToFile author_BSLoop1000(path + "/Biot_Savart" + suffix,"Biot1000");
 	writeToFile author_BSLoop1000_t(path,"BSLoop1000_t");
 	
 	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway");
 	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway");
 	
-	writeBFieldToFile author_McDShell1(path + "/McDonald/Shell" + suffix,"McD1");
+	writeBFieldToFile author_McDShell1(path + "/McDonald/shell" + suffix,"McD1");
 	writeToFile author_McDShell1_t(path,"McDShell1_t");
-	writeBFieldToFile author_McDShell2(path + "/McDonald/Shell" + suffix,"McD2");
+	writeBFieldToFile author_McDShell2(path + "/McDonald/shell" + suffix,"McD2");
 	writeToFile author_McDShell2_t(path,"McDShell2_t");
-	writeBFieldToFile author_McDShell3(path + "/McDonald/Shell" + suffix,"McD3");
+	writeBFieldToFile author_McDShell3(path + "/McDonald/shell" + suffix,"McD3");
 	writeToFile author_McDShell3_t(path,"McDShell3_t");
-	writeBFieldToFile author_McDShell4(path + "/McDonald/Shell" + suffix,"McD4");
+	writeBFieldToFile author_McDShell4(path + "/McDonald/shell" + suffix,"McD4");
 	writeToFile author_McDShell4_t(path,"McDShell4_t");
-	writeBFieldToFile author_McDShell5(path + "/McDonald/Shell" + suffix,"McD5");
+	writeBFieldToFile author_McDShell5(path + "/McDonald/shell" + suffix,"McD5");
 	writeToFile author_McDShell5_t(path,"McDShell5_t");
-	writeBFieldToFile author_McDShell6(path + "/McDonald/Shell" + suffix,"McD6");
+	writeBFieldToFile author_McDShell6(path + "/McDonald/shell" + suffix,"McD6");
 	writeToFile author_McDShell6_t(path,"McDShell6_t");
-	writeBFieldToFile author_McDShell7(path + "/McDonald/Shell" + suffix,"McD7");
+	writeBFieldToFile author_McDShell7(path + "/McDonald/shell" + suffix,"McD7");
 	writeToFile author_McDShell7_t(path,"McDShell7_t");
 	
-	writeBFieldToFile author_NWireShell(path + "/NWire/Shell" + suffix,"NWireShell");
-	writeToFile author_NWireShell_t(path + "/NWire/Shell" + suffix,"NWireShell_t");
+	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWireShell");
+	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWireShell_t");
 	
 	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/LoopShell" + suffix,"GQLoopsShell3");
 	writeToFile author_GQLoopsShell3_t(path ,"GQLoopsShell3_t");
@@ -110,18 +116,18 @@ int main(){
 	writeBFieldToFile author_TAVP(path + "/TAVP" + suffix,"TAVP");
 	writeToFile author_TAVP_t(path,"TAVP_t");
 	
-	writeBFieldToFile author_McDTube1(path + "/McDonald/Tube" + suffix,"McD1");
+	writeBFieldToFile author_McDTube1(path + "/McDonald/tube" + suffix,"McD1");
 	writeToFile author_McDTube1_t(path,"McDTube1_t");
-	writeBFieldToFile author_McDTube2(path + "/McDonald/Tube" + suffix,"McD2");
+	writeBFieldToFile author_McDTube2(path + "/McDonald/tube" + suffix,"McD2");
 	writeToFile author_McDTube2_t(path,"McDTube2_t");
-	writeBFieldToFile author_McDTube3(path + "/McDonald/Tube" + suffix,"McD3");
+	writeBFieldToFile author_McDTube3(path + "/McDonald/tube" + suffix,"McD3");
 	writeToFile author_McDTube3_t(path,"McDTube3_t");
-	writeBFieldToFile author_McDTube4(path + "/McDonald/Tube" + suffix,"McD4");
+	writeBFieldToFile author_McDTube4(path + "/McDonald/tube" + suffix,"McD4");
 	writeToFile author_McDTube4_t(path,"McDTube4_t");
-	writeBFieldToFile author_McDTube5(path + "/McDonald/Tube" + suffix,"McD5");
+	writeBFieldToFile author_McDTube5(path + "/McDonald/tube" + suffix,"McD5");
 	writeToFile author_McDTube5_t(path,"McDTube5_t");
 	
-	writeBFieldToFile author_NWireTube(path + "/NWire/Tube"+ suffix,"NWire");
+	writeBFieldToFile author_NWireTube(path + "/NWire/tube"+ suffix,"NWire");
 	writeToFile author_NWireTube_t(path,"NWireTube_t");
 	
 	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/LoopTube" + suffix,"GQLoopsTube13");
@@ -145,7 +151,7 @@ int main(){
 	for(int n_t=0; n_t<N_t2; n_t++){
 	for(int n_p=0; n_p<N_p; n_p++){
 		
-		double carP[3] = {0.5*R1,0.,p_min + n_p*dp}; 	// point to calculate field at in cartesian coordinates
+		double carP[3] = {rho_min + n_p*rho_d,0.,z_min + n_p*z_d}; 	// point to calculate field at in cartesian coordinates
 		double cylP[3];								// point to calculate field at in cylindrical coordinates
 		double sphP[3];								// point to calculate field at in spherical coordinates
 		carPToCylP(carP,cylP);						// converting the point in cartesian coor to cylindrical coordinates
