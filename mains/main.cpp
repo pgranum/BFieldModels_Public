@@ -205,7 +205,7 @@ int main(){
 		//////////////////// LOOP ////////////////////
 		std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 		
-		McDOrder = 3;	// number of terms to use in the McDonald model
+		McDOrder = 7;	// number of terms to use in the McDonald model
 		//~ N_BS = 1000; 	// number of segments to be used in the Biot-Savart model I HAVE MOVED THIS FURTHER DOWN
 			
 		std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
