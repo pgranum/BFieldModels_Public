@@ -44,12 +44,47 @@ int main(){
 	// setting the code up to loop over multiple points in space along a straight line
 
 	const int N_p = 10;								// number of points along the line (number of segments = N_p-1 )
-	const double z_min = 1/2*R1;							// minimum value
-	const double z_max = 1/2*R1;							// maximum value
-	const double rho_min = 0*R1;							// minimum value
-	const double rho_max = R1;							// maximum value
-	const std::string suffix = "/rho/off";
+	
+	const bool rhoOrZ = false; // true is rho false is z
+	const bool onOrOff = true; // true is on false is off
+	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
+	double z_min;
+	double z_max;
+	double rho_min;
+	double rho_max;
+	std::string suffix;
+
+	if (rhoOrZ) {
+		if (onOrOff) {
+			z_min = 0;							
+			z_max = 0;					
+			rho_min = 0;							
+			rho_max = R1;							
+			suffix = "/rho/on";
+		} else {
+			z_min = 1/2*R1;							
+			z_max = 1/2*R1;							
+			rho_min = 0;							
+			rho_max = R1;							
+			suffix = "/rho/off";
+		}
+	} else {
+		if (onOrOff) {
+			z_min = -z_bound*R1;							
+			z_max = z_bound*R1;							
+			rho_min = 0;							
+			rho_max = 0;							
+			suffix = "/z/on";
+		} else {
+			z_min = -z_bound*R1;							
+			z_max = z_bound*R1;							
+			rho_min = 1/2*R1;							
+			rho_max = 1/2*R1;							
+			suffix = "/z/off";
+		}
+	}
+	
 	const double z_d = (z_max-z_min)/((double)N_p-1.0);	// length of a stright line segment
 	const double rho_d = (rho_max-rho_min)/((double)N_p-1.0);	// length of a stright line segment
 
