@@ -135,14 +135,14 @@ int main(){
 	writeBFieldToFile author_McDShell7(path + "/McDonald/shell" + suffix,"McD7");
 	writeToFile author_McDShell7_t(path,"McDShell7_t");
 	
-	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWireShell");
-	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWireShell_t");
+	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWire");
+	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWire_t");
 	
-	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/LoopShell" + suffix,"GQLoopsShell3");
+	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/loopshell" + suffix,"GQloopshell3");
 	writeToFile author_GQLoopsShell3_t(path ,"GQLoopsShell3_t");
-	writeBFieldToFile author_GQLoopsShell4(path + "/GQ/LoopShell" + suffix,"GQLoopsShell4");
+	writeBFieldToFile author_GQLoopsShell4(path + "/GQ/loopshell" + suffix,"GQloopshell4");
 	writeToFile author_GQLoopsShell4_t(path,"GQLoopsShell4_t");
-	writeBFieldToFile author_GQLoopsShell5(path + "/GQ/LoopShell" + suffix,"GQLoopsShell5");
+	writeBFieldToFile author_GQLoopsShell5(path + "/GQ/loopshell" + suffix,"GQloopshell5");
 	writeToFile author_GQLoopsShell5_t(path,"GQLoopsShell5_t");
 	
 	writeBFieldToFile author_Helix(path + "/Helix" + suffix,"Helix");
@@ -163,24 +163,24 @@ int main(){
 	writeToFile author_McDTube5_t(path,"McDTube5_t");
 	
 	writeBFieldToFile author_NWireTube(path + "/NWire/tube"+ suffix,"NWire");
-	writeToFile author_NWireTube_t(path,"NWireTube_t");
+	writeToFile author_NWireTube_t(path,"NWire_t");
 	
-	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/LoopTube" + suffix,"GQLoopsTube13");
+	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/looptube" + suffix,"GQlooptube13");
 	writeToFile author_GQLoopsTube13_t(path,"GQLoopsTube13_t");
-	writeBFieldToFile author_GQLoopsTube14(path + "/GQ/LoopTube" + suffix,"GQLoopsTube14");
+	writeBFieldToFile author_GQLoopsTube14(path + "/GQ/looptube" + suffix,"GQlooptube14");
 	writeToFile author_GQLoopsTube14_t(path,"GQLoopsTube14_t");
-	writeBFieldToFile author_GQLoopsTube15(path + "/GQ/LoopTube" + suffix,"GQLoopsTube15");
+	writeBFieldToFile author_GQLoopsTube15(path + "/GQ/looptube" + suffix,"GQlooptube15");
 	writeToFile author_GQLoopsTube15_t(path,"GQLoopsTube15_t");
-	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/LoopTube" + suffix,"GQLoopsTube23");
+	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/looptube" + suffix,"GQloopstube23");
 	writeToFile author_GQLoopsTube23_t(path,"GQLoopsTube23_t");
 	
-	writeBFieldToFile author_GQShellsTube1(path + "/GQ/ShellTube" + suffix,"GQShellsTube1");
+	writeBFieldToFile author_GQShellsTube1(path + "/GQ/shelltube" + suffix,"GQshelltube1");
 	writeToFile author_GQShellsTube1_t(path,"GQShellsTube1_t");
-	writeBFieldToFile author_GQShellsTube2(path + "/GQ/ShellTube" + suffix,"GQShellsTube2");
+	writeBFieldToFile author_GQShellsTube2(path + "/GQ/shelltube" + suffix,"GQshelltube2");
 	writeToFile author_GQShellsTube2_t(path,"GQShellsTube2_t");
-	writeBFieldToFile author_GQShellsTube3(path + "/GQ/ShellTube" + suffix,"GQShellsTube3");
+	writeBFieldToFile author_GQShellsTube3(path + "/GQ/shelltube" + suffix,"GQshelltube3");
 	writeToFile author_GQShellsTube3_t(path,"GQShellsTube3_t");
-	writeBFieldToFile author_GQShellsTube4(path + "/GQ/ShellTube" + suffix,"GQShellsTube4");
+	writeBFieldToFile author_GQShellsTube4(path + "/GQ/shelltube" + suffix,"GQshelltube4");
 	writeToFile author_GQShellsTube4_t(path,"GQShellsTube4_t");
 	
 	for(int n_t=0; n_t<N_t2; n_t++){
