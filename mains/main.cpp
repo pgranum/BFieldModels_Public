@@ -742,6 +742,28 @@ int main(){
 		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 		std::cout << "\n";
 		
+		NG_rho = 2;	
+		NG_z = 3;	
+		std::cout << "Using the Gaussian Quadrature model with Loops:\n";
+		time = 0;
+		time_squared = 0;
+		GaussianQuadratureLoops_Tube GQL_T15 = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			GQL_T15.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		if(n_t == 0){author_GQLoopsTube23.write(cylP,BCylVec);}
+		author_GQLoopsTube23_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		std::cout << "\n";
+
 		
 		NG_rho = 1;
 		std::cout << "Using the Gaussian Quadrature model with Shells:\n";
