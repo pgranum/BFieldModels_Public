@@ -747,10 +747,10 @@ int main(){
 		std::cout << "Using the Gaussian Quadrature model with Loops:\n";
 		time = 0;
 		time_squared = 0;
-		GaussianQuadratureLoops_Tube GQL_T15 = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N_wires,i,L,x,y,z);
+		GaussianQuadratureLoops_Tube GQL_T23 = GaussianQuadratureLoops_Tube(N_z,N_rho,NG_z,NG_rho,R1,R2,N_wires,i,L,x,y,z);
 		for(int i=0; i<N_t; i++){
 			auto start = std::chrono::steady_clock::now();
-			GQL_T15.getB(cylP,BCylVec);
+			GQL_T23.getB(cylP,BCylVec);
 			auto end = std::chrono::steady_clock::now();
 			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 			time += t;
