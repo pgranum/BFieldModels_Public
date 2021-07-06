@@ -32,18 +32,19 @@ int main(){
 	double lambda;	// parameter for TAVP model
 	
 	// setting the code up to run multiple times to get statistics of the computation time
-	const int N_t = 1;			// number of evaluations of each method within the position loop
+	const int N_t = 10000;			// number of evaluations of each method within the position loop
 	const int N_t2 = 1;			// number of evaluations of each method outside the position loop
 	double time;
 	double time_squared;
 	double mean;
 	double stdev;
 	
-	const std::string path = "/home/magn5452/Data";
+	//~ const std::string path = "/home/magn5452/Data";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_ZOn";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
-	const int N_p = 10;								// number of points along the line (number of segments = N_p-1 )
+	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
 	const bool rhoOrZ = false; // true is rho false is z
 	const bool onOrOff = true; // true is on false is off
@@ -186,6 +187,7 @@ int main(){
 	writeToFile author_GQShellsTube4_t(path,"GQShellsTube4_t");
 	
 	for(int n_t=0; n_t<N_t2; n_t++){
+		std::cout << "N_t = " << n_t << std::endl;
 	for(int n_p=0; n_p<N_p; n_p++){
 		
 		double carP[3] = {rho_min + n_p*rho_d,0.,z_min + n_p*z_d}; 	// point to calculate field at in cartesian coordinates
@@ -236,8 +238,8 @@ int main(){
 		author_SAM_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		for(int n_McD=1; n_McD<McDOrder+1; n_McD++){
@@ -281,8 +283,8 @@ int main(){
 			
 			mean = time/(double)N_t;
 			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			std::cout << "\n";
+			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		}
 	
 	
@@ -306,8 +308,8 @@ int main(){
 		author_BSLoop10_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -330,8 +332,8 @@ int main(){
 		author_BSLoop100_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -354,8 +356,8 @@ int main(){
 		author_BSLoop1000_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		std::cout << "\n";
 		
@@ -385,8 +387,8 @@ int main(){
 		author_Conway1D_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 	
 	
 	
@@ -430,8 +432,8 @@ int main(){
 			}
 			mean = time/(double)N_t;
 			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			std::cout << "\n";
+			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		}
 		
 		
@@ -453,8 +455,8 @@ int main(){
 		author_NWireShell_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		NG_z = 3;
@@ -475,8 +477,8 @@ int main(){
 		author_GQLoopsShell3_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";	
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";	
 		
 		
 		
@@ -498,8 +500,8 @@ int main(){
 		author_GQLoopsShell4_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";	
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";	
 		
 		
 		
@@ -521,8 +523,8 @@ int main(){
 		author_GQLoopsShell5_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";	
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";	
 		
 			
 		std::cout << "\n";	
@@ -531,58 +533,58 @@ int main(){
 		//////////////////// FINITE SOLENOID ////////////////////
 		std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
-		McDOrder = 5;
+		McDOrder = 4;
 		N_BS = 10000;
 		//~ NG_rho = 1;	//MOVED FURTHER DOWN
 		//~ NG_z = 3;	//MOVED FURTHER DOWN
 		//~ lambda = 0.866; //MOVED FURTHER DOWN
 		
 		
-		std::cout << "Using the detailed Biot-Savart model:\n";
-		time = 0;
-		time_squared = 0;
-		Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
-		for(int i=0; i<N_t; i++){
-			auto start = std::chrono::steady_clock::now();
-			helix.getB(carP,BCarVec);
-			auto end = std::chrono::steady_clock::now();
-			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-			time += t;
-			time_squared += t*t;
-		}
-		carVecToCylVec(BCarVec,carP,BCylVec);		
-		printVec(BCylVec,"B");
-		if(n_t == 0){author_Helix.write(cylP,BCylVec);}
-		author_Helix_t.write(time);
-		mean = time/(double)N_t;
-		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//~ std::cout << "Using the detailed Biot-Savart model:\n";
+		//~ time = 0;
+		//~ time_squared = 0;
+		//~ Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
+		//~ for(int i=0; i<N_t; i++){
+			//~ auto start = std::chrono::steady_clock::now();
+			//~ helix.getB(carP,BCarVec);
+			//~ auto end = std::chrono::steady_clock::now();
+			//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			//~ time += t;
+			//~ time_squared += t*t;
+		//~ }
+		//~ carVecToCylVec(BCarVec,carP,BCylVec);		
+		//~ printVec(BCylVec,"B");
+		//~ if(n_t == 0){author_Helix.write(cylP,BCylVec);}
+		//~ author_Helix_t.write(time);
+		//~ mean = time/(double)N_t;
+		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//~ std::cout << "\n";
 		
 		
-		lambda = 0.866;
-		std::cout << "Using the TAVP model:\n";
-		time = 0;
-		time_squared = 0;
-		TAVP tavp866 = TAVP(lambda,R_TAVP,I,x,y,z);
-		for(int i=0; i<N_t; i++){
-			//~ std::cout << "i = " << i << "\n";
-			auto start = std::chrono::steady_clock::now();
-			tavp866.getB(sphP,BSphVec);
-			auto end = std::chrono::steady_clock::now();
-			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-			time += t;
-			time_squared += t*t;
-		}	
-		sphVecToCarVec(BSphVec,sphP,BCarVec);
-		carVecToCylVec(BCarVec,carP,BCylVec);	
-		printVec(BCylVec,"B");
-		if(n_t == 0){author_TAVP866.write(cylP,BCylVec);}
-		author_TAVP866_t.write(time);
-		mean = time/(double)N_t;
-		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//~ lambda = 0.866;
+		//~ std::cout << "Using the TAVP model:\n";
+		//~ time = 0;
+		//~ time_squared = 0;
+		//~ TAVP tavp866 = TAVP(lambda,R_TAVP,I,x,y,z);
+		//~ for(int i=0; i<N_t; i++){
+			//~ //std::cout << "i = " << i << "\n";
+			//~ auto start = std::chrono::steady_clock::now();
+			//~ tavp866.getB(sphP,BSphVec);
+			//~ auto end = std::chrono::steady_clock::now();
+			//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			//~ time += t;
+			//~ time_squared += t*t;
+		//~ }	
+		//~ sphVecToCarVec(BSphVec,sphP,BCarVec);
+		//~ carVecToCylVec(BCarVec,carP,BCylVec);	
+		//~ printVec(BCylVec,"B");
+		//~ if(n_t == 0){author_TAVP866.write(cylP,BCylVec);}
+		//~ author_TAVP866_t.write(time);
+		//~ mean = time/(double)N_t;
+		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//~ std::cout << "\n";
 		
 		
 		
@@ -607,8 +609,8 @@ int main(){
 		author_TAVP902_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -646,8 +648,8 @@ int main(){
 			}
 			mean = time/(double)N_t;
 			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			std::cout << "\n";
+			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		}
 		
 		
@@ -668,8 +670,8 @@ int main(){
 		author_NWireTube_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		NG_rho = 1;	
@@ -691,8 +693,8 @@ int main(){
 		author_GQLoopsTube13_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -715,8 +717,8 @@ int main(){
 		author_GQLoopsTube14_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -739,8 +741,8 @@ int main(){
 		author_GQLoopsTube15_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		NG_rho = 2;	
 		NG_z = 3;	
@@ -761,8 +763,8 @@ int main(){
 		author_GQLoopsTube23_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 
 		
 		NG_rho = 1;
@@ -783,8 +785,8 @@ int main(){
 		author_GQShellsTube1_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -806,8 +808,8 @@ int main(){
 		author_GQShellsTube2_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -829,8 +831,8 @@ int main(){
 		author_GQShellsTube3_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
@@ -852,8 +854,8 @@ int main(){
 		author_GQShellsTube4_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
-		std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-		std::cout << "\n";
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+			//std::cout << "\n";
 		
 		
 		
