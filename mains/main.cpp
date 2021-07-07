@@ -119,7 +119,7 @@ int main(){
 	writeToFile author_BSLoop1000_t(path,"Biot1000_t");
 	
 	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway");
-	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway");
+	writeToFile author_Conway1D_t(path,"Conway");
 	
 	writeBFieldToFile author_McDShell1(path + "/McDonald/shell" + suffix,"McD1");
 	writeToFile author_McDShell1_t(path,"McD_shell1_t");
