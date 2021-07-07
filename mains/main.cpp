@@ -32,22 +32,22 @@ int main(){
 	double lambda;	// parameter for TAVP model
 	
 	// setting the code up to run multiple times to get statistics of the computation time
-	const int N_t = 10000;			// number of evaluations of each method within the position loop
-	const int N_t2 = 1;			// number of evaluations of each method outside the position loop
+	const int N_t = 1;			// number of evaluations of each method within the position loop
+	const int N_t2 = 10000;			// number of evaluations of each method outside the position loop
 	double time;
 	double time_squared;
 	double mean;
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_ZOn";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_ZOff";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
 	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
 	const bool rhoOrZ = false; // true is rho false is z
-	const bool onOrOff = true; // true is on false is off
+	const bool onOrOff = false; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
 	double z_min;
