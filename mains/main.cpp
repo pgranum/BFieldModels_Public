@@ -40,13 +40,13 @@ int main(){
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_ZOff";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOff";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
 	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = false; // true is rho false is z
+	const bool rhoOrZ = true; // true is rho false is z
 	const bool onOrOff = false; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
@@ -119,7 +119,7 @@ int main(){
 	writeToFile author_BSLoop1000_t(path,"Biot1000_t");
 	
 	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway");
-	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway");
+	writeToFile author_Conway1D_t(path,"Conway");
 	
 	writeBFieldToFile author_McDShell1(path + "/McDonald/shell" + suffix,"McD1");
 	writeToFile author_McDShell1_t(path,"McD_shell1_t");
