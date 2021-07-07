@@ -97,54 +97,54 @@ int main(){
 	std::cout << path + "/McDonald/Loop" + suffix << std::endl;
 
 	writeBFieldToFile author_McDLoop1(path + "/McDonald/loop" + suffix,"McD1");
-	writeToFile author_McDLoop1_t(path,"McDLoop1_t");
+	writeToFile author_McDLoop1_t(path,"McD_loop1_t");
 	writeBFieldToFile author_McDLoop2(path + "/McDonald/loop" + suffix,"McD2");
-	writeToFile author_McDLoop2_t(path,"McDLoop2_t");
+	writeToFile author_McDLoop2_t(path,"McD_loop2_t");
 	writeBFieldToFile author_McDLoop3(path + "/McDonald/loop" + suffix,"McD3");
-	writeToFile author_McDLoop3_t(path,"McDLoop3_t");
+	writeToFile author_McDLoop3_t(path,"McD_loop3_t");
 	writeBFieldToFile author_McDLoop4(path + "/McDonald/loop" + suffix,"McD4");
-	writeToFile author_McDLoop4_t(path,"McDLoop4_t");
+	writeToFile author_McDLoop4_t(path,"McD_loop4_t");
 	writeBFieldToFile author_McDLoop5(path + "/McDonald/loop" + suffix,"McD5");
-	writeToFile author_McDLoop5_t(path,"McDLoop5_t");
+	writeToFile author_McDLoop5_t(path,"McD_loop5_t");
 	writeBFieldToFile author_McDLoop6(path + "/McDonald/loop" + suffix,"McD6");
-	writeToFile author_McDLoop6_t(path,"McDLoop6_t");
+	writeToFile author_McDLoop6_t(path,"McD_loop6_t");
 	writeBFieldToFile author_McDLoop7(path + "/McDonald/loop" + suffix,"McD7");
-	writeToFile author_McDLoop7_t(path,"McDLoop7_t");
+	writeToFile author_McDLoop7_t(path,"McD_loop7_t");
 	
 	writeBFieldToFile author_BSLoop10(path + "/Biot_Savart" + suffix,"Biot10");
-	writeToFile author_BSLoop10_t(path,"BSLoop10_t");
+	writeToFile author_BSLoop10_t(path,"Biot10_t");
 	writeBFieldToFile author_BSLoop100(path + "/Biot_Savart" + suffix,"Biot100");
-	writeToFile author_BSLoop100_t(path,"BSLoop100_t");
+	writeToFile author_BSLoop100_t(path,"Biot100_t");
 	writeBFieldToFile author_BSLoop1000(path + "/Biot_Savart" + suffix,"Biot1000");
-	writeToFile author_BSLoop1000_t(path,"BSLoop1000_t");
+	writeToFile author_BSLoop1000_t(path,"Biot1000_t");
 	
 	writeBFieldToFile author_Conway1D(path + "/Conway" + suffix,"Conway");
 	writeToFile author_Conway1D_t(path + "/Conway" + suffix,"Conway");
 	
 	writeBFieldToFile author_McDShell1(path + "/McDonald/shell" + suffix,"McD1");
-	writeToFile author_McDShell1_t(path,"McDShell1_t");
+	writeToFile author_McDShell1_t(path,"McD_shell1_t");
 	writeBFieldToFile author_McDShell2(path + "/McDonald/shell" + suffix,"McD2");
-	writeToFile author_McDShell2_t(path,"McDShell2_t");
+	writeToFile author_McDShell2_t(path,"McD_shell2_t");
 	writeBFieldToFile author_McDShell3(path + "/McDonald/shell" + suffix,"McD3");
-	writeToFile author_McDShell3_t(path,"McDShell3_t");
+	writeToFile author_McDShell3_t(path,"McD_shell3_t");
 	writeBFieldToFile author_McDShell4(path + "/McDonald/shell" + suffix,"McD4");
-	writeToFile author_McDShell4_t(path,"McDShell4_t");
+	writeToFile author_McDShell4_t(path,"McD_shell4_t");
 	writeBFieldToFile author_McDShell5(path + "/McDonald/shell" + suffix,"McD5");
-	writeToFile author_McDShell5_t(path,"McDShell5_t");
+	writeToFile author_McDShell5_t(path,"McD_shell5_t");
 	writeBFieldToFile author_McDShell6(path + "/McDonald/shell" + suffix,"McD6");
-	writeToFile author_McDShell6_t(path,"McDShell6_t");
+	writeToFile author_McDShell6_t(path,"McD_shell6_t");
 	writeBFieldToFile author_McDShell7(path + "/McDonald/shell" + suffix,"McD7");
-	writeToFile author_McDShell7_t(path,"McDShell7_t");
+	writeToFile author_McDShell7_t(path,"McD_shell7_t");
 	
 	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWire");
 	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWire_t");
 	
 	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/loopshell" + suffix,"GQloopshell3");
-	writeToFile author_GQLoopsShell3_t(path ,"GQLoopsShell3_t");
+	writeToFile author_GQLoopsShell3_t(path ,"GQloopshell3_t");
 	writeBFieldToFile author_GQLoopsShell4(path + "/GQ/loopshell" + suffix,"GQloopshell4");
-	writeToFile author_GQLoopsShell4_t(path,"GQLoopsShell4_t");
+	writeToFile author_GQLoopsShell4_t(path,"GQloopshell4_t");
 	writeBFieldToFile author_GQLoopsShell5(path + "/GQ/loopshell" + suffix,"GQloopshell5");
-	writeToFile author_GQLoopsShell5_t(path,"GQLoopsShell5_t");
+	writeToFile author_GQLoopsShell5_t(path,"GQloopshell5_t");
 	
 	writeBFieldToFile author_Helix(path + "/Helix" + suffix,"Helix");
 	writeToFile author_Helix_t(path,"Helix_t");
@@ -155,36 +155,36 @@ int main(){
 	writeToFile author_TAVP902_t(path,"TAVP902_t");
 	
 	writeBFieldToFile author_McDTube1(path + "/McDonald/tube" + suffix,"McD1");
-	writeToFile author_McDTube1_t(path,"McDTube1_t");
+	writeToFile author_McDTube1_t(path,"McD_tube1_t");
 	writeBFieldToFile author_McDTube2(path + "/McDonald/tube" + suffix,"McD2");
-	writeToFile author_McDTube2_t(path,"McDTube2_t");
+	writeToFile author_McDTube2_t(path,"McD_tube2_t");
 	writeBFieldToFile author_McDTube3(path + "/McDonald/tube" + suffix,"McD3");
-	writeToFile author_McDTube3_t(path,"McDTube3_t");
+	writeToFile author_McDTube3_t(path,"McD_tube3_t");
 	writeBFieldToFile author_McDTube4(path + "/McDonald/tube" + suffix,"McD4");
-	writeToFile author_McDTube4_t(path,"McDTube4_t");
+	writeToFile author_McDTube4_t(path,"McD_tube4_t");
 	writeBFieldToFile author_McDTube5(path + "/McDonald/tube" + suffix,"McD5");
-	writeToFile author_McDTube5_t(path,"McDTube5_t");
+	writeToFile author_McDTube5_t(path,"McD_tube5_t");
 	
 	writeBFieldToFile author_NWireTube(path + "/NWire/tube"+ suffix,"NWire");
 	writeToFile author_NWireTube_t(path,"NWire_t");
 	
 	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/looptube" + suffix,"GQlooptube13");
-	writeToFile author_GQLoopsTube13_t(path,"GQLoopsTube13_t");
+	writeToFile author_GQLoopsTube13_t(path,"GQlooptube13_t");
 	writeBFieldToFile author_GQLoopsTube14(path + "/GQ/looptube" + suffix,"GQlooptube14");
-	writeToFile author_GQLoopsTube14_t(path,"GQLoopsTube14_t");
+	writeToFile author_GQLoopsTube14_t(path,"GQlooptube14_t");
 	writeBFieldToFile author_GQLoopsTube15(path + "/GQ/looptube" + suffix,"GQlooptube15");
-	writeToFile author_GQLoopsTube15_t(path,"GQLoopsTube15_t");
+	writeToFile author_GQLoopsTube15_t(path,"GQlooptube15_t");
 	writeBFieldToFile author_GQLoopsTube23(path + "/GQ/looptube" + suffix,"GQlooptube23");
-	writeToFile author_GQLoopsTube23_t(path,"GQLoopsTube23_t");
+	writeToFile author_GQLoopsTube23_t(path,"GQlooptube23_t");
 	
 	writeBFieldToFile author_GQShellsTube1(path + "/GQ/shelltube" + suffix,"GQshelltube1");
-	writeToFile author_GQShellsTube1_t(path,"GQShellsTube1_t");
+	writeToFile author_GQShellsTube1_t(path,"GQshelltube1_t");
 	writeBFieldToFile author_GQShellsTube2(path + "/GQ/shelltube" + suffix,"GQshelltube2");
-	writeToFile author_GQShellsTube2_t(path,"GQShellsTube2_t");
+	writeToFile author_GQShellsTube2_t(path,"GQshelltube2_t");
 	writeBFieldToFile author_GQShellsTube3(path + "/GQ/shelltube" + suffix,"GQshelltube3");
-	writeToFile author_GQShellsTube3_t(path,"GQShellsTube3_t");
+	writeToFile author_GQShellsTube3_t(path,"GQshelltube3_t");
 	writeBFieldToFile author_GQShellsTube4(path + "/GQ/shelltube" + suffix,"GQshelltube4");
-	writeToFile author_GQShellsTube4_t(path,"GQShellsTube4_t");
+	writeToFile author_GQShellsTube4_t(path,"GQshelltube4_t");
 	
 	for(int n_t=0; n_t<N_t2; n_t++){
 		std::cout << "N_t = " << n_t << std::endl;
