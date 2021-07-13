@@ -562,27 +562,27 @@ int main(){
 		//~ std::cout << "\n";
 		
 		
-		//~ lambda = 0.866;
-		//~ std::cout << "Using the TAVP model:\n";
-		//~ time = 0;
-		//~ time_squared = 0;
-		//~ TAVP tavp866 = TAVP(lambda,R_TAVP,I,x,y,z);
-		//~ for(int i=0; i<N_t; i++){
-			//~ //std::cout << "i = " << i << "\n";
-			//~ auto start = std::chrono::steady_clock::now();
-			//~ tavp866.getB(sphP,BSphVec);
-			//~ auto end = std::chrono::steady_clock::now();
-			//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-			//~ time += t;
-			//~ time_squared += t*t;
-		//~ }	
-		//~ sphVecToCarVec(BSphVec,sphP,BCarVec);
-		//~ carVecToCylVec(BCarVec,carP,BCylVec);	
-		//~ printVec(BCylVec,"B");
-		//~ if(n_t == 0){author_TAVP866.write(cylP,BCylVec);}
-		//~ author_TAVP866_t.write(time);
-		//~ mean = time/(double)N_t;
-		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		lambda = 0.866;
+		std::cout << "Using the TAVP model:\n";
+		time = 0;
+		time_squared = 0;
+		TAVP tavp866 = TAVP(lambda,R_TAVP,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			//std::cout << "i = " << i << "\n";
+			auto start = std::chrono::steady_clock::now();
+			tavp866.getB(sphP,BSphVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		sphVecToCarVec(BSphVec,sphP,BCarVec);
+		carVecToCylVec(BCarVec,carP,BCylVec);	
+		printVec(BCylVec,"B");
+		if(n_t == 0){author_TAVP866.write(cylP,BCylVec);}
+		author_TAVP866_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 		//~ std::cout << "\n";
 		
