@@ -46,7 +46,7 @@ int main(){
 
 	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = true; // true is rho false is z
+	const bool rhoOrZ = false; // true is rho false is z
 	const bool onOrOff = true; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
