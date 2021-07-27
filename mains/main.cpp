@@ -33,14 +33,14 @@ int main(){
 	
 	// setting the code up to run multiple times to get statistics of the computation time
 	const int N_t = 1;			// number of evaluations of each method within the position loop
-	const int N_t2 = 10000;			// number of evaluations of each method outside the position loop
+	const int N_t2 = 1;			// number of evaluations of each method outside the position loop
 	double time;
 	double time_squared;
 	double mean;
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOn";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt1Np10000";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
