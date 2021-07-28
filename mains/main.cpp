@@ -44,9 +44,9 @@ int main(){
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
-	const int N_p = 10000;								// number of points along the line (number of segments = N_p-1 )
+	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = true; // true is rho false is z
+	const bool rhoOrZ = false; // true is rho false is z
 	const bool onOrOff = true; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
@@ -233,8 +233,9 @@ int main(){
 			//~ BCylVecArr[i][1] = BCylVec[1];
 			//~ BCylVecArr[i][2] = BCylVec[2];
 		}	
-		printVec(BCylVec,"B");				
-		if(n_t == 0){author_SAM.write(cylP,BCylVec);}
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);					
+		if(n_t == 0){author_SAM.write(carP,BCarVec);}
 		author_SAM_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -256,26 +257,27 @@ int main(){
 				time_squared += t*t;
 			}	
 			printVec(BCylVec,"B");
+			cylVecToCarVec(BCylVec,cylP,BCarVec);
 			if(n_McD == 1){
-				if(n_t == 0){author_McDLoop1.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop1.write(carP,BCarVec);}
 				author_McDLoop1_t.write(time);
 			}else if(n_McD == 2){
-				if(n_t == 0){author_McDLoop2.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop2.write(carP,BCarVec);}
 				author_McDLoop2_t.write(time);			
 			}else if(n_McD == 3){
-				if(n_t == 0){author_McDLoop3.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop3.write(carP,BCarVec);}
 				author_McDLoop3_t.write(time);
 			}else if(n_McD == 4){
-				if(n_t == 0){author_McDLoop4.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop4.write(carP,BCarVec);}
 				author_McDLoop4_t.write(time);	
 			}else if(n_McD == 5){
-				if(n_t == 0){author_McDLoop5.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop5.write(carP,BCarVec);}
 				author_McDLoop5_t.write(time);	
 			}else if(n_McD == 6){
-				if(n_t == 0){author_McDLoop6.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop6.write(carP,BCarVec);}
 				author_McDLoop6_t.write(time);	
 			}else if(n_McD == 7){
-				if(n_t == 0){author_McDLoop7.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDLoop7.write(carP,BCarVec);}
 				author_McDLoop7_t.write(time);				
 			}else{
 				std::cout << "You are asking for too high an order on the McDLoop\n";
@@ -304,7 +306,8 @@ int main(){
 		}
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_BSLoop10.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_BSLoop10.write(carP,BCarVec);}
 		author_BSLoop10_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -328,7 +331,7 @@ int main(){
 		}
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_BSLoop100.write(cylP,BCylVec);}
+		if(n_t == 0){author_BSLoop100.write(carP,BCarVec);}
 		author_BSLoop100_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -352,7 +355,7 @@ int main(){
 		}
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_BSLoop1000.write(cylP,BCylVec);}
+		if(n_t == 0){author_BSLoop1000.write(carP,BCarVec);}
 		author_BSLoop1000_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -383,7 +386,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_Conway1D.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_Conway1D.write(carP,BCarVec);}
 		author_Conway1D_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -406,26 +410,27 @@ int main(){
 				time_squared += t*t;
 			}	
 			printVec(BCylVec,"B");
+			cylVecToCarVec(BCylVec,cylP,BCarVec);
 			if(n_McD == 1){
-				if(n_t == 0){author_McDShell1.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell1.write(carP,BCarVec);}
 				author_McDShell1_t.write(time);
 			}else if(n_McD == 2){
-				if(n_t == 0){author_McDShell2.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell2.write(carP,BCarVec);}
 				author_McDShell2_t.write(time);			
 			}else if(n_McD == 3){
-				if(n_t == 0){author_McDShell3.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell3.write(carP,BCarVec);}
 				author_McDShell3_t.write(time);
 			}else if(n_McD == 4){
-				if(n_t == 0){author_McDShell4.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell4.write(carP,BCarVec);}
 				author_McDShell4_t.write(time);	
 			}else if(n_McD == 5){
-				if(n_t == 0){author_McDShell5.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell5.write(carP,BCarVec);}
 				author_McDShell5_t.write(time);	
 			}else if(n_McD == 6){
-				if(n_t == 0){author_McDShell6.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell6.write(carP,BCarVec);}
 				author_McDShell6_t.write(time);	
 			}else if(n_McD == 7){
-				if(n_t == 0){author_McDShell7.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDShell7.write(carP,BCarVec);}
 				author_McDShell7_t.write(time);				
 			}else{
 				std::cout << "You are asking for too high an order on the McDShell\n";
@@ -451,7 +456,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_NWireShell.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_NWireShell.write(carP,BCarVec);}
 		author_NWireShell_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -473,7 +479,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsShell3.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsShell3.write(carP,BCarVec);}
 		author_GQLoopsShell3_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -496,7 +503,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsShell4.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsShell4.write(carP,BCarVec);}
 		author_GQLoopsShell4_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -519,7 +527,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsShell5.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsShell5.write(carP,BCarVec);}
 		author_GQLoopsShell5_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -533,7 +542,7 @@ int main(){
 		//////////////////// FINITE SOLENOID ////////////////////
 		std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
-		McDOrder = 4;
+		McDOrder = 5;
 		N_BS = 10000;
 		//~ NG_rho = 1;	//MOVED FURTHER DOWN
 		//~ NG_z = 3;	//MOVED FURTHER DOWN
@@ -554,7 +563,7 @@ int main(){
 		}
 		carVecToCylVec(BCarVec,carP,BCylVec);		
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_Helix.write(cylP,BCylVec);}
+		if(n_t == 0){author_Helix.write(carP,BCarVec);}
 		author_Helix_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -579,7 +588,7 @@ int main(){
 		sphVecToCarVec(BSphVec,sphP,BCarVec);
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_TAVP866.write(cylP,BCylVec);}
+		if(n_t == 0){author_TAVP866.write(carP,BCarVec);}
 		author_TAVP866_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -605,7 +614,7 @@ int main(){
 		sphVecToCarVec(BSphVec,sphP,BCarVec);
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_TAVP902.write(cylP,BCylVec);}
+		if(n_t == 0){author_TAVP902.write(carP,BCarVec);}
 		author_TAVP902_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -628,20 +637,21 @@ int main(){
 				time_squared += t*t;
 			}	
 			printVec(BCylVec,"B");
+			cylVecToCarVec(BCylVec,cylP,BCarVec);
 			if(n_McD == 1){
-				if(n_t == 0){author_McDTube1.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDTube1.write(carP,BCarVec);}
 				author_McDTube1_t.write(time);
 			}else if(n_McD == 2){
-				if(n_t == 0){author_McDTube2.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDTube2.write(carP,BCarVec);}
 				author_McDTube2_t.write(time);			
 			}else if(n_McD == 3){
-				if(n_t == 0){author_McDTube3.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDTube3.write(carP,BCarVec);}
 				author_McDTube3_t.write(time);
 			}else if(n_McD == 4){
-				if(n_t == 0){author_McDTube4.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDTube4.write(carP,BCarVec);}
 				author_McDTube4_t.write(time);	
 			}else if(n_McD == 5){
-				if(n_t == 0){author_McDTube5.write(cylP,BCylVec);}
+				if(n_t == 0){author_McDTube5.write(carP,BCarVec);}
 				author_McDTube5_t.write(time);			
 			}else{
 				std::cout << "You are asking for too high an order on the McDTube\n";
@@ -666,7 +676,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_NWireTube.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_NWireTube.write(carP,BCarVec);}
 		author_NWireTube_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -689,7 +700,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsTube13.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsTube13.write(carP,BCarVec);}
 		author_GQLoopsTube13_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -713,7 +725,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsTube14.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsTube14.write(carP,BCarVec);}
 		author_GQLoopsTube14_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -737,7 +750,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsTube15.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsTube15.write(carP,BCarVec);}
 		author_GQLoopsTube15_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -759,7 +773,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQLoopsTube23.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQLoopsTube23.write(carP,BCarVec);}
 		author_GQLoopsTube23_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -781,7 +796,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQShellsTube1.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQShellsTube1.write(carP,BCarVec);}
 		author_GQShellsTube1_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -804,7 +820,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQShellsTube2.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQShellsTube2.write(carP,BCarVec);}
 		author_GQShellsTube2_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -827,7 +844,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQShellsTube3.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQShellsTube3.write(carP,BCarVec);}
 		author_GQShellsTube3_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
@@ -850,7 +868,8 @@ int main(){
 			time_squared += t*t;
 		}	
 		printVec(BCylVec,"B");
-		if(n_t == 0){author_GQShellsTube4.write(cylP,BCylVec);}
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_GQShellsTube4.write(carP,BCarVec);}
 		author_GQShellsTube4_t.write(time);
 		mean = time/(double)N_t;
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
