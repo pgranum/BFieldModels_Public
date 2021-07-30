@@ -44,9 +44,9 @@ int main(){
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
-	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
+	const int N_p = 10000;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = false; // true is rho false is z
+	const bool rhoOrZ = true; // true is rho false is z
 	const bool onOrOff = true; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
@@ -136,8 +136,8 @@ int main(){
 	writeBFieldToFile author_McDShell7(path + "/McDonald/shell" + suffix,"McD7");
 	writeToFile author_McDShell7_t(path,"McD_shell7_t");
 	
-	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWire");
-	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWire_t");
+	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWireShell");
+	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWireShell_t");
 	
 	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/loopshell" + suffix,"GQloopshell3");
 	writeToFile author_GQLoopsShell3_t(path ,"GQloopshell3_t");
@@ -165,8 +165,8 @@ int main(){
 	writeBFieldToFile author_McDTube5(path + "/McDonald/tube" + suffix,"McD5");
 	writeToFile author_McDTube5_t(path,"McD_tube5_t");
 	
-	writeBFieldToFile author_NWireTube(path + "/NWire/tube"+ suffix,"NWire");
-	writeToFile author_NWireTube_t(path,"NWire_t");
+	writeBFieldToFile author_NWireTube(path + "/NWire/tube"+ suffix,"NWireTube");
+	writeToFile author_NWireTube_t(path,"NWireTube_t");
 	
 	writeBFieldToFile author_GQLoopsTube13(path + "/GQ/looptube" + suffix,"GQlooptube13");
 	writeToFile author_GQLoopsTube13_t(path,"GQlooptube13_t");
