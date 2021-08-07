@@ -40,7 +40,7 @@ int main(){
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOff";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOff2";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
@@ -209,7 +209,7 @@ int main(){
 		//////////////////// LOOP ////////////////////
 		std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 		
-		McDOrder = 7;	// number of terms to use in the McDonald model
+		//~ McDOrder = 7;	// number of terms to use in the McDonald model
 		//~ N_BS = 1000; 	// number of segments to be used in the Biot-Savart model I HAVE MOVED THIS FURTHER DOWN
 			
 		std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
@@ -241,53 +241,163 @@ int main(){
 		stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 			//std::cout << "\n";
-		
-		
-		for(int n_McD=1; n_McD<McDOrder+1; n_McD++){
-			std::cout << "Using the McDonald model:\n";
-			time = 0;
-			time_squared = 0;
-			McD_Loop mcD_Loop = McD_Loop(n_McD,R,I,x,y,z);
-			for(int i=0; i<N_t; i++){
-				auto start = std::chrono::steady_clock::now();
-				mcD_Loop.getB(cylP,BCylVec);
-				auto end = std::chrono::steady_clock::now();
-				double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-				time += t;
-				time_squared += t*t;
-			}	
-			printVec(BCylVec,"B");
-			cylVecToCarVec(BCylVec,cylP,BCarVec);
-			if(n_McD == 1){
-				if(n_t == 0){author_McDLoop1.write(carP,BCarVec);}
-				author_McDLoop1_t.write(time);
-			}else if(n_McD == 2){
-				if(n_t == 0){author_McDLoop2.write(carP,BCarVec);}
-				author_McDLoop2_t.write(time);			
-			}else if(n_McD == 3){
-				if(n_t == 0){author_McDLoop3.write(carP,BCarVec);}
-				author_McDLoop3_t.write(time);
-			}else if(n_McD == 4){
-				if(n_t == 0){author_McDLoop4.write(carP,BCarVec);}
-				author_McDLoop4_t.write(time);	
-			}else if(n_McD == 5){
-				if(n_t == 0){author_McDLoop5.write(carP,BCarVec);}
-				author_McDLoop5_t.write(time);	
-			}else if(n_McD == 6){
-				if(n_t == 0){author_McDLoop6.write(carP,BCarVec);}
-				author_McDLoop6_t.write(time);	
-			}else if(n_McD == 7){
-				if(n_t == 0){author_McDLoop7.write(carP,BCarVec);}
-				author_McDLoop7_t.write(time);				
-			}else{
-				std::cout << "You are asking for too high an order on the McDLoop\n";
-			}
 			
-			mean = time/(double)N_t;
-			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			//std::cout << "\n";
-		}
+					
+		
+		McDOrder = 1;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop1 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop1.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop1.write(carP,BCarVec);}
+		author_McDLoop1_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 2;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop2 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop2.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop2.write(carP,BCarVec);}
+		author_McDLoop2_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 3;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop3 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop3.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop3.write(carP,BCarVec);}
+		author_McDLoop3_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 4;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop4 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop4.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop4.write(carP,BCarVec);}
+		author_McDLoop4_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 5;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop5 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop5.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop5.write(carP,BCarVec);}
+		author_McDLoop5_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 6;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop6 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop6.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop6.write(carP,BCarVec);}
+		author_McDLoop6_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 7;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop7 = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop7.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDLoop7.write(carP,BCarVec);}
+		author_McDLoop7_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
 	
 	
 	
@@ -368,7 +478,7 @@ int main(){
 		std::cout << "CALCULATING MODELS FOR A SHELL\n";
 		
 		//~ NG_z = 3;	// MOVED FURTHER DOWN
-		McDOrder = 7;	// number of terms to use in the McDonald model
+		//~ McDOrder = 7;	// number of terms to use in the McDonald model
 		
 				
 		
@@ -395,51 +505,159 @@ int main(){
 			//std::cout << "\n";
 	
 	
-	
-		for(int n_McD=1; n_McD<McDOrder+1; n_McD++){
-			std::cout << "Using the McDonald model:\n";
-			time = 0;
-			time_squared = 0;
-			McD_Shell mcDShell = McD_Shell(n_McD,R,N_wires,i,L,x,y,z);
-			for(int i=0; i<N_t; i++){
-				auto start = std::chrono::steady_clock::now();
-				mcDShell.getB(cylP,BCylVec);
-				auto end = std::chrono::steady_clock::now();
-				double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-				time += t;
-				time_squared += t*t;
-			}	
-			printVec(BCylVec,"B");
-			cylVecToCarVec(BCylVec,cylP,BCarVec);
-			if(n_McD == 1){
-				if(n_t == 0){author_McDShell1.write(carP,BCarVec);}
-				author_McDShell1_t.write(time);
-			}else if(n_McD == 2){
-				if(n_t == 0){author_McDShell2.write(carP,BCarVec);}
-				author_McDShell2_t.write(time);			
-			}else if(n_McD == 3){
-				if(n_t == 0){author_McDShell3.write(carP,BCarVec);}
-				author_McDShell3_t.write(time);
-			}else if(n_McD == 4){
-				if(n_t == 0){author_McDShell4.write(carP,BCarVec);}
-				author_McDShell4_t.write(time);	
-			}else if(n_McD == 5){
-				if(n_t == 0){author_McDShell5.write(carP,BCarVec);}
-				author_McDShell5_t.write(time);	
-			}else if(n_McD == 6){
-				if(n_t == 0){author_McDShell6.write(carP,BCarVec);}
-				author_McDShell6_t.write(time);	
-			}else if(n_McD == 7){
-				if(n_t == 0){author_McDShell7.write(carP,BCarVec);}
-				author_McDShell7_t.write(time);				
-			}else{
-				std::cout << "You are asking for too high an order on the McDShell\n";
-			}
-			mean = time/(double)N_t;
-			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			//std::cout << "\n";
-		}
+		McDOrder = 1;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell1 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell1.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell1.write(carP,BCarVec);}
+		author_McDShell1_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 2;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell2 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell2.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell2.write(carP,BCarVec);}
+		author_McDShell2_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 3;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell3 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell3.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell3.write(carP,BCarVec);}
+		author_McDShell3_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 4;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell4 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell4.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell4.write(carP,BCarVec);}
+		author_McDShell4_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 5;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell5 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell5.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell5.write(carP,BCarVec);}
+		author_McDShell5_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 6;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell6 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell6.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell6.write(carP,BCarVec);}
+		author_McDShell6_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 7;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Shell mcDShell7 = McD_Shell(McDOrder,R,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcDShell7.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDShell7.write(carP,BCarVec);}
+		author_McDShell7_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
 		
 		
 		
@@ -542,7 +760,7 @@ int main(){
 		//////////////////// FINITE SOLENOID ////////////////////
 		std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 	
-		McDOrder = 4;
+		//~ McDOrder = 4;
 		N_BS = 10000;
 		//~ NG_rho = 1;	//MOVED FURTHER DOWN
 		//~ NG_z = 3;	//MOVED FURTHER DOWN
@@ -622,45 +840,116 @@ int main(){
 			//std::cout << "\n";
 		
 		
+		McDOrder = 1;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Tube mcD_Tube1 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Tube1.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDTube1.write(carP,BCarVec);}
+		author_McDTube1_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
 		
-		for(int n_McD=1; n_McD<McDOrder+1; n_McD++){
-			std::cout << "Using the McDonald model:\n";
-			time = 0;
-			time_squared = 0;
-			McD_Tube mcD_Tube = McD_Tube(n_McD,R1,R2,N_wires,i,L,x,y,z);
-			for(int i=0; i<N_t; i++){
-				auto start = std::chrono::steady_clock::now();
-				mcD_Tube.getB(cylP,BCylVec);
-				auto end = std::chrono::steady_clock::now();
-				double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-				time += t;
-				time_squared += t*t;
-			}	
-			printVec(BCylVec,"B");
-			cylVecToCarVec(BCylVec,cylP,BCarVec);
-			if(n_McD == 1){
-				if(n_t == 0){author_McDTube1.write(carP,BCarVec);}
-				author_McDTube1_t.write(time);
-			}else if(n_McD == 2){
-				if(n_t == 0){author_McDTube2.write(carP,BCarVec);}
-				author_McDTube2_t.write(time);			
-			}else if(n_McD == 3){
-				if(n_t == 0){author_McDTube3.write(carP,BCarVec);}
-				author_McDTube3_t.write(time);
-			}else if(n_McD == 4){
-				if(n_t == 0){author_McDTube4.write(carP,BCarVec);}
-				author_McDTube4_t.write(time);	
-			}else if(n_McD == 5){
-				if(n_t == 0){author_McDTube5.write(carP,BCarVec);}
-				author_McDTube5_t.write(time);			
-			}else{
-				std::cout << "You are asking for too high an order on the McDTube\n";
-			}
-			mean = time/(double)N_t;
-			stdev = sqrt( time_squared / (double)N_t - mean * mean );
-			//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
-			//std::cout << "\n";
-		}
+		McDOrder = 2;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Tube mcD_Tube2 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Tube2.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDTube2.write(carP,BCarVec);}
+		author_McDTube2_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 3;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Tube mcD_Tube3 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Tube3.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDTube3.write(carP,BCarVec);}
+		author_McDTube3_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		McDOrder = 4;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Tube mcD_Tube4 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Tube4.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		if(n_t == 0){author_McDTube4.write(carP,BCarVec);}
+		author_McDTube4_t.write(time);
+		mean = time/(double)N_t;
+		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";
+		
+		//~ McDOrder = 5;
+		//~ std::cout << "Using the McDonald model:\n";
+		//~ time = 0;
+		//~ time_squared = 0;
+		//~ McD_Tube mcD_Tube5 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+		//~ for(int i=0; i<N_t; i++){
+			//~ auto start = std::chrono::steady_clock::now();
+			//~ mcD_Tube5.getB(cylP,BCylVec);
+			//~ auto end = std::chrono::steady_clock::now();
+			//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			//~ time += t;
+			//~ time_squared += t*t;
+		//~ }	
+		//~ printVec(BCylVec,"B");
+		//~ cylVecToCarVec(BCylVec,cylP,BCarVec);
+		//~ if(n_t == 0){author_McDTube5.write(carP,BCarVec);}
+		//~ author_McDTube5_t.write(time);
+		//~ mean = time/(double)N_t;
+		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//~ //std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//~ //std::cout << "\n";
+		
 		
 		
 		std::cout << "Using the N-Wire model:\n";
