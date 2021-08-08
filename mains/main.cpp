@@ -242,7 +242,27 @@ int main(){
 		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 			//std::cout << "\n";
 			
-					
+		McDOrder = 1;
+		std::cout << "Using the McDonald model:\n";
+		time = 0;
+		time_squared = 0;
+		McD_Loop mcD_Loop1_warmup = McD_Loop(McDOrder,R,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			auto start = std::chrono::steady_clock::now();
+			mcD_Loop1_warmup.getB(cylP,BCylVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		printVec(BCylVec,"B");
+		cylVecToCarVec(BCylVec,cylP,BCarVec);
+		//~ if(n_t == 0){author_McDLoop1.write(carP,BCarVec);}
+		//~ author_McDLoop1_t.write(time);
+		//~ mean = time/(double)N_t;
+		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+		//std::cout << "\n";		
 		
 		McDOrder = 1;
 		std::cout << "Using the McDonald model:\n";
