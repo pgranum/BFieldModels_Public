@@ -40,14 +40,14 @@ int main(){
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_ZOff";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOn";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
 	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = false; // true is rho false is z. RHO ON HALF COMPLETED, RHO OFF DONE. Z On Off done
-	const bool onOrOff = false; // true is on false is off
+	const bool rhoOrZ = true; // true is rho false is z. RHO ON HALF COMPLETED, RHO OFF DONE. Z On Off done
+	const bool onOrOff = true; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
 	double z_min;
@@ -137,7 +137,7 @@ int main(){
 	writeToFile author_McDShell7_t(path,"McD_shell7_t");
 	
 	writeBFieldToFile author_NWireShell(path + "/NWire/shell" + suffix,"NWireShell");
-	writeToFile author_NWireShell_t(path + "/NWire/shell" + suffix,"NWireShell_t");
+	writeToFile author_NWireShell_t(path,"NWireShell_t");
 	
 	writeBFieldToFile author_GQLoopsShell3(path + "/GQ/loopshell" + suffix,"GQloopshell3");
 	writeToFile author_GQLoopsShell3_t(path ,"GQloopshell3_t");
@@ -494,6 +494,7 @@ int main(){
 		
 		std::cout << "\n";
 		
+		/*
 		//////////////////// SHELL ////////////////////
 		std::cout << "CALCULATING MODELS FOR A SHELL\n";
 		
@@ -792,7 +793,7 @@ int main(){
 		
 			
 		std::cout << "\n";	
-		
+		*/
 		
 		//////////////////// FINITE SOLENOID ////////////////////
 		std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
@@ -825,6 +826,24 @@ int main(){
 		//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 		//~ std::cout << "\n";
 		
+		
+		lambda = 0.866;
+		std::cout << "Using the TAVP model:\n";
+		time = 0;
+		time_squared = 0;
+		TAVP tavp_warmup = TAVP(lambda,R_TAVP,I,x,y,z);
+		for(int i=0; i<N_t; i++){
+			//std::cout << "i = " << i << "\n";
+			auto start = std::chrono::steady_clock::now();
+			tavp_warmup.getB(sphP,BSphVec);
+			auto end = std::chrono::steady_clock::now();
+			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			time += t;
+			time_squared += t*t;
+		}	
+		sphVecToCarVec(BSphVec,sphP,BCarVec);
+		carVecToCylVec(BCarVec,carP,BCylVec);	
+		printVec(BCylVec,"B");
 		
 		lambda = 0.866;
 		std::cout << "Using the TAVP model:\n";
@@ -877,7 +896,7 @@ int main(){
 			//std::cout << "\n";
 		
 		
-		
+		/*
 		McDOrder = 1;
 		std::cout << "Using the McDonald model:\n";
 		time = 0;
@@ -1220,7 +1239,7 @@ int main(){
 			//std::cout << "\n";
 		
 		
-		
+		*/
 		std::cout << "\n";
 		
 	}
