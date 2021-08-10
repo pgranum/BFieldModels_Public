@@ -33,21 +33,21 @@ int main(){
 	
 	// setting the code up to run multiple times to get statistics of the computation time
 	const int N_t = 1;			// number of evaluations of each method within the position loop
-	const int N_t2 = 100;			// number of evaluations of each method outside the position loop
+	const int N_t2 = 10000;			// number of evaluations of each method outside the position loop
 	double time;
 	double time_squared;
 	double mean;
 	double stdev;
 	
 	//~ const std::string path = "/home/magn5452/Data";
-	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesHelixTimeData_ZOn";
+	const std::string path = "/home/penielse/BFieldModels_Public/BinFilesNt10000Np100_RhoOff";
 	
 	// setting the code up to loop over multiple points in space along a straight line
 
 	const int N_p = 100;								// number of points along the line (number of segments = N_p-1 )
 	
-	const bool rhoOrZ = false; // true is rho false is z. RHO ON HALF COMPLETED, RHO OFF DONE. Z On Off done
-	const bool onOrOff = true; // true is on false is off
+	const bool rhoOrZ = true; // true is rho false is z. RHO ON HALF COMPLETED, RHO OFF DONE. Z On Off done
+	const bool onOrOff = false; // true is on false is off
 	const double z_bound = 3; // The maximum value of R1 of the paths on the axis
 
 	double z_min;
@@ -805,28 +805,28 @@ int main(){
 		//~ lambda = 0.866; //MOVED FURTHER DOWN
 		
 		
-		std::cout << "Using the detailed Biot-Savart model:\n";
-		time = 0;
-		time_squared = 0;
-		Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
-		for(int i=0; i<N_t; i++){
-			auto start = std::chrono::steady_clock::now();
-			helix.getB(carP,BCarVec);
-			auto end = std::chrono::steady_clock::now();
-			double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-			time += t;
-			time_squared += t*t;
-		}
-		carVecToCylVec(BCarVec,carP,BCylVec);		
-		printVec(BCylVec,"B");
-		if(n_t == 0){author_Helix.write(carP,BCarVec);}
-		author_Helix_t.write(time);
-		mean = time/(double)N_t;
-		stdev = sqrt( time_squared / (double)N_t - mean * mean );
+		//~ std::cout << "Using the detailed Biot-Savart model:\n";
+		//~ time = 0;
+		//~ time_squared = 0;
+		//~ Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
+		//~ for(int i=0; i<N_t; i++){
+			//~ auto start = std::chrono::steady_clock::now();
+			//~ helix.getB(carP,BCarVec);
+			//~ auto end = std::chrono::steady_clock::now();
+			//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+			//~ time += t;
+			//~ time_squared += t*t;
+		//~ }
+		//~ carVecToCylVec(BCarVec,carP,BCylVec);		
+		//~ printVec(BCylVec,"B");
+		//~ if(n_t == 0){author_Helix.write(carP,BCarVec);}
+		//~ author_Helix_t.write(time);
+		//~ mean = time/(double)N_t;
+		//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
 		//~ std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
 		//~ std::cout << "\n";
 		
-		/*
+		
 		lambda = 0.866;
 		std::cout << "Using the TAVP model:\n";
 		time = 0;
@@ -844,6 +844,8 @@ int main(){
 		sphVecToCarVec(BSphVec,sphP,BCarVec);
 		carVecToCylVec(BCarVec,carP,BCylVec);	
 		printVec(BCylVec,"B");
+		
+		
 		
 		lambda = 0.866;
 		std::cout << "Using the TAVP model:\n";
@@ -896,7 +898,7 @@ int main(){
 			//std::cout << "\n";
 		
 		
-		
+		/*
 		McDOrder = 1;
 		std::cout << "Using the McDonald model:\n";
 		time = 0;
