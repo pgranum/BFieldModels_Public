@@ -9,21 +9,51 @@
 int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	
+	//~ // specs for Ag MAB
+	//~ const double R1 = 0.0430658;			// inner radius
+	//~ const double R2 = R1+7*0.0005332;		// outer radius
+	//~ const double R = (R2-R1)/2.0+R1;	// radius to represent an object without radial extension
+	//~ const double R_TAVP = R2*1.015355; 	// this radius will make B_z match B_z of the helix BS model (R_TAVP = R2_helix*1.015355)
+	//~ const double L = 90*0.0003853; 		// Length
+	//~ const double i = 1; 				// current per loop/current in the wire
+	//~ const int N_z = 90; 				// number of wire turns/loops per layer/shell
+	//~ const int N_rho = 8; 				// number of layers/shell
+	//~ const int N_wires = N_z*N_rho;		// total number of wires
+	//~ const double I = N_z*N_rho*i;		// "total" amount of current
+	//~ const double x = 0.;				// x coordinate of magnet centre
+	//~ const double y = 0.;				// y coordinate of magnet centre
+	//~ const double z = 0.;					// z coordinate of magnet centre	
 	
-	
-	const double R1 = 0.04125;			// inner radius
-	const double R2 = 0.0463701;		// outer radius
+	// specs for Ag SoB
+	const double R1 = 0.028266;			// inner radius
+	const double R2 = R1+8*0.0005332;		// outer radius
 	const double R = (R2-R1)/2.0+R1;	// radius to represent an object without radial extension
 	const double R_TAVP = R2*1.015355; 	// this radius will make B_z match B_z of the helix BS model (R_TAVP = R2_helix*1.015355)
-	const double L = 0.0346811; 		// Length
-	const double i = 600; 				// current per loop/current in the wire
-	const int N_z = 30; 				// number of wire turns/loops per layer/shell
-	const int N_rho = 4; 				// number of layers/shell
+	const double L = 526*0.000475; 		// Length
+	const double i = 1; 				// current per loop/current in the wire
+	const int N_z = 526; 				// number of wire turns/loops per layer/shell
+	const int N_rho = 8; 				// number of layers/shell
 	const int N_wires = N_z*N_rho;		// total number of wires
 	const double I = N_z*N_rho*i;		// "total" amount of current
 	const double x = 0.;				// x coordinate of magnet centre
 	const double y = 0.;				// y coordinate of magnet centre
-	const double z = 0;					// z coordinate of magnet centre	
+	const double z = 0.;					// z coordinate of magnet centre	
+	
+	
+	//~ // specs for A2 mirror coil
+	//~ const double R1 = 0.04125;			// inner radius
+	//~ const double R2 = 0.0463701;		// outer radius
+	//~ const double R = (R2-R1)/2.0+R1;	// radius to represent an object without radial extension
+	//~ const double R_TAVP = R2*1.015355; 	// this radius will make B_z match B_z of the helix BS model (R_TAVP = R2_helix*1.015355)
+	//~ const double L = 0.0346811; 		// Length
+	//~ const double i = 600; 				// current per loop/current in the wire
+	//~ const int N_z = 30; 				// number of wire turns/loops per layer/shell
+	//~ const int N_rho = 4; 				// number of layers/shell
+	//~ const int N_wires = N_z*N_rho;		// total number of wires
+	//~ const double I = N_z*N_rho*i;		// "total" amount of current
+	//~ const double x = 0.;				// x coordinate of magnet centre
+	//~ const double y = 0.;				// y coordinate of magnet centre
+	//~ const double z = 0;					// z coordinate of magnet centre	
 	
 	int McDOrder;	// number of terms to use in the McDonald model
 	int N_BS; 		// number of segments to be used in the Biot-Savart model
@@ -89,7 +119,7 @@ int main(){
 	const double z_d = (z_max-z_min)/((double)N_p-1.0);	// length of a stright line segment
 	const double rho_d = (rho_max-rho_min)/((double)N_p-1.0);	// length of a stright line segment
 
-	double carP[3] = {R1*0.9,0,0}; 	// point to calculate field at in cartesian coordinates
+	double carP[3] = {0,0,0}; 	// point to calculate field at in cartesian coordinates
 	double cylP[3];								// point to calculate field at in cylindrical coordinates
 	double sphP[3];								// point to calculate field at in spherical coordinates
 	carPToCylP(carP,cylP);						// converting the point in cartesian coor to cylindrical coordinates
@@ -98,115 +128,62 @@ int main(){
 	double BCylVec[3] = {0.,0.,0.}; 			// placeholder for the field in cylindrical coordinates
 	double BSphVec[3] = {0.,0.,0.}; 			// placeholder for the field in spherical coordinates		
 	
+	std::cout << "\n";
+	std::cout << "Calculating field at point:\n";
+	printVec(carP,"P_car");
+	printVec(cylP,"P_cyl");
+	//~ printVec(sphP,"P");
+	std::cout << "\n";
 
-	//////////////////////////// LOOP ////////////////////////
-	
-	McDOrder = 7;	// number of terms to use in the McDonald model
-	//~ N_BS = 1000; 	// number of segments to be used in the Biot-Savart model I HAVE MOVED THIS FURTHER DOWN
-	
-	//~ std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
-	//~ time = 0;
-	//~ time_squared = 0;
-	//~ SimpleAnalyticModel SAM = SimpleAnalyticModel(R,I,x,y,z);		
-	//~ for(int i=0; i<N_t; i++){
-		//~ auto start = std::chrono::steady_clock::now();
-		//~ SAM.getB(cylP,BCylVec);
-		//~ auto end = std::chrono::steady_clock::now();
-		//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-		//~ time += t;
-		//~ time_squared += t*t;
-	//~ }	
-	//~ printVec(BCylVec,"B");
-	//~ cylVecToCarVec(BCylVec,cylP,BCarVec);
-	//~ mean = time/(double)N_t;
-	//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
-	
-	//////////////////////////// SHELL ////////////////////////
 
-	McDOrder = 7;	// number of terms to use in the McDonald model
-		
-				
-		
-	std::cout << "Using the (exact) Conway model:\n";
+	//////////////////// LOOP ////////////////////
+	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
+
+	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
 	time_squared = 0;
-	Conway1D conway1D = Conway1D(R,N_wires,i,L,x,y,z);
-    assert(x == 0 && y == 0); // the solenoid has to be centered around the axis
+	//~ double[N_t][3] cylPArr;
+	//~ double[N_t][3] BCylVecArr;
+	SimpleAnalyticModel SAM = SimpleAnalyticModel(R,I,x,y,z);		
 	for(int i=0; i<N_t; i++){
 		auto start = std::chrono::steady_clock::now();
-		conway1D.getB(cylP,BCylVec);
+		SAM.getB(cylP,BCylVec);
 		auto end = std::chrono::steady_clock::now();
 		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
 		time += t;
 		time_squared += t*t;
 	}	
 	printVec(BCylVec,"B");
-	cylVecToCarVec(BCylVec,cylP,BCarVec);
-	mean = time/(double)N_t;
-	stdev = sqrt( time_squared / (double)N_t - mean * mean );
-	
-	NG_z = 4;
-	std::cout << "Using the Gaussian Quadrature model:\n";
-	time = 0;
-	time_squared = 0;
-	GaussianQuadratureLoops_Shell GQL_S3 = GaussianQuadratureLoops_Shell(N_z,NG_z,R,N_wires,i,L,x,y,z);
-	for(int i=0; i<N_t; i++){
-		auto start = std::chrono::steady_clock::now();
-		GQL_S3.getB(cylP,BCylVec);
-		auto end = std::chrono::steady_clock::now();
-		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-		time += t;
-		time_squared += t*t;
-	}	
-	printVec(BCylVec,"B");
-	cylVecToCarVec(BCylVec,cylP,BCarVec);
-	mean = time/(double)N_t;
-	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	cylVecToCarVec(BCylVec,cylP,BCarVec);					
 
 	//////////////////////////// FINITE SOLENOID ////////////////////////
-
-	McDOrder = 5;
+	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
+	
+	//~ McDOrder = 4;
 	N_BS = 10000;
 	//~ NG_rho = 1;	//MOVED FURTHER DOWN
 	//~ NG_z = 3;	//MOVED FURTHER DOWN
 	//~ lambda = 0.866; //MOVED FURTHER DOWN
-		
-		
-	//~ std::cout << "Using the detailed Biot-Savart model:\n";
-	//~ time = 0;
-	//~ time_squared = 0;
-	//~ Helix helix = Helix(N_z,N_rho,N_BS,R1,R2,N_wires,i,L,x,y,z);
-	//~ for(int i=0; i<N_t; i++){
-		//~ auto start = std::chrono::steady_clock::now();
-		//~ helix.getB(carP,BCarVec);
-		//~ auto end = std::chrono::steady_clock::now();
-		//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-		//~ time += t;
-		//~ time_squared += t*t;
-	//~ }
-	//~ carVecToCylVec(BCarVec,carP,BCylVec);		
-	//~ printVec(BCylVec,"B");
-	//~ mean = time/(double)N_t;
-	//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );	
-	
 
-	//~ lambda = 0.866;
-	//~ std::cout << "Using the TAVP model:\n";
-	//~ time = 0;
-	//~ time_squared = 0;
-	//~ TAVP tavp866 = TAVP(lambda,R_TAVP,I,x,y,z);
-	//~ for(int i=0; i<N_t; i++){
-		//~ //std::cout << "i = " << i << "\n";
-		//~ auto start = std::chrono::steady_clock::now();
-		//~ tavp866.getB(sphP,BSphVec);
-		//~ auto end = std::chrono::steady_clock::now();
-		//~ double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
-		//~ time += t;
-		//~ time_squared += t*t;
-	//~ }	
-	//~ sphVecToCarVec(BSphVec,sphP,BCarVec);
-	//~ carVecToCylVec(BCarVec,carP,BCylVec);
-	//~ printVec(BCylVec,"B");
-	//~ mean = time/(double)N_t;
-	//~ stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	McDOrder = 3;
+	std::cout << "Using the McDonald model:\n";
+	time = 0;
+	time_squared = 0;
+	McD_Tube mcD_Tube1 = McD_Tube(McDOrder,R1,R2,N_wires,i,L,x,y,z);
+	for(int i=0; i<N_t; i++){
+		auto start = std::chrono::steady_clock::now();
+		mcD_Tube1.getB(cylP,BCylVec);
+		auto end = std::chrono::steady_clock::now();
+		double t = std::chrono::duration_cast<std::chrono::duration<double>>(end - start).count();
+		time += t;
+		time_squared += t*t;
+	}	
+	printVec(BCylVec,"B");
+	cylVecToCarVec(BCylVec,cylP,BCarVec);
+	//~ if(n_t == 0){author_McDTube1.write(carP,BCarVec);}
+	//~ author_McDTube1_t.write(time);
+	mean = time/(double)N_t;
+	stdev = sqrt( time_squared / (double)N_t - mean * mean );
+	//std::cout << "Average calc time = " << mean << " +/- " <<  stdev <<" s\n";
+	//std::cout << "\n";
 }

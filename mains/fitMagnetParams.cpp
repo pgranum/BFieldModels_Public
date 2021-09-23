@@ -188,7 +188,7 @@ int main(){
 	std::cout.precision(15);	// sets the number of significant digits of cout
 	std::cout << "Hello world\n";
 	
-	int N = 2;
+	const int N = 2;
 	double a_0[N] = {0.02,0.02};
 	double a_min[N] = {0.,0.};
 	//~ int N = 1;

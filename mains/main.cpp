@@ -25,6 +25,8 @@ int main(){
 	const double y = 0.;				// y coordinate of magnet centre
 	const double z = 0;					// z coordinate of magnet centre	
 	
+	std::cout << "R = " << R << std::endl;
+	
 	int McDOrder;	// number of terms to use in the McDonald model
 	int N_BS; 		// number of segments to be used in the Biot-Savart model
 	int NG_z; 		// number of loops used to represent a layer in the GQ methods
@@ -206,6 +208,7 @@ int main(){
 		//~ printVec(sphP,"P");
 		std::cout << "\n";
 		
+		/*
 		//////////////////// LOOP ////////////////////
 		std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 		
@@ -494,7 +497,7 @@ int main(){
 		
 		std::cout << "\n";
 		
-		
+		*/
 		//////////////////// SHELL ////////////////////
 		std::cout << "CALCULATING MODELS FOR A SHELL\n";
 		
@@ -506,6 +509,7 @@ int main(){
 		std::cout << "Using the (exact) Conway model:\n";
 		time = 0;
 		time_squared = 0;
+		std::cout << "R = " << R << std::endl;
 		Conway1D conway1D = Conway1D(R,N_wires,i,L,x,y,z);
 	    assert(x == 0 && y == 0); // the solenoid has to be centered around the axis
 		for(int i=0; i<N_t; i++){

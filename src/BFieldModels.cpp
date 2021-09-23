@@ -373,7 +373,7 @@ double Conway1D::I_010(const double zDiff, const double cylP[3]) const {
 	
 	const double rho = cylP[0];
 	//~ std::cout << "rho = " << zDiff << std::endl;	
-	
+	std::cout << "R = " << R << std::endl;
 	const double rSum = rho+R;
 	const double rSum2 = rSum*rSum;
 	const double rDiff = rho-R;
