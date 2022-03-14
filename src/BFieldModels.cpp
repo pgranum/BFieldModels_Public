@@ -692,10 +692,17 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	//~ std::cout << "z1 = " << z1 << std::endl;
 	//~ std::cout << "z2 = " << z2 << std::endl;
 	
-	double an11[Na] = {0};		// array to hold terms with z1 and R1
-	double an12[Na] = {0};		// array to hold terms with z1 and R2
-	double an21[Na] = {0};		// array to hold terms with z2 and R1
-	double an22[Na] = {0};		// array to hold terms with z2 and R2
+	double an11[Na];	// array to hold terms with z1 and R1
+	double an12[Na];	// array to hold terms with z1 and R2
+	double an21[Na];	// array to hold terms with z2 and R1
+	double an22[Na];	// array to hold terms with z2 and R2
+	for (int i = 0; i < Na; i++)
+	{
+		an11[i] = 0;
+		an12[i] = 0;
+		an21[i] = 0;
+		an22[i] = 0;
+	}
 	
 	this->getA0(z1,R1,an11);
 	this->getA0(z1,R2,an12);

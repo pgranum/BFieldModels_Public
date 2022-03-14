@@ -20,17 +20,23 @@ void gradDesc(double a_n[], int N, double a_final[]){
 	double eps = std::numeric_limits<double>::epsilon();
 	
 	// predefine a_n-1 and a_n+1
-	double a_np1[N] = {0};
-	double a_nm1[N] = {0};
+	double a_np1[N];
+	double a_nm1[N];
 	for(int i=0; i<N; i++){
 		a_nm1[i] = a_n[i] - 100*eps;
+		a_np1[i] = 0;
 	}
 	
 	// placeholders for gradients
-	double grad_nm1[N]{0};
-	double grad_n[N]{0};
-	double grad_np1[N]{0};
-	
+	double grad_nm1[N];
+	double grad_n[N];
+	double grad_np1[N];
+	for (int i = 0; i < N; i++)
+	{
+		grad_nm1[i] = 0;
+		grad_n[i] = 0;
+		grad_np1[i] = 0;
+	}
 	// precalc gradients for a_n-1 and a_n
 	dfdx(a_nm1,N,grad_nm1);
 	dfdx(a_n,N,grad_n);
