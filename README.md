@@ -14,7 +14,7 @@ cmake .
 make
 ```
 
-To clean repo
+To clean the build
 ```
 make clean
 ```
