@@ -373,7 +373,7 @@ double Conway1D::I_010(const double zDiff, const double cylP[3]) const {
 	
 	const double rho = cylP[0];
 	//~ std::cout << "rho = " << zDiff << std::endl;	
-	std::cout << "R = " << R << std::endl;
+	//~ std::cout << "R = " << R << std::endl;
 	const double rSum = rho+R;
 	const double rSum2 = rSum*rSum;
 	const double rDiff = rho-R;
@@ -692,16 +692,16 @@ void McD_Tube::getB(const double cylP[3], double BCylVec[3]) const{
 	//~ std::cout << "z1 = " << z1 << std::endl;
 	//~ std::cout << "z2 = " << z2 << std::endl;
 	
-	double an11[Na];	// array to hold terms with z1 and R1
-	double an12[Na];	// array to hold terms with z1 and R2
-	double an21[Na];	// array to hold terms with z2 and R1
-	double an22[Na];	// array to hold terms with z2 and R2
-	for (int i = 0; i < Na; i++)
-	{
-		an11[i] = 0;
-		an12[i] = 0;
-		an21[i] = 0;
-		an22[i] = 0;
+	double* an11 = new double[Na];		// array to hold terms with z1 and R1
+	double* an12 = new double[Na];		// array to hold terms with z1 and R2
+	double* an21 = new double[Na];		// array to hold terms with z2 and R1
+	double* an22 = new double[Na];		// array to hold terms with z2 and R2
+	
+	for(int n=0; n<Na; n++){
+		an11[n] = 0;
+		an12[n] = 0;
+		an21[n] = 0;
+		an22[n] = 0;
 	}
 	
 	this->getA0(z1,R1,an11);

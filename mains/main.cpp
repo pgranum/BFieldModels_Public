@@ -7,8 +7,7 @@
 #include "utils.h"
 
 int main(){
-	std::cout.precision(15);	// sets the number of significant digits of cout
-	
+	std::cout.precision(15);	// sets the number of significant digits of cout	
 	
 	
 	const double R1 = 0.04125;			// inner radius
@@ -24,9 +23,7 @@ int main(){
 	const double x = 0.;				// x coordinate of magnet centre
 	const double y = 0.;				// y coordinate of magnet centre
 	const double z = 0;					// z coordinate of magnet centre	
-	
-	std::cout << "R = " << R << std::endl;
-	
+		
 	int McDOrder;	// number of terms to use in the McDonald model
 	int N_BS; 		// number of segments to be used in the Biot-Savart model
 	int NG_z; 		// number of loops used to represent a layer in the GQ methods
@@ -34,7 +31,7 @@ int main(){
 	double lambda;	// parameter for TAVP model
 	
 	// setting the code up to run multiple times to get statistics of the computation time
-	const int N_t = 1;			// number of evaluations of each method within the position loop
+	const int N_t = 100;			// number of evaluations of each method within the position loop
 	double time;
 	double time_squared;
 	double mean;
@@ -50,6 +47,8 @@ int main(){
 	double BSphVec[3] = {0.,0.,0.}; 			// placeholder for the field in spherical coordinates		
 
 	std::cout << "\n";
+	std::cout << "N_t = " << N_t;
+	std::cout << "\n";
 	std::cout << "Calculating field at point:\n";
 	printVec(carP,"P_car");
 	printVec(cylP,"P_cyl");
@@ -61,8 +60,13 @@ int main(){
 	std::cout << "CALCULATING MODELS FOR A CURRENT LOOP\n";
 	
 	McDOrder = 7;	// number of terms to use in the McDonald model
-	N_BS = 1000; 	// number of segments to be used in the Biot-Savart model I HAVE MOVED THIS FURTHER DOWN
-		
+	N_BS = 1000; 	// number of segments to be used in the Biot-Savart model 
+	
+	std::cout << "McDOrder = " << McDOrder << "\n";
+	std::cout << "N_BS = " << N_BS << "\n";
+	std::cout << "\n";
+	
+	
 	std::cout << "Using the (exact) Simple Analytic Model (SAM):\n";
 	time = 0;
 	time_squared = 0;
@@ -128,15 +132,17 @@ int main(){
 	//////////////////// SHELL ////////////////////
 	std::cout << "CALCULATING MODELS FOR A SHELL\n";
 	
-	NG_z = 3;	// MOVED FURTHER DOWN
+	NG_z = 3;		// number of points to use in the axial direction for Gaussian quadrature
 	McDOrder = 7;	// number of terms to use in the McDonald model
 	
+	std::cout << "McDOrder = " << McDOrder << "\n";
+	std::cout << "NG_z = " << NG_z << "\n";
+	std::cout << "\n";
 			
 	
 	std::cout << "Using the (exact) Conway model:\n";
 	time = 0;
 	time_squared = 0;
-	std::cout << "R = " << R << std::endl;
 	Conway1D conway1D = Conway1D(R,N_wires,i,L,x,y,z);
     assert(x == 0 && y == 0); // the solenoid must be centered around the axis
 	for(int i=0; i<N_t; i++){
@@ -221,11 +227,18 @@ int main(){
 	//////////////////// FINITE SOLENOID ////////////////////
 	std::cout << "CALCULATING MODELS FOR A FINITE SOLENOID\n";
 
-	McDOrder = 4;
-	N_BS = 10000;
-	NG_rho = 1;	//MOVED FURTHER DOWN
-	NG_z = 3;	//MOVED FURTHER DOWN
-	lambda = 0.866; //MOVED FURTHER DOWN
+	McDOrder = 4;	// number of terms to use in the McDonald model
+	N_BS = 10000;	// number of segments to be used in the Biot-Savart model 
+	NG_rho = 1;		// number of points to use in the radial direction for Gaussian quadrature
+	NG_z = 3;		// number of points to use in the axial direction for Gaussian quadrature
+	lambda = 0.866; // parameter for the TAVP model
+	
+	std::cout << "McDOrder = " << McDOrder << "\n";
+	std::cout << "N_BS = " << N_BS << "\n";
+	std::cout << "NG_rho = " << NG_rho << "\n";
+	std::cout << "NG_z = " << NG_z << "\n";
+	std::cout << "lambda = " << lambda << "\n";
+	std::cout << "\n";
 	
 	
 	std::cout << "Using the detailed Biot-Savart model:\n";
