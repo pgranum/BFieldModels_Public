@@ -14,3 +14,12 @@ cmake .
 make
 ```
 
+To clean repo
+```
+make clean
+```
+
+To clean repo including cmake files
+```
+rm -rf CMakeCache.txt cmake_install.cmake CMakeFiles *.exe
+```
